@@ -1,0 +1,395 @@
+/* =========================================================
+   CADERNO DE CAMPO — GLOBAL
+   Identidade: Microsoft 365 / Excel Premium
+========================================================= */
+
+:root {
+  --green: #107c41;
+  --green-dark: #0b6a36;
+  --green-light: #eaf5ee;
+  --green-hover: #f1f8f4;
+
+  --text: #242424;
+  --text-secondary: #616161;
+  --text-muted: #8a8a8a;
+
+  --background: #f3f4f3;
+  --white: #ffffff;
+
+  --border: #d9d9d9;
+  --border-light: #ebebeb;
+
+  --danger: #a4262c;
+  --danger-light: #fff5f5;
+
+  --radius: 6px;
+
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.025);
+
+  --shadow-hover:
+    0 4px 12px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+
+  font-family:
+    "Segoe UI",
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    Arial,
+    sans-serif;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f7f8f7 0%,
+      var(--background) 100%
+    );
+
+  color: var(--text);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(16, 124, 65, 0.35);
+  outline-offset: 2px;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+  width: 100%;
+  min-height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 38px;
+
+  background: rgba(255, 255, 255, 0.98);
+
+  border-bottom: 1px solid var(--border);
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.035);
+
+  position: relative;
+  z-index: 10;
+}
+
+
+/* =========================================================
+   MARCA
+========================================================= */
+
+.brand {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  padding-left: 47px;
+
+  cursor: pointer;
+
+  user-select: none;
+}
+
+.logo-icon {
+  position: absolute;
+
+  left: 0;
+  top: 50%;
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: translateY(-50%);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #14934d,
+      var(--green)
+    );
+
+  color: #ffffff;
+
+  font-size: 17px;
+
+  box-shadow:
+    0 3px 8px rgba(16, 124, 65, 0.18);
+}
+
+.header h1 {
+  color: var(--text);
+
+  font-size: 18px;
+  font-weight: 650;
+
+  line-height: 1.2;
+
+  letter-spacing: -0.2px;
+}
+
+.header p {
+  margin-top: 3px;
+
+  color: var(--text-secondary);
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.connection-status {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 6px 10px;
+
+  background: #fafafa;
+
+  border: 1px solid var(--border);
+
+  border-radius: 20px;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #f59e0b;
+
+  box-shadow:
+    0 0 0 3px rgba(245, 158, 11, 0.11);
+}
+
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.primary-button,
+.secondary-button,
+.cancel-button,
+.edit-button,
+.delete-button {
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+
+/* PRINCIPAL */
+
+.primary-button {
+  min-height: 40px;
+
+  padding: 0 17px;
+
+  border: 1px solid var(--green);
+
+  border-radius: 6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #148a49 0%,
+      var(--green) 100%
+    );
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.primary-button:hover {
+  background: var(--green-dark);
+
+  box-shadow:
+    0 4px 12px rgba(16, 124, 65, 0.17);
+
+  transform: translateY(-1px);
+}
+
+.primary-button:active {
+  transform: translateY(0);
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+/* SECUNDÁRIO */
+
+.secondary-button,
+.cancel-button {
+  min-height: 40px;
+
+  padding: 0 17px;
+
+  border: 1px solid #cfcfcf;
+
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  color: #424242;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.035);
+}
+
+.secondary-button:hover,
+.cancel-button:hover {
+  background: #f7f7f7;
+
+  border-color: #b8b8b8;
+
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .header {
+    min-height: 64px;
+
+    padding: 0 16px;
+  }
+
+  .brand {
+    padding-left: 40px;
+  }
+
+  .logo-icon {
+    width: 31px;
+    height: 31px;
+
+    font-size: 15px;
+  }
+
+  .header h1 {
+    font-size: 15px;
+  }
+
+  .header p {
+    display: none;
+  }
+
+  .connection-status {
+    padding: 5px 8px;
+
+    font-size: 10px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE PEQUENO
+========================================================= */
+
+@media (max-width: 430px) {
+
+  .header {
+    padding: 0 12px;
+  }
+
+  .brand {
+    padding-left: 37px;
+  }
+
+  .header h1 {
+    font-size: 14px;
+  }
+
+  .connection-status {
+    gap: 5px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+  }
+}
