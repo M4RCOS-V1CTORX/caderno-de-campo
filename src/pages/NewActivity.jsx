@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
+
 import {
   createActivity,
   updateActivity,
 } from "../services/activityService";
+
+import { getProperties } from "../services/propertyService";
+
+import { getPlotsByProperty } from "../services/plotService";
 
 import "../styles/newActivity.css";
 
@@ -16,14 +21,84 @@ function NewActivity({
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
 
+  const [properties, setProperties] = useState([]);
+  const [plots, setPlots] = useState([]);
+
+  const [propertyId, setPropertyId] = useState("");
+  const [plotId, setPlotId] = useState("");
+
   useEffect(() => {
-  if (activityToEdit) {
-    setTitle(activityToEdit.title || "");
-    setDate(activityToEdit.date || "");
-    setLocation(activityToEdit.location || "");
-    setDescription(activityToEdit.description || "");
-  }
-}, [activityToEdit]);
+    async function loadProperties() {
+      try {
+        const data = await getProperties();
+        setProperties(data);
+      } catch (error) {
+        console.error(
+          "ERRO AO CARREGAR PROPRIEDADES:",
+          error
+        );
+      }
+    }
+
+    loadProperties();
+  }, []);
+
+  useEffect(() => {
+    async function loadPlots() {
+      if (!propertyId) {
+        setPlots([]);
+        setPlotId("");
+        return;
+      }
+
+      try {
+        const data = await getPlotsByProperty(
+          Number(propertyId)
+        );
+
+        setPlots(data);
+      } catch (error) {
+        console.error(
+          "ERRO AO CARREGAR TALHÕES:",
+          error
+        );
+
+        setPlots([]);
+      }
+    }
+
+    loadPlots();
+  }, [propertyId]);
+
+  useEffect(() => {
+    if (activityToEdit) {
+      setTitle(activityToEdit.title || "");
+      setDate(activityToEdit.date || "");
+      setLocation(activityToEdit.location || "");
+      setDescription(
+        activityToEdit.description || ""
+      );
+
+      setPropertyId(
+        activityToEdit.propertyId
+          ? String(activityToEdit.propertyId)
+          : ""
+      );
+
+      setPlotId(
+        activityToEdit.plotId
+          ? String(activityToEdit.plotId)
+          : ""
+      );
+    } else {
+      setTitle("");
+      setDate("");
+      setLocation("");
+      setDescription("");
+      setPropertyId("");
+      setPlotId("");
+    }
+  }, [activityToEdit]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -35,31 +110,44 @@ function NewActivity({
       date,
       location,
       description,
+      propertyId: propertyId
+        ? Number(propertyId)
+        : null,
+      plotId: plotId
+        ? Number(plotId)
+        : null,
     };
 
     try {
       if (activityToEdit) {
-  await updateActivity(activityToEdit.id, activity);
-} else {
-  await createActivity(activity);
-}
+        await updateActivity(
+          activityToEdit.id,
+          activity
+        );
+      } else {
+        await createActivity(activity);
+      }
 
-      console.log("ATIVIDADE SALVA COM SUCESSO");
+      console.log(
+        "ATIVIDADE SALVA COM SUCESSO"
+      );
 
       alert(
-  activityToEdit
-    ? "Atividade atualizada com sucesso!"
-    : "Atividade cadastrada com sucesso!"
-);
+        activityToEdit
+          ? "Atividade atualizada com sucesso!"
+          : "Atividade cadastrada com sucesso!"
+      );
 
       if (onActivityCreated) {
         onActivityCreated();
       } else {
         onCancel();
       }
-
     } catch (error) {
-      console.error("ERRO AO SALVAR:", error);
+      console.error(
+        "ERRO AO SALVAR:",
+        error
+      );
 
       alert(
         "Erro ao salvar a atividade. Veja o Console (F12)."
@@ -71,17 +159,21 @@ function NewActivity({
     <main className="new-activity">
 
       <div className="page-heading">
+
         <span className="home-label">
           ATIVIDADES
         </span>
 
         <h2>
-            {activityToEdit ? "Editar atividade" : "Nova atividade"}
+          {activityToEdit
+            ? "Editar atividade"
+            : "Nova atividade"}
         </h2>
 
         <p>
           Registre uma nova atividade de campo.
         </p>
+
       </div>
 
       <form
@@ -91,11 +183,14 @@ function NewActivity({
 
         <div className="form-section">
 
-          <h3>Informações da atividade</h3>
+          <h3>
+            Informações da atividade
+          </h3>
 
           <div className="form-grid">
 
             <div className="form-group full">
+
               <label htmlFor="title">
                 Nome da atividade
               </label>
@@ -110,9 +205,80 @@ function NewActivity({
                 }
                 required
               />
+
             </div>
 
             <div className="form-group">
+
+              <label htmlFor="property">
+                Propriedade
+              </label>
+
+              <select
+                id="property"
+                value={propertyId}
+                onChange={(event) => {
+                  setPropertyId(
+                    event.target.value
+                  );
+
+                  setPlotId("");
+                }}
+              >
+
+                <option value="">
+                  Selecione uma propriedade
+                </option>
+
+                {properties.map((property) => (
+                  <option
+                    key={property.id}
+                    value={property.id}
+                  >
+                    {property.name}
+                  </option>
+                ))}
+
+              </select>
+
+            </div>
+
+            <div className="form-group">
+
+              <label htmlFor="plot">
+                Talhão
+              </label>
+
+              <select
+                id="plot"
+                value={plotId}
+                onChange={(event) =>
+                  setPlotId(event.target.value)
+                }
+                disabled={!propertyId}
+              >
+
+                <option value="">
+                  {propertyId
+                    ? "Selecione um talhão"
+                    : "Selecione a propriedade primeiro"}
+                </option>
+
+                {plots.map((plot) => (
+                  <option
+                    key={plot.id}
+                    value={plot.id}
+                  >
+                    {plot.name}
+                  </option>
+                ))}
+
+              </select>
+
+            </div>
+
+            <div className="form-group">
+
               <label htmlFor="date">
                 Data
               </label>
@@ -126,9 +292,11 @@ function NewActivity({
                 }
                 required
               />
+
             </div>
 
             <div className="form-group">
+
               <label htmlFor="location">
                 Local
               </label>
@@ -142,9 +310,11 @@ function NewActivity({
                   setLocation(event.target.value)
                 }
               />
+
             </div>
 
             <div className="form-group full">
+
               <label htmlFor="description">
                 Descrição
               </label>
@@ -155,9 +325,12 @@ function NewActivity({
                 placeholder="Descreva o que foi realizado..."
                 value={description}
                 onChange={(event) =>
-                  setDescription(event.target.value)
+                  setDescription(
+                    event.target.value
+                  )
                 }
               />
+
             </div>
 
           </div>
@@ -173,11 +346,15 @@ function NewActivity({
           >
             Cancelar
           </button>
-        <button>
-            {activityToEdit ? "Salvar alterações" : "Salvar atividade"}
 
-        </button>
-          
+          <button
+            type="submit"
+            className="primary-button"
+          >
+            {activityToEdit
+              ? "Salvar alterações"
+              : "Salvar atividade"}
+          </button>
 
         </div>
 

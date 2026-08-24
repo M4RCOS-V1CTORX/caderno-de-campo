@@ -1,4 +1,4 @@
-import db from "../database/db";
+import db from "../db";
 
 export async function createActivity(activity) {
   const newActivity = {

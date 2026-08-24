@@ -1,0 +1,397 @@
+/* =========================================================
+   PROPRIEDADES
+========================================================= */
+
+.properties-page {
+  width: 100%;
+  max-width: 1100px;
+
+  margin: 0 auto;
+
+  padding: 42px 38px 70px;
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.properties-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  margin-bottom: 30px;
+}
+
+.properties-heading .home-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: var(--green);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+}
+
+.properties-heading h2 {
+  color: var(--text);
+
+  font-size: 29px;
+  font-weight: 600;
+
+  letter-spacing: -0.5px;
+}
+
+.properties-heading p {
+  margin-top: 7px;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   BOTÃO PRINCIPAL
+========================================================= */
+
+.properties-heading .primary-button,
+.empty-state .primary-button {
+  min-height: 40px;
+
+  padding: 0 17px;
+
+  border: 1px solid var(--green);
+
+  border-radius: 6px;
+
+  background: var(--green);
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.properties-heading .primary-button:hover,
+.empty-state .primary-button:hover {
+  background: #267a4b;
+
+  border-color: #267a4b;
+}
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.properties-content {
+  width: 100%;
+}
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.properties-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.property-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 18px 20px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 8px;
+
+  box-shadow: var(--shadow-card);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.property-card:hover {
+  border-color: #cfcfcf;
+
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================================================
+   INFORMAÇÕES
+========================================================= */
+
+.property-card-content {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 14px;
+}
+
+.property-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 7px;
+
+  background: #f0f7f3;
+
+  font-size: 19px;
+}
+
+.property-info {
+  min-width: 0;
+}
+
+.property-info h3 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.property-info p {
+  margin-top: 4px;
+
+  color: var(--text-secondary);
+
+  font-size: 12px;
+}
+
+.property-info span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #888888;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.property-actions {
+  display: flex;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  gap: 7px;
+}
+
+.property-actions button {
+  min-height: 34px;
+
+  padding: 0 12px;
+
+  border-radius: 5px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.secondary-button {
+  border: 1px solid #d1d1d1;
+
+  background: #ffffff;
+
+  color: #424242;
+}
+
+.secondary-button:hover {
+  background: #f3f3f3;
+
+  border-color: #bdbdbd;
+}
+
+.delete-button {
+  border: 1px solid #e1caca;
+
+  background: #ffffff;
+
+  color: #a34848;
+}
+
+.delete-button:hover {
+  background: #faf0f0;
+
+  border-color: #d5aaaa;
+}
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 300px;
+
+  padding: 40px 20px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  text-align: center;
+
+  box-shadow: var(--shadow-card);
+}
+
+.empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 16px;
+
+  border-radius: 10px;
+
+  background: #f0f7f3;
+
+  font-size: 26px;
+}
+
+.empty-state h3 {
+  color: var(--text);
+
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.empty-state p {
+  margin-top: 7px;
+  margin-bottom: 18px;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+
+  .properties-page {
+    padding: 34px 24px 50px;
+  }
+
+  .properties-heading {
+    align-items: flex-start;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .properties-page {
+    padding: 27px 15px 40px;
+  }
+
+  .properties-heading {
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 18px;
+
+    margin-bottom: 23px;
+  }
+
+  .properties-heading h2 {
+    font-size: 25px;
+  }
+
+  .properties-heading p {
+    font-size: 13px;
+  }
+
+  .properties-heading .primary-button {
+    width: 100%;
+  }
+
+  .property-card {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+    padding: 16px;
+  }
+
+  .property-card-content {
+    width: 100%;
+  }
+
+  .property-actions {
+    width: 100%;
+  }
+
+  .property-actions button {
+    flex: 1;
+
+    min-height: 38px;
+  }
+
+  .empty-state {
+    min-height: 270px;
+  }
+}

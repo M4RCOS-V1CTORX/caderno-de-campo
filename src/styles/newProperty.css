@@ -1,8 +1,8 @@
 /* =========================================================
-   NOVA ATIVIDADE
+   NOVA PROPRIEDADE
 ========================================================= */
 
-.new-activity {
+.new-property {
   width: 100%;
   max-width: 980px;
 
@@ -15,11 +15,11 @@
    CABEÇALHO
 ========================================================= */
 
-.page-heading {
+.new-property .page-heading {
   margin-bottom: 30px;
 }
 
-.page-heading .home-label {
+.new-property .page-heading .home-label {
   display: block;
 
   margin-bottom: 8px;
@@ -32,7 +32,7 @@
   letter-spacing: 0.12em;
 }
 
-.page-heading h2 {
+.new-property .page-heading h2 {
   color: var(--text);
 
   font-size: 29px;
@@ -41,7 +41,7 @@
   letter-spacing: -0.5px;
 }
 
-.page-heading p {
+.new-property .page-heading p {
   margin-top: 7px;
 
   color: var(--text-secondary);
@@ -53,7 +53,7 @@
    FORMULÁRIO
 ========================================================= */
 
-.activity-form {
+.property-form {
   overflow: hidden;
 
   background: var(--white);
@@ -69,13 +69,13 @@
    SEÇÃO
 ========================================================= */
 
-.form-section {
+.property-form .form-section {
   padding: 30px;
 
   background: #ffffff;
 }
 
-.form-section h3 {
+.property-form .form-section h3 {
   margin-bottom: 24px;
 
   color: var(--text);
@@ -88,7 +88,7 @@
    GRID
 ========================================================= */
 
-.form-grid {
+.property-form .form-grid {
   display: grid;
 
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -96,14 +96,14 @@
   gap: 20px 18px;
 }
 
-.form-group {
+.property-form .form-group {
   min-width: 0;
 
   display: flex;
   flex-direction: column;
 }
 
-.form-group.full {
+.property-form .form-group.full {
   grid-column: 1 / -1;
 }
 
@@ -111,7 +111,7 @@
    LABEL
 ========================================================= */
 
-.form-group label {
+.property-form .form-group label {
   margin-bottom: 7px;
 
   color: #424242;
@@ -121,13 +121,15 @@
 }
 
 /* =========================================================
-   INPUTS / SELECT / TEXTAREA
+   INPUTS
 ========================================================= */
 
-.form-group input,
-.form-group textarea,
-.form-group select {
+.property-form .form-group input {
   width: 100%;
+
+  height: 42px;
+
+  padding: 0 12px;
 
   border: 1px solid #d1d1d1;
 
@@ -145,56 +147,15 @@
     background 0.15s ease;
 }
 
-.form-group input {
-  height: 42px;
-
-  padding: 0 12px;
-}
-
-.form-group select {
-  height: 42px;
-
-  padding: 0 12px;
-
-  cursor: pointer;
-}
-
-.form-group textarea {
-  min-height: 120px;
-
-  padding: 11px 12px;
-
-  resize: vertical;
-
-  line-height: 1.5;
-}
-
-/* =========================================================
-   PLACEHOLDER
-========================================================= */
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
+.property-form .form-group input::placeholder {
   color: #9a9a9a;
 }
 
-/* =========================================================
-   HOVER
-========================================================= */
-
-.form-group input:hover,
-.form-group textarea:hover,
-.form-group select:hover:not(:disabled) {
+.property-form .form-group input:hover {
   border-color: #bdbdbd;
 }
 
-/* =========================================================
-   FOCO
-========================================================= */
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.property-form .form-group input:focus {
   outline: none;
 
   border-color: var(--green);
@@ -206,28 +167,12 @@
 }
 
 /* =========================================================
-   SELECT DESABILITADO
-========================================================= */
-
-.form-group select:disabled {
-  background: #f5f5f5;
-
-  color: #999999;
-
-  cursor: not-allowed;
-
-  border-color: #d8d8d8;
-}
-
-/* =========================================================
    AÇÕES
 ========================================================= */
 
-.form-actions {
+.property-form .form-actions {
   display: flex;
-
   align-items: center;
-
   justify-content: flex-end;
 
   gap: 9px;
@@ -242,42 +187,58 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-.cancel-button {
+.property-form .cancel-button,
+.property-form .primary-button {
   min-height: 40px;
 
   padding: 0 17px;
 
-  border: 1px solid #d1d1d1;
-
   border-radius: 6px;
 
-  background: #ffffff;
-
-  color: #424242;
-
   font-size: 13px;
-
   font-weight: 600;
 
   cursor: pointer;
 
   transition:
     background 0.15s ease,
-    border-color 0.15s ease;
+    border-color 0.15s ease,
+    transform 0.1s ease;
 }
 
-.cancel-button:hover {
+.property-form .cancel-button {
+  border: 1px solid #d1d1d1;
+
+  background: #ffffff;
+
+  color: #424242;
+}
+
+.property-form .cancel-button:hover {
   background: #f3f3f3;
 
   border-color: #bdbdbd;
 }
 
-/* =========================================================
-   BOTÃO PRINCIPAL
-========================================================= */
-
-.form-actions .primary-button {
+.property-form .primary-button {
   min-width: 145px;
+
+  border: 1px solid var(--green);
+
+  background: var(--green);
+
+  color: #ffffff;
+}
+
+.property-form .primary-button:hover {
+  background: #267a4b;
+
+  border-color: #267a4b;
+}
+
+.property-form .primary-button:active,
+.property-form .cancel-button:active {
+  transform: translateY(1px);
 }
 
 /* =========================================================
@@ -286,18 +247,17 @@
 
 @media (max-width: 800px) {
 
-  .new-activity {
+  .new-property {
     padding: 34px 24px 50px;
   }
 
-  .form-section {
+  .property-form .form-section {
     padding: 25px;
   }
 
-  .form-actions {
+  .property-form .form-actions {
     padding: 16px 25px;
   }
-
 }
 
 /* =========================================================
@@ -306,69 +266,57 @@
 
 @media (max-width: 600px) {
 
-  .new-activity {
+  .new-property {
     padding: 27px 15px 40px;
   }
 
-  .page-heading {
+  .new-property .page-heading {
     margin-bottom: 23px;
   }
 
-  .page-heading h2 {
+  .new-property .page-heading h2 {
     font-size: 25px;
   }
 
-  .page-heading p {
+  .new-property .page-heading p {
     font-size: 13px;
   }
 
-  .activity-form {
+  .property-form {
     border-radius: 8px;
   }
 
-  .form-section {
+  .property-form .form-section {
     padding: 21px 17px;
   }
 
-  .form-section h3 {
+  .property-form .form-section h3 {
     margin-bottom: 20px;
 
     font-size: 15px;
   }
 
-  .form-grid {
+  .property-form .form-grid {
     grid-template-columns: 1fr;
 
     gap: 17px;
   }
 
-  .form-group.full {
+  .property-form .form-group.full {
     grid-column: auto;
   }
 
-  .form-group label {
+  .property-form .form-group label {
     font-size: 11px;
   }
 
-  .form-group input {
+  .property-form .form-group input {
     height: 44px;
 
     font-size: 13px;
   }
 
-  .form-group select {
-    height: 44px;
-
-    font-size: 13px;
-  }
-
-  .form-group textarea {
-    min-height: 130px;
-
-    font-size: 13px;
-  }
-
-  .form-actions {
+  .property-form .form-actions {
     flex-direction: column-reverse;
 
     align-items: stretch;
@@ -376,8 +324,7 @@
     padding: 15px 17px;
   }
 
-  .form-actions button {
+  .property-form .form-actions button {
     width: 100%;
   }
-
 }

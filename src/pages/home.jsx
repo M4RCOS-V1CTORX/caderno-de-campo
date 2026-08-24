@@ -11,6 +11,7 @@ function Home({
   onNewActivity,
   onEditActivity,
   onViewActivity,
+  onProperties,
 }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -134,7 +135,7 @@ function Home({
           </span>
 
           <h2>
-            Bom dia! 👋
+            Bom dia, Laís! 👋
           </h2>
 
           <p>
@@ -213,7 +214,47 @@ function Home({
         </div>
 
       </section>
+<section className="modules-section">
 
+  <div className="section-title">
+    <h3>
+      Módulos
+    </h3>
+
+    <p>
+      Acesse as principais ferramentas do sistema.
+    </p>
+  </div>
+
+  <div className="modules-grid">
+
+    <button
+      type="button"
+      className="module-card"
+      onClick={onProperties}
+    >
+      <span className="module-icon">
+        🏡
+      </span>
+
+      <div>
+        <h4>
+          Propriedades
+        </h4>
+
+        <p>
+          Propriedades e talhões
+        </p>
+      </div>
+
+      <span className="module-arrow">
+        →
+      </span>
+    </button>
+
+  </div>
+
+</section>
 
       <section className="recent-section">
 
