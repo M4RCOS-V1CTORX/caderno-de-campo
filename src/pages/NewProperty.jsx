@@ -13,65 +13,127 @@ function NewProperty({
   propertyToEdit,
 }) {
   const [name, setName] = useState("");
-  const [owner, setOwner] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
+
+  const [saving, setSaving] = useState(false);
+
+  /* =========================================================
+     PREENCHER FORMULÁRIO AO EDITAR
+  ========================================================= */
 
   useEffect(() => {
     if (propertyToEdit) {
       setName(propertyToEdit.name || "");
-      setOwner(propertyToEdit.owner || "");
-      setCity(propertyToEdit.city || "");
-      setState(propertyToEdit.state || "");
+      setLocation(
+        propertyToEdit.location ||
+          propertyToEdit.address ||
+          ""
+      );
+      setDescription(
+        propertyToEdit.description || ""
+      );
     } else {
       setName("");
-      setOwner("");
-      setCity("");
-      setState("");
+      setLocation("");
+      setDescription("");
     }
   }, [propertyToEdit]);
+
+  /* =========================================================
+     SALVAR
+  ========================================================= */
 
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (saving) {
+      return;
+    }
+
     const property = {
-      name,
-      owner,
-      city,
-      state,
+      name: name.trim(),
+      location: location.trim(),
+      description: description.trim(),
     };
 
+    if (!property.name) {
+      alert("Informe o nome da propriedade.");
+      return;
+    }
+
     try {
+      setSaving(true);
+
+      let savedProperty;
+
+      /* =====================================================
+         EDITAR
+      ===================================================== */
+
       if (propertyToEdit) {
-        await updateProperty(propertyToEdit.id, property);
+        await updateProperty(
+          propertyToEdit.id,
+          property
+        );
 
-        alert("Propriedade atualizada com sucesso!");
-      } else {
-        await createProperty(property);
-
-        alert("Propriedade cadastrada com sucesso!");
+        savedProperty = {
+          ...propertyToEdit,
+          ...property,
+        };
       }
 
+      /* =====================================================
+         NOVA PROPRIEDADE
+      ===================================================== */
+
+      else {
+        savedProperty =
+          await createProperty(property);
+      }
+
+      /* =====================================================
+         SUCESSO
+      ===================================================== */
+
+      alert(
+        propertyToEdit
+          ? "Propriedade atualizada com sucesso!"
+          : "Propriedade cadastrada com sucesso!"
+      );
+
       if (onPropertyCreated) {
-        onPropertyCreated();
-      } else {
+        onPropertyCreated(savedProperty);
+      } else if (onCancel) {
         onCancel();
       }
     } catch (error) {
-      console.error("ERRO AO SALVAR PROPRIEDADE:", error);
+      console.error(
+        "ERRO AO SALVAR PROPRIEDADE:",
+        error
+      );
 
       alert(
         "Erro ao salvar a propriedade. Veja o Console (F12)."
       );
+    } finally {
+      setSaving(false);
     }
   }
 
+  /* =========================================================
+     TELA
+  ========================================================= */
+
   return (
     <main className="new-property">
+      {/* =====================================================
+          CABEÇALHO
+      ===================================================== */}
 
       <div className="page-heading">
         <span className="home-label">
-          PROPRIEDADES
+          CADASTROS
         </span>
 
         <h2>
@@ -81,25 +143,46 @@ function NewProperty({
         </h2>
 
         <p>
-          {propertyToEdit
-            ? "Atualize as informações da propriedade."
-            : "Cadastre uma nova propriedade rural."}
+          Cadastre uma propriedade para organizar
+          seus locais e atividades de campo.
         </p>
       </div>
+
+      {/* =====================================================
+          FORMULÁRIO
+      ===================================================== */}
 
       <form
         className="property-form"
         onSubmit={handleSubmit}
       >
-        <div className="form-section">
+        {/* ===================================================
+            INFORMAÇÕES
+        =================================================== */}
 
-          <h3>
-            Informações da propriedade
-          </h3>
+        <section className="property-form-section">
+          <div className="form-section-heading">
+            <div className="section-icon">
+              🏡
+            </div>
 
-          <div className="form-grid">
+            <div>
+              <h3>
+                Informações da propriedade
+              </h3>
 
-            <div className="form-group full">
+              <p>
+                Informe os dados básicos do local.
+              </p>
+            </div>
+          </div>
+
+          <div className="property-form-grid">
+            {/* =================================================
+                NOME
+            ================================================= */}
+
+            <div className="property-form-group full">
               <label htmlFor="property-name">
                 Nome da propriedade
               </label>
@@ -112,68 +195,102 @@ function NewProperty({
                 onChange={(event) =>
                   setName(event.target.value)
                 }
+                maxLength={100}
+                autoComplete="off"
                 required
               />
             </div>
 
-            <div className="form-group full">
-              <label htmlFor="owner">
-                Proprietário
+            {/* =================================================
+                LOCALIZAÇÃO
+            ================================================= */}
+
+            <div className="property-form-group full">
+              <label htmlFor="property-location">
+                Localização
               </label>
 
               <input
-                id="owner"
+                id="property-location"
                 type="text"
-                placeholder="Ex.: João da Silva"
-                value={owner}
+                placeholder="Ex.: Zona Rural, Jacobina - BA"
+                value={location}
                 onChange={(event) =>
-                  setOwner(event.target.value)
+                  setLocation(
+                    event.target.value
+                  )
                 }
+                maxLength={150}
+                autoComplete="off"
               />
+
+              <span className="field-hint">
+                Informe cidade, região ou outra
+                referência para localizar a propriedade.
+              </span>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="city">
-                Cidade
+            {/* =================================================
+                DESCRIÇÃO
+            ================================================= */}
+
+            <div className="property-form-group full">
+              <label htmlFor="property-description">
+                Descrição
               </label>
 
-              <input
-                id="city"
-                type="text"
-                placeholder="Ex.: Jacobina"
-                value={city}
+              <textarea
+                id="property-description"
+                rows="5"
+                placeholder="Adicione informações importantes sobre a propriedade..."
+                value={description}
                 onChange={(event) =>
-                  setCity(event.target.value)
+                  setDescription(
+                    event.target.value
+                  )
                 }
+                maxLength={1000}
               />
+
+              <div className="character-counter">
+                {description.length}/1000
+              </div>
             </div>
-
-            <div className="form-group">
-              <label htmlFor="state">
-                Estado
-              </label>
-
-              <input
-                id="state"
-                type="text"
-                placeholder="Ex.: BA"
-                maxLength="2"
-                value={state}
-                onChange={(event) =>
-                  setState(event.target.value.toUpperCase())
-                }
-              />
-            </div>
-
           </div>
-        </div>
+        </section>
 
-        <div className="form-actions">
+        {/* ===================================================
+            INFORMAÇÃO SOBRE TALHÕES
+        =================================================== */}
 
+        <section className="property-info-box">
+          <div className="property-info-icon">
+            🌱
+          </div>
+
+          <div>
+            <strong>
+              Talhões
+            </strong>
+
+            <p>
+              Depois de cadastrar a propriedade,
+              você poderá adicionar e organizar os
+              talhões pertencentes a ela.
+            </p>
+          </div>
+        </section>
+
+        {/* ===================================================
+            AÇÕES
+        =================================================== */}
+
+        <div className="property-form-actions">
           <button
             type="button"
             className="cancel-button"
             onClick={onCancel}
+            disabled={saving}
           >
             Cancelar
           </button>
@@ -181,12 +298,14 @@ function NewProperty({
           <button
             type="submit"
             className="primary-button"
+            disabled={saving}
           >
-            {propertyToEdit
+            {saving
+              ? "Salvando..."
+              : propertyToEdit
               ? "Salvar alterações"
               : "Salvar propriedade"}
           </button>
-
         </div>
       </form>
     </main>

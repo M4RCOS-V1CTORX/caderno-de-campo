@@ -3,6 +3,12 @@ import db from "../db";
 export async function createActivity(activity) {
   const newActivity = {
     ...activity,
+    propertyId: activity.propertyId
+      ? Number(activity.propertyId)
+      : null,
+    plotId: activity.plotId
+      ? Number(activity.plotId)
+      : null,
     synced: false,
     createdAt: new Date().toISOString(),
   };
@@ -26,21 +32,36 @@ export async function getActivities() {
   console.log("DADOS DO BANCO:", activities);
 
   return activities.sort((a, b) => {
-    return new Date(b.createdAt) - new Date(a.createdAt);
+    return (
+      new Date(b.createdAt) -
+      new Date(a.createdAt)
+    );
   });
 }
+
+export async function getActivityById(id) {
+  return await db.activities.get(Number(id));
+}
+
 export async function deleteActivity(id) {
   console.log("EXCLUINDO ATIVIDADE:", id);
 
-  await db.activities.delete(id);
+  await db.activities.delete(Number(id));
 
   console.log("ATIVIDADE EXCLUÍDA COM SUCESSO");
 }
+
 export async function updateActivity(id, activity) {
   console.log("ATUALIZANDO ATIVIDADE:", id);
 
-  await db.activities.update(id, {
+  await db.activities.update(Number(id), {
     ...activity,
+    propertyId: activity.propertyId
+      ? Number(activity.propertyId)
+      : null,
+    plotId: activity.plotId
+      ? Number(activity.plotId)
+      : null,
     synced: false,
   });
 

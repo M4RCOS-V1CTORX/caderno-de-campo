@@ -1,5 +1,6 @@
 /* =========================================================
-   NOVA PROPRIEDADE
+   NOVA PROPRIEDADE — CADERNO DE CAMPO
+   PREMIUM / APPLE INSPIRED
 ========================================================= */
 
 .new-property {
@@ -9,6 +10,10 @@
   margin: 0 auto;
 
   padding: 42px 38px 70px;
+
+  color: var(--text);
+
+  animation: pageEnter 0.35s ease-out;
 }
 
 /* =========================================================
@@ -20,31 +25,47 @@
 }
 
 .new-property .page-heading .home-label {
-  display: block;
+  display: inline-flex;
 
-  margin-bottom: 8px;
+  align-items: center;
+
+  margin-bottom: 12px;
+
+  padding: 6px 10px;
+
+  border: 1px solid rgba(16, 124, 65, 0.16);
+
+  border-radius: 999px;
+
+  background: rgba(16, 124, 65, 0.07);
 
   color: var(--green);
 
-  font-size: 10px;
+  font-size: 9px;
+
   font-weight: 700;
 
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
 }
 
 .new-property .page-heading h2 {
-  color: var(--text);
+  margin: 0;
 
-  font-size: 29px;
+  color: #171a18;
+
+  font-size: 30px;
+
   font-weight: 600;
 
-  letter-spacing: -0.5px;
+  letter-spacing: -1px;
+
+  line-height: 1.08;
 }
 
 .new-property .page-heading p {
-  margin-top: 7px;
+  margin-top: 8px;
 
-  color: var(--text-secondary);
+  color: #737874;
 
   font-size: 14px;
 }
@@ -56,54 +77,110 @@
 .property-form {
   overflow: hidden;
 
-  background: var(--white);
+  border: 1px solid rgba(0, 0, 0, 0.065);
 
-  border: 1px solid var(--border);
+  border-radius: 16px;
 
-  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.9);
 
-  box-shadow: var(--shadow-card);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.025),
+    0 15px 35px rgba(0, 0, 0, 0.055);
 }
 
 /* =========================================================
    SEÇÃO
 ========================================================= */
 
-.property-form .form-section {
+.property-form-section {
   padding: 30px;
-
-  background: #ffffff;
 }
 
-.property-form .form-section h3 {
-  margin-bottom: 24px;
+/* =========================================================
+   CABEÇALHO DA SEÇÃO
+========================================================= */
 
-  color: var(--text);
+.form-section-heading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-bottom: 28px;
+}
+
+.section-icon {
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid rgba(16, 124, 65, 0.12);
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f1f8f3,
+      #e5f1e9
+    );
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+
+  font-size: 18px;
+}
+
+.form-section-heading h3 {
+  margin: 0;
+
+  color: #202421;
 
   font-size: 16px;
+
   font-weight: 600;
+
+  letter-spacing: -0.25px;
+}
+
+.form-section-heading p {
+  margin-top: 4px;
+
+  color: #858b87;
+
+  font-size: 11px;
 }
 
 /* =========================================================
    GRID
 ========================================================= */
 
-.property-form .form-grid {
+.property-form-grid {
   display: grid;
 
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
 
   gap: 20px 18px;
 }
 
-.property-form .form-group {
+.property-form-group {
   min-width: 0;
 
   display: flex;
+
   flex-direction: column;
 }
 
-.property-form .form-group.full {
+.property-form-group.full {
   grid-column: 1 / -1;
 }
 
@@ -111,134 +188,260 @@
    LABEL
 ========================================================= */
 
-.property-form .form-group label {
+.property-form-group label {
   margin-bottom: 7px;
 
-  color: #424242;
+  color: #424844;
 
-  font-size: 12px;
+  font-size: 11px;
+
   font-weight: 600;
 }
 
 /* =========================================================
-   INPUTS
+   CAMPOS
 ========================================================= */
 
-.property-form .form-group input {
+.property-form-group input,
+.property-form-group textarea {
   width: 100%;
 
-  height: 42px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 
-  padding: 0 12px;
-
-  border: 1px solid #d1d1d1;
-
-  border-radius: 6px;
+  border-radius: 10px;
 
   background: #ffffff;
 
-  color: var(--text);
+  color: #202421;
 
-  font-size: 13px;
+  font-family: inherit;
+
+  font-size: 12px;
 
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease;
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
-.property-form .form-group input::placeholder {
-  color: #9a9a9a;
+.property-form-group input {
+  height: 44px;
+
+  padding: 0 13px;
 }
 
-.property-form .form-group input:hover {
-  border-color: #bdbdbd;
+.property-form-group textarea {
+  min-height: 125px;
+
+  padding: 12px 13px;
+
+  resize: vertical;
+
+  line-height: 1.55;
 }
 
-.property-form .form-group input:focus {
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.property-form-group input::placeholder,
+.property-form-group textarea::placeholder {
+  color: #a0a5a2;
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.property-form-group input:hover,
+.property-form-group textarea:hover {
+  border-color: rgba(0, 0, 0, 0.17);
+}
+
+/* =========================================================
+   FOCO
+========================================================= */
+
+.property-form-group input:focus,
+.property-form-group textarea:focus {
   outline: none;
 
-  border-color: var(--green);
+  border-color: rgba(16, 124, 65, 0.45);
 
   box-shadow:
-    0 0 0 1px var(--green);
+    0 0 0 4px rgba(16, 124, 65, 0.055);
 
   background: #ffffff;
+}
+
+/* =========================================================
+   DICA DO CAMPO
+========================================================= */
+
+.field-hint {
+  margin-top: 6px;
+
+  color: #949a96;
+
+  font-size: 9px;
+
+  line-height: 1.4;
+}
+
+/* =========================================================
+   CONTADOR
+========================================================= */
+
+.character-counter {
+  margin-top: 6px;
+
+  color: #999f9b;
+
+  font-size: 9px;
+
+  text-align: right;
+}
+
+/* =========================================================
+   BOX INFORMATIVO
+========================================================= */
+
+.property-info-box {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 13px;
+
+  margin: 0 30px 25px;
+
+  padding: 15px 16px;
+
+  border: 1px solid rgba(16, 124, 65, 0.1);
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(241, 248, 243, 0.8),
+      rgba(247, 250, 248, 0.8)
+    );
+}
+
+.property-info-icon {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #e9f3ec;
+
+  font-size: 15px;
+}
+
+.property-info-box strong {
+  display: block;
+
+  color: #303631;
+
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+.property-info-box p {
+  max-width: 650px;
+
+  margin-top: 4px;
+
+  color: #7d857f;
+
+  font-size: 10px;
+
+  line-height: 1.5;
 }
 
 /* =========================================================
    AÇÕES
 ========================================================= */
 
-.property-form .form-actions {
+.property-form-actions {
   display: flex;
+
   align-items: center;
+
   justify-content: flex-end;
 
   gap: 9px;
 
   padding: 18px 30px;
 
-  background: #fafafa;
+  border-top: 1px solid rgba(0, 0, 0, 0.055);
 
-  border-top: 1px solid var(--border);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background:
+    rgba(248, 249, 248, 0.85);
 }
 
-.property-form .cancel-button,
-.property-form .primary-button {
-  min-height: 40px;
+.property-form-actions .cancel-button {
+  min-height: 41px;
 
   padding: 0 17px;
 
-  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 
-  font-size: 13px;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #555b57;
+
+  font-family: inherit;
+
+  font-size: 11px;
+
   font-weight: 600;
 
   cursor: pointer;
 
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.1s ease;
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
 }
 
-.property-form .cancel-button {
-  border: 1px solid #d1d1d1;
+.property-form-actions .cancel-button:hover {
+  transform: translateY(-1px);
 
-  background: #ffffff;
+  background: #f7f8f7;
 
-  color: #424242;
+  border-color: rgba(0, 0, 0, 0.16);
 }
 
-.property-form .cancel-button:hover {
-  background: #f3f3f3;
+.property-form-actions .primary-button {
+  min-width: 155px;
 
-  border-color: #bdbdbd;
+  min-height: 41px;
 }
 
-.property-form .primary-button {
-  min-width: 145px;
+/* =========================================================
+   BOTÕES DESABILITADOS
+========================================================= */
 
-  border: 1px solid var(--green);
+.property-form-actions button:disabled {
+  opacity: 0.6;
 
-  background: var(--green);
+  cursor: not-allowed;
 
-  color: #ffffff;
-}
-
-.property-form .primary-button:hover {
-  background: #267a4b;
-
-  border-color: #267a4b;
-}
-
-.property-form .primary-button:active,
-.property-form .cancel-button:active {
-  transform: translateY(1px);
+  transform: none;
 }
 
 /* =========================================================
@@ -248,16 +451,22 @@
 @media (max-width: 800px) {
 
   .new-property {
-    padding: 34px 24px 50px;
+    padding: 34px 24px 55px;
   }
 
-  .property-form .form-section {
+  .property-form-section {
     padding: 25px;
   }
 
-  .property-form .form-actions {
+  .property-info-box {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  .property-form-actions {
     padding: 16px 25px;
   }
+
 }
 
 /* =========================================================
@@ -276,55 +485,178 @@
 
   .new-property .page-heading h2 {
     font-size: 25px;
+
+    letter-spacing: -0.8px;
   }
 
   .new-property .page-heading p {
-    font-size: 13px;
+    font-size: 12px;
+
+    line-height: 1.5;
   }
 
   .property-form {
-    border-radius: 8px;
+    border-radius: 13px;
   }
 
-  .property-form .form-section {
+  .property-form-section {
     padding: 21px 17px;
   }
 
-  .property-form .form-section h3 {
-    margin-bottom: 20px;
+  /* CABEÇALHO */
 
-    font-size: 15px;
+  .form-section-heading {
+    gap: 10px;
+
+    margin-bottom: 22px;
   }
 
-  .property-form .form-grid {
+  .section-icon {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+  }
+
+  .form-section-heading h3 {
+    font-size: 14px;
+  }
+
+  .form-section-heading p {
+    font-size: 10px;
+  }
+
+  /* GRID */
+
+  .property-form-grid {
     grid-template-columns: 1fr;
 
     gap: 17px;
   }
 
-  .property-form .form-group.full {
+  .property-form-group.full {
     grid-column: auto;
   }
 
-  .property-form .form-group label {
-    font-size: 11px;
+  /* CAMPOS */
+
+  .property-form-group label {
+    font-size: 10px;
   }
 
-  .property-form .form-group input {
+  .property-form-group input {
     height: 44px;
 
     font-size: 13px;
   }
 
-  .property-form .form-actions {
+  .property-form-group textarea {
+    min-height: 135px;
+
+    font-size: 13px;
+  }
+
+  .field-hint {
+    font-size: 8px;
+  }
+
+  /* BOX */
+
+  .property-info-box {
+    margin: 0 17px 20px;
+
+    padding: 13px;
+
+    gap: 10px;
+
+    border-radius: 10px;
+  }
+
+  .property-info-icon {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+  }
+
+  .property-info-box strong {
+    font-size: 10px;
+  }
+
+  .property-info-box p {
+    font-size: 9px;
+  }
+
+  /* AÇÕES */
+
+  .property-form-actions {
     flex-direction: column-reverse;
 
     align-items: stretch;
 
     padding: 15px 17px;
+
+    gap: 7px;
   }
 
-  .property-form .form-actions button {
+  .property-form-actions button {
     width: 100%;
   }
+
+}
+
+/* =========================================================
+   CELULARES PEQUENOS
+========================================================= */
+
+@media (max-width: 400px) {
+
+  .new-property {
+    padding-left: 11px;
+
+    padding-right: 11px;
+  }
+
+  .new-property .page-heading h2 {
+    font-size: 24px;
+  }
+
+  .property-form-section {
+    padding: 19px 14px;
+  }
+
+  .property-info-box {
+    margin-left: 14px;
+    margin-right: 14px;
+  }
+
+  .property-form-actions {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+}
+
+/* =========================================================
+   ANIMAÇÃO
+========================================================= */
+
+@keyframes pageEnter {
+
+  from {
+    opacity: 0;
+
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+
 }

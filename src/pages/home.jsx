@@ -20,6 +20,10 @@ function Home({
   const [selectedDate, setSelectedDate] = useState("");
   const [sortOrder, setSortOrder] = useState("recent");
 
+  /* =========================================================
+     CARREGAR ATIVIDADES
+  ========================================================= */
+
   async function loadActivities() {
     try {
       console.log("CARREGANDO ATIVIDADES...");
@@ -28,9 +32,12 @@ function Home({
 
       console.log("ATIVIDADES ENCONTRADAS:", data);
 
-      setActivities(data);
+      setActivities(data || []);
     } catch (error) {
-      console.error("ERRO AO CARREGAR ATIVIDADES:", error);
+      console.error(
+        "ERRO AO CARREGAR ATIVIDADES:",
+        error
+      );
     } finally {
       setLoading(false);
     }
@@ -40,9 +47,17 @@ function Home({
     loadActivities();
   }, []);
 
+  /* =========================================================
+     DATA ATUAL
+  ========================================================= */
+
   const today = new Date()
     .toISOString()
     .split("T")[0];
+
+  /* =========================================================
+     ESTATÍSTICAS
+  ========================================================= */
 
   const todayActivities = activities.filter(
     (activity) => activity.date === today
@@ -56,40 +71,68 @@ function Home({
 
   const locationsCount = uniqueLocations.size;
 
-  const filteredActivities = activities
+  /* =========================================================
+     FILTROS + PESQUISA + ORDENAÇÃO
+  ========================================================= */
+
+  const filteredActivities = [...activities]
     .filter((activity) => {
-      const term = search.toLowerCase().trim();
+      const term = search
+        .toLowerCase()
+        .trim();
 
       const matchesSearch =
         !term ||
-        activity.title?.toLowerCase().includes(term) ||
-        activity.location?.toLowerCase().includes(term) ||
-        activity.description?.toLowerCase().includes(term);
+        activity.title
+          ?.toLowerCase()
+          .includes(term) ||
+        activity.location
+          ?.toLowerCase()
+          .includes(term) ||
+        activity.description
+          ?.toLowerCase()
+          .includes(term);
 
       const matchesDate =
         !selectedDate ||
         activity.date === selectedDate;
 
-      return matchesSearch && matchesDate;
+      return (
+        matchesSearch &&
+        matchesDate
+      );
     })
     .sort((a, b) => {
-      const dateDifference =
-        new Date(b.date) - new Date(a.date);
+      const dateA = a.date
+        ? new Date(a.date).getTime()
+        : 0;
 
-      if (dateDifference !== 0) {
+      const dateB = b.date
+        ? new Date(b.date).getTime()
+        : 0;
+
+      if (dateA !== dateB) {
         return sortOrder === "recent"
-          ? dateDifference
-          : -dateDifference;
+          ? dateB - dateA
+          : dateA - dateB;
       }
 
-      const createdDifference =
-        new Date(b.createdAt) -
-        new Date(a.createdAt);
+      const createdA = a.createdAt
+        ? new Date(a.createdAt).getTime()
+        : 0;
+
+      const createdB = b.createdAt
+        ? new Date(b.createdAt).getTime()
+        : 0;
 
       return sortOrder === "recent"
-        ? createdDifference
-        : -createdDifference;
+        ? createdB - createdA
+        : createdA - createdB;
     });
+
+  /* =========================================================
+     EXCLUIR ATIVIDADE
+  ========================================================= */
 
   async function handleDeleteActivity(id) {
     const confirmed = window.confirm(
@@ -105,7 +148,9 @@ function Home({
 
       await loadActivities();
 
-      console.log("ATIVIDADE REMOVIDA DA LISTA");
+      console.log(
+        "ATIVIDADE REMOVIDA DA LISTA"
+      );
     } catch (error) {
       console.error(
         "ERRO AO EXCLUIR ATIVIDADE:",
@@ -118,13 +163,25 @@ function Home({
     }
   }
 
+  /* =========================================================
+     LIMPAR FILTROS
+  ========================================================= */
+
   function clearFilters() {
     setSearch("");
     setSelectedDate("");
   }
 
+  /* =========================================================
+     RENDER
+  ========================================================= */
+
   return (
     <main className="home">
+
+      {/* =====================================================
+          CABEÇALHO
+      ===================================================== */}
 
       <section className="home-header">
 
@@ -155,11 +212,17 @@ function Home({
       </section>
 
 
+      {/* =====================================================
+          ESTATÍSTICAS
+      ===================================================== */}
+
       <section className="stats-grid">
 
         <div className="stat-card">
 
-          <span>📋</span>
+          <span>
+            📋
+          </span>
 
           <div>
 
@@ -178,7 +241,9 @@ function Home({
 
         <div className="stat-card">
 
-          <span>📍</span>
+          <span>
+            📍
+          </span>
 
           <div>
 
@@ -197,7 +262,9 @@ function Home({
 
         <div className="stat-card">
 
-          <span>📅</span>
+          <span>
+            📅
+          </span>
 
           <div>
 
@@ -214,47 +281,65 @@ function Home({
         </div>
 
       </section>
-<section className="modules-section">
 
-  <div className="section-title">
-    <h3>
-      Módulos
-    </h3>
 
-    <p>
-      Acesse as principais ferramentas do sistema.
-    </p>
-  </div>
+      {/* =====================================================
+          MÓDULOS
+      ===================================================== */}
 
-  <div className="modules-grid">
+      <section className="modules-section">
 
-    <button
-      type="button"
-      className="module-card"
-      onClick={onProperties}
-    >
-      <span className="module-icon">
-        🏡
-      </span>
+        <div className="section-title">
 
-      <div>
-        <h4>
-          Propriedades
-        </h4>
+          <h3>
+            Módulos
+          </h3>
 
-        <p>
-          Propriedades e talhões
-        </p>
-      </div>
+          <p>
+            Acesse as principais ferramentas do sistema.
+          </p>
 
-      <span className="module-arrow">
-        →
-      </span>
-    </button>
+        </div>
 
-  </div>
 
-</section>
+        <div className="modules-grid">
+
+          <button
+            type="button"
+            className="module-card"
+            onClick={onProperties}
+          >
+
+            <span className="module-icon">
+              🏡
+            </span>
+
+            <div>
+
+              <h4>
+                Propriedades
+              </h4>
+
+              <p>
+                Propriedades e talhões
+              </p>
+
+            </div>
+
+            <span className="module-arrow">
+              →
+            </span>
+
+          </button>
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          ATIVIDADES RECENTES
+      ===================================================== */}
 
       <section className="recent-section">
 
@@ -271,7 +356,9 @@ function Home({
         </div>
 
 
-        {/* PESQUISA */}
+        {/* ===================================================
+            PESQUISA
+        =================================================== */}
 
         <div className="activity-search">
 
@@ -291,77 +378,103 @@ function Home({
         </div>
 
 
-        {/* FILTRO DE DATA */}
+        {/* ===================================================
+            FILTROS
+        =================================================== */}
 
-        <div className="activity-filter">
+        <div className="filters-wrapper">
 
-          <span>
-            📅
-          </span>
+          {/* FILTRO DE DATA */}
 
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(event) =>
-              setSelectedDate(event.target.value)
-            }
-          />
+          <div className="activity-filter">
 
-          {selectedDate && (
-            <button
-              type="button"
-              onClick={() =>
-                setSelectedDate("")
+            <span>
+              📅
+            </span>
+
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(event) =>
+                setSelectedDate(
+                  event.target.value
+                )
+              }
+            />
+
+            {selectedDate && (
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedDate("")
+                }
+              >
+                Limpar
+              </button>
+            )}
+
+          </div>
+
+
+          {/* ORDENAÇÃO */}
+
+          <div className="activity-sort">
+
+            <span>
+              ↕
+            </span>
+
+            <select
+              value={sortOrder}
+              onChange={(event) =>
+                setSortOrder(
+                  event.target.value
+                )
               }
             >
-              Limpar
-            </button>
-          )}
+
+              <option value="recent">
+                Mais recentes primeiro
+              </option>
+
+              <option value="oldest">
+                Mais antigas primeiro
+              </option>
+
+            </select>
+
+          </div>
 
         </div>
 
 
-        {/* ORDENAÇÃO */}
-
-        <div className="activity-sort">
-
-          <span>
-            ↕
-          </span>
-
-          <select
-            value={sortOrder}
-            onChange={(event) =>
-              setSortOrder(event.target.value)
-            }
-          >
-
-            <option value="recent">
-              Mais recentes primeiro
-            </option>
-
-            <option value="oldest">
-              Mais antigas primeiro
-            </option>
-
-          </select>
-
-        </div>
-
-
-        {/* CONTEÚDO */}
+        {/* ===================================================
+            CONTEÚDO
+        =================================================== */}
 
         {loading ? (
 
           <div className="empty-state">
 
+            <div className="empty-icon">
+              ⏳
+            </div>
+
+            <h3>
+              Carregando atividades
+            </h3>
+
             <p>
-              Carregando atividades...
+              Aguarde enquanto buscamos seus registros.
             </p>
 
           </div>
 
         ) : activities.length === 0 ? (
+
+          /* =================================================
+             NENHUMA ATIVIDADE
+          ================================================= */
 
           <div className="empty-state">
 
@@ -390,6 +503,10 @@ function Home({
 
         ) : filteredActivities.length === 0 ? (
 
+          /* =================================================
+             NENHUM RESULTADO
+          ================================================= */
+
           <div className="empty-state">
 
             <div className="empty-icon">
@@ -416,80 +533,99 @@ function Home({
 
         ) : (
 
+          /* =================================================
+             LISTA
+          ================================================= */
+
           <div className="activity-list">
 
-            {filteredActivities.map((activity) => (
+            {filteredActivities.map(
+              (activity) => (
 
-              <div
-                className="activity-item"
-                key={activity.id}
-                onClick={() =>
-                  onViewActivity(activity)
-                }
-              >
+                <div
+                  className="activity-item"
+                  key={activity.id}
+                  onClick={() =>
+                    onViewActivity(activity)
+                  }
+                >
 
-                <div className="activity-icon">
-                  🌱
-                </div>
+                  {/* ÍCONE */}
 
-
-                <div className="activity-info">
-
-                  <h4>
-                    {activity.title}
-                  </h4>
-
-                  <p>
-                    {activity.location ||
-                      "Local não informado"}
-                  </p>
-
-                </div>
-
-
-                <div className="activity-actions">
-
-                  <div className="activity-date">
-                    {formatDate(activity.date)}
+                  <div className="activity-icon">
+                    🌱
                   </div>
 
 
-                  <button
-                    type="button"
-                    className="edit-button"
-                    onClick={(event) => {
+                  {/* INFORMAÇÕES */}
 
-                      event.stopPropagation();
+                  <div className="activity-info">
 
-                      onEditActivity(activity);
+                    <h4>
+                      {activity.title ||
+                        "Atividade sem título"}
+                    </h4>
 
-                    }}
-                  >
-                    Editar
-                  </button>
+                    <p>
+                      {activity.location ||
+                        "Local não informado"}
+                    </p>
+
+                  </div>
 
 
-                  <button
-                    type="button"
-                    className="delete-button"
-                    onClick={(event) => {
+                  {/* AÇÕES */}
 
-                      event.stopPropagation();
+                  <div className="activity-actions">
 
-                      handleDeleteActivity(
-                        activity.id
-                      );
+                    <div className="activity-date">
+                      {formatDate(
+                        activity.date
+                      )}
+                    </div>
 
-                    }}
-                  >
-                    Excluir
-                  </button>
+
+                    {/* EDITAR */}
+
+                    <button
+                      type="button"
+                      className="edit-button"
+                      onClick={(event) => {
+
+                        event.stopPropagation();
+
+                        onEditActivity(activity);
+
+                      }}
+                    >
+                      Editar
+                    </button>
+
+
+                    {/* EXCLUIR */}
+
+                    <button
+                      type="button"
+                      className="delete-button"
+                      onClick={(event) => {
+
+                        event.stopPropagation();
+
+                        handleDeleteActivity(
+                          activity.id
+                        );
+
+                      }}
+                    >
+                      Excluir
+                    </button>
+
+                  </div>
 
                 </div>
 
-              </div>
-
-            ))}
+              )
+            )}
 
           </div>
 
@@ -502,14 +638,23 @@ function Home({
 }
 
 
+/* =========================================================
+   FORMATAR DATA
+========================================================= */
+
 function formatDate(date) {
 
   if (!date) {
     return "Sem data";
   }
 
-  const [year, month, day] =
-    date.split("-");
+  const parts = date.split("-");
+
+  if (parts.length !== 3) {
+    return date;
+  }
+
+  const [year, month, day] = parts;
 
   return `${day}/${month}/${year}`;
 }

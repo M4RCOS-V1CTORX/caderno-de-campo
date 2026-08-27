@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import Home from "./pages/home";
 import NewActivity from "./pages/NewActivity";
-import ActivityDetails from "./pages/ActivityDetails";
+import ActivityDetails from "./pages/activityDetails";
 import Plots from "./pages/Plots";
 import NewPlot from "./pages/NewPlot";
 import Properties from "./pages/Properties";
@@ -68,6 +68,9 @@ function App() {
 }
 
 function goToNewPlot() {
+  if (!selectedProperty) {
+    return;
+  }
   setPlotToEdit(null);
   setPage("newPlot");
 }
@@ -139,10 +142,11 @@ function goToEditPlot(plot) {
       )}
       {page === "plots" && (
   <Plots
-    property={selectedProperty}
-    onNewPlot={goToNewPlot}
-    onEditPlot={goToEditPlot}
-  />
+  property={selectedProperty}
+  onNewPlot={goToNewPlot}
+  onEditPlot={goToEditPlot}
+  onBack={goToProperties}
+/>
 )}
 
 {page === "newPlot" && (

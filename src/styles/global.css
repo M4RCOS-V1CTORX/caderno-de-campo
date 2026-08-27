@@ -1,35 +1,63 @@
 /* =========================================================
    CADERNO DE CAMPO — GLOBAL
-   Identidade: Microsoft 365 / Excel Premium
+   PREMIUM / APPLE INSPIRED
 ========================================================= */
 
 :root {
+  /* =======================================================
+     CORES PRINCIPAIS
+  ======================================================= */
+
   --green: #107c41;
-  --green-dark: #0b6a36;
-  --green-light: #eaf5ee;
-  --green-hover: #f1f8f4;
+  --green-dark: #0b6835;
+  --green-light: #e9f5ee;
+  --green-hover: #f0f8f3;
 
-  --text: #242424;
-  --text-secondary: #616161;
-  --text-muted: #8a8a8a;
+  --text: #171a18;
+  --text-secondary: #68706b;
+  --text-muted: #969d98;
 
-  --background: #f3f4f3;
+  /* FUNDO GERAL */
+  --background: #eef1ef;
+
+  /* SUPERFÍCIES */
   --white: #ffffff;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-solid: #ffffff;
+  --surface-soft: rgba(248, 250, 249, 0.86);
 
-  --border: #d9d9d9;
-  --border-light: #ebebeb;
+  /* BORDAS */
+  --border: rgba(0, 0, 0, 0.075);
+  --border-light: rgba(0, 0, 0, 0.045);
 
-  --danger: #a4262c;
-  --danger-light: #fff5f5;
+  /* ALERTAS */
+  --danger: #b4232c;
+  --danger-light: #fff4f4;
 
-  --radius: 6px;
+  /* DIMENSÕES */
+  --radius: 14px;
+  --radius-small: 10px;
+  --radius-large: 18px;
+
+  /* =======================================================
+     SOMBRAS PREMIUM
+  ======================================================= */
 
   --shadow-card:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 2px 6px rgba(0, 0, 0, 0.025);
+    0 1px 2px rgba(0, 0, 0, 0.025),
+    0 6px 18px rgba(0, 0, 0, 0.035),
+    0 18px 40px rgba(0, 0, 0, 0.025);
 
   --shadow-hover:
-    0 4px 12px rgba(0, 0, 0, 0.07);
+    0 4px 10px rgba(0, 0, 0, 0.035),
+    0 16px 35px rgba(0, 0, 0, 0.075);
+
+  --shadow-button:
+    0 6px 16px rgba(16, 124, 65, 0.16);
+
+  --shadow-header:
+    0 1px 3px rgba(0, 0, 0, 0.025),
+    0 8px 25px rgba(0, 0, 0, 0.025);
 }
 
 
@@ -40,36 +68,79 @@
 * {
   margin: 0;
   padding: 0;
+
   box-sizing: border-box;
 }
 
 html {
   min-height: 100%;
+
+  background: var(--background);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   min-height: 100vh;
 
-  font-family:
-    "Segoe UI",
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    Arial,
-    sans-serif;
-
   background:
+    radial-gradient(
+      circle at 8% -5%,
+      rgba(16, 124, 65, 0.09),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(255, 255, 255, 0.8),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(16, 124, 65, 0.035),
+      transparent 38%
+    ),
     linear-gradient(
-      180deg,
-      #f7f8f7 0%,
-      var(--background) 100%
+      135deg,
+      #eef2ef 0%,
+      #f3f5f4 48%,
+      #e9eeeb 100%
     );
 
+  background-attachment: fixed;
+
   color: var(--text);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+
+/* =========================================================
+   SELEÇÃO DE TEXTO
+========================================================= */
+
+::selection {
+  background: rgba(16, 124, 65, 0.16);
+
+  color: var(--text);
+}
+
+
+/* =========================================================
+   ELEMENTOS BÁSICOS
+========================================================= */
 
 button,
 input,
@@ -82,16 +153,29 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+}
+
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid rgba(16, 124, 65, 0.35);
-  outline-offset: 2px;
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px rgba(16, 124, 65, 0.12);
 }
+
+
+/* =========================================================
+   APP
+========================================================= */
 
 .app {
   min-height: 100vh;
+
+  position: relative;
 }
 
 
@@ -109,15 +193,20 @@ select:focus-visible {
 
   padding: 0 38px;
 
-  background: rgba(255, 255, 255, 0.98);
-
-  border-bottom: 1px solid var(--border);
-
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.035);
-
   position: relative;
   z-index: 10;
+
+  background:
+    rgba(255, 255, 255, 0.78);
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.025),
+    0 8px 25px rgba(0, 0, 0, 0.025);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 
@@ -133,12 +222,17 @@ select:focus-visible {
 
   min-width: 0;
 
-  padding-left: 47px;
+  padding-left: 50px;
 
   cursor: pointer;
 
   user-select: none;
 }
+
+
+/* =========================================================
+   LOGO
+========================================================= */
 
 .logo-icon {
   position: absolute;
@@ -146,8 +240,8 @@ select:focus-visible {
   left: 0;
   top: 50%;
 
-  width: 35px;
-  height: 35px;
+  width: 36px;
+  height: 36px;
 
   display: flex;
   align-items: center;
@@ -155,13 +249,16 @@ select:focus-visible {
 
   transform: translateY(-50%);
 
-  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  border-radius: 11px;
 
   background:
     linear-gradient(
       145deg,
-      #14934d,
-      var(--green)
+      #16964f 0%,
+      #107c41 55%,
+      #0d6e39 100%
     );
 
   color: #ffffff;
@@ -169,31 +266,53 @@ select:focus-visible {
   font-size: 17px;
 
   box-shadow:
-    0 3px 8px rgba(16, 124, 65, 0.18);
+    0 4px 10px rgba(16, 124, 65, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
+.brand:hover .logo-icon {
+  transform:
+    translateY(-50%)
+    scale(1.04);
+
+  box-shadow:
+    0 6px 15px rgba(16, 124, 65, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+
+/* =========================================================
+   TÍTULO DO SISTEMA
+========================================================= */
+
 .header h1 {
-  color: var(--text);
+  color: #171a18;
 
   font-size: 18px;
   font-weight: 650;
 
   line-height: 1.2;
 
-  letter-spacing: -0.2px;
+  letter-spacing: -0.35px;
 }
 
 .header p {
   margin-top: 3px;
 
-  color: var(--text-secondary);
+  color: #747b76;
 
-  font-size: 12px;
+  font-size: 11px;
+
+  letter-spacing: -0.05px;
 }
 
 
 /* =========================================================
-   STATUS
+   STATUS DE CONEXÃO
 ========================================================= */
 
 .connection-status {
@@ -202,19 +321,31 @@ select:focus-visible {
 
   gap: 8px;
 
-  padding: 6px 10px;
+  padding: 7px 11px;
 
-  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.065);
 
-  border: 1px solid var(--border);
+  border-radius: 999px;
 
-  border-radius: 20px;
+  background:
+    rgba(255, 255, 255, 0.72);
 
-  color: var(--text-secondary);
+  color: #69716c;
 
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 600;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.025);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
+
+
+/* =========================================================
+   STATUS DOT
+========================================================= */
 
 .status-dot {
   width: 7px;
@@ -227,12 +358,13 @@ select:focus-visible {
   background: #f59e0b;
 
   box-shadow:
-    0 0 0 3px rgba(245, 158, 11, 0.11);
+    0 0 0 3px rgba(245, 158, 11, 0.1),
+    0 0 8px rgba(245, 158, 11, 0.12);
 }
 
 
 /* =========================================================
-   BOTÕES
+   BOTÕES — BASE
 ========================================================= */
 
 .primary-button,
@@ -240,89 +372,154 @@ select:focus-visible {
 .cancel-button,
 .edit-button,
 .delete-button {
+  font-family: inherit;
+
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
 
-/* PRINCIPAL */
+/* =========================================================
+   BOTÃO PRINCIPAL
+========================================================= */
 
 .primary-button {
-  min-height: 40px;
+  min-height: 42px;
 
-  padding: 0 17px;
+  padding: 0 18px;
 
-  border: 1px solid var(--green);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 
-  border-radius: 6px;
+  border-radius: 10px;
 
   background:
     linear-gradient(
-      180deg,
-      #148a49 0%,
-      var(--green) 100%
+      145deg,
+      #16894b 0%,
+      #107c41 52%,
+      #0d6e39 100%
     );
 
   color: #ffffff;
 
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.06);
+    0 6px 16px rgba(16, 124, 65, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.08);
 }
 
 .primary-button:hover {
-  background: var(--green-dark);
+  transform: translateY(-2px);
+
+  filter: brightness(1.035);
 
   box-shadow:
-    0 4px 12px rgba(16, 124, 65, 0.17);
-
-  transform: translateY(-1px);
+    0 10px 24px rgba(16, 124, 65, 0.21),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .primary-button:active {
   transform: translateY(0);
 
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.1);
+    0 4px 10px rgba(16, 124, 65, 0.14);
+}
+
+.primary-button:disabled {
+  opacity: 0.55;
+
+  transform: none;
+
+  box-shadow: none;
 }
 
 
-/* SECUNDÁRIO */
+/* =========================================================
+   BOTÕES SECUNDÁRIOS
+========================================================= */
 
 .secondary-button,
 .cancel-button {
-  min-height: 40px;
+  min-height: 42px;
 
-  padding: 0 17px;
+  padding: 0 18px;
 
-  border: 1px solid #cfcfcf;
+  border: 1px solid rgba(0, 0, 0, 0.085);
 
-  border-radius: 6px;
+  border-radius: 10px;
 
-  background: #ffffff;
+  background:
+    rgba(255, 255, 255, 0.78);
 
-  color: #424242;
+  color: #444b47;
 
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.035);
+    0 3px 10px rgba(0, 0, 0, 0.025);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .secondary-button:hover,
 .cancel-button:hover {
-  background: #f7f7f7;
+  transform: translateY(-1px);
 
-  border-color: #b8b8b8;
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  border-color: rgba(0, 0, 0, 0.13);
 
   box-shadow:
-    0 2px 5px rgba(0, 0, 0, 0.05);
+    0 6px 15px rgba(0, 0, 0, 0.05);
+}
+
+.secondary-button:active,
+.cancel-button:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   SCROLLBAR — DESKTOP
+========================================================= */
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0, 0, 0, 0.14);
+
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:
+    rgba(0, 0, 0, 0.22);
+
+  background-clip: padding-box;
 }
 
 
@@ -336,21 +533,28 @@ select:focus-visible {
     min-height: 64px;
 
     padding: 0 16px;
+
+    background:
+      rgba(255, 255, 255, 0.84);
   }
 
   .brand {
-    padding-left: 40px;
+    padding-left: 43px;
   }
 
   .logo-icon {
-    width: 31px;
-    height: 31px;
+    width: 32px;
+    height: 32px;
+
+    border-radius: 9px;
 
     font-size: 15px;
   }
 
   .header h1 {
     font-size: 15px;
+
+    letter-spacing: -0.25px;
   }
 
   .header p {
@@ -358,9 +562,14 @@ select:focus-visible {
   }
 
   .connection-status {
-    padding: 5px 8px;
+    padding: 6px 9px;
 
-    font-size: 10px;
+    font-size: 9px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
   }
 }
 
@@ -376,7 +585,16 @@ select:focus-visible {
   }
 
   .brand {
-    padding-left: 37px;
+    padding-left: 39px;
+  }
+
+  .logo-icon {
+    width: 30px;
+    height: 30px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
   }
 
   .header h1 {
@@ -391,5 +609,27 @@ select:focus-visible {
     border: none;
 
     background: transparent;
+
+    box-shadow: none;
+  }
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+   Acessibilidade
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
   }
 }

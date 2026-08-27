@@ -11,6 +11,9 @@ db.version(1).stores({
 
   plots:
     "++id, propertyId, name, culture, soil, area, synced, createdAt",
+
+  photos:
+    "++id, activityId, createdAt",
 });
 
 db.version(2).stores({
@@ -22,6 +25,9 @@ db.version(2).stores({
 
   plots:
     "++id, propertyId, name, culture, soil, area, synced, createdAt",
+
+  photos:
+    "++id, activityId, createdAt",
 });
 
 export default db;

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 import {
@@ -11,8 +12,13 @@ function Plots({
   property,
   onNewPlot,
   onEditPlot,
+  onBack,
 }) {
   const [plots, setPlots] = useState([]);
+
+  /* =========================================================
+     CARREGAR TALHÕES
+  ========================================================= */
 
   async function loadPlots() {
     if (!property?.id) {
@@ -21,22 +27,30 @@ function Plots({
     }
 
     try {
-      const data = await getPlotsByProperty(
-        property.id
-      );
+      const data = await getPlotsByProperty(property.id);
 
-      setPlots(data);
+      setPlots(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(
         "ERRO AO CARREGAR TALHÕES:",
         error
       );
+
+      setPlots([]);
     }
   }
+
+  /* =========================================================
+     CARREGAMENTO INICIAL
+  ========================================================= */
 
   useEffect(() => {
     loadPlots();
   }, [property]);
+
+  /* =========================================================
+     EXCLUIR TALHÃO
+  ========================================================= */
 
   async function handleDelete(id) {
     const confirmed = window.confirm(
@@ -63,12 +77,20 @@ function Plots({
     }
   }
 
+  /* =========================================================
+     TELA
+  ========================================================= */
+
   return (
     <main className="plots-page">
 
+      {/* =====================================================
+          CABEÇALHO
+      ===================================================== */}
+
       <div className="plots-heading">
 
-        <div>
+        <div className="plots-heading-content">
 
           <span className="home-label">
             PROPRIEDADE
@@ -86,18 +108,39 @@ function Plots({
 
         <button
           type="button"
-          className="primary-button"
+          className="primary-button plots-new-button"
           onClick={onNewPlot}
           disabled={!property}
         >
-          + Novo talhão
+          <span>＋</span>
+          Novo talhão
         </button>
 
       </div>
 
+      {/* =====================================================
+          BOTÃO VOLTAR
+      ===================================================== */}
+
+      <button
+        type="button"
+        className="back-button"
+        onClick={onBack}
+      >
+        ← Voltar para propriedades
+      </button>
+
+      {/* =====================================================
+          CONTEÚDO
+      ===================================================== */}
+
       <section className="plots-content">
 
         {!property ? (
+
+          /* =================================================
+             NENHUMA PROPRIEDADE
+          ================================================= */
 
           <div className="empty-state">
 
@@ -114,9 +157,21 @@ function Plots({
               visualizar seus talhões.
             </p>
 
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={onBack}
+            >
+              Voltar para propriedades
+            </button>
+
           </div>
 
         ) : plots.length === 0 ? (
+
+          /* =================================================
+             NENHUM TALHÃO
+          ================================================= */
 
           <div className="empty-state">
 
@@ -138,12 +193,16 @@ function Plots({
               className="primary-button"
               onClick={onNewPlot}
             >
-              Cadastrar primeiro talhão
+              ＋ Cadastrar primeiro talhão
             </button>
 
           </div>
 
         ) : (
+
+          /* =================================================
+             LISTA DE TALHÕES
+          ================================================= */
 
           <div className="plots-list">
 
@@ -154,6 +213,10 @@ function Plots({
                 key={plot.id}
               >
 
+                {/* =================================================
+                    INFORMAÇÕES
+                ================================================= */}
+
                 <div className="plot-card-content">
 
                   <div className="plot-icon">
@@ -163,26 +226,30 @@ function Plots({
                   <div className="plot-info">
 
                     <h3>
-                      {plot.name}
+                      {plot.name ||
+                        "Talhão sem nome"}
                     </h3>
 
                     <div className="plot-details">
 
                       {plot.culture && (
                         <span>
-                          Cultura: {plot.culture}
+                          <strong>Cultura:</strong>{" "}
+                          {plot.culture}
                         </span>
                       )}
 
                       {plot.area && (
                         <span>
-                          Área: {plot.area}
+                          <strong>Área:</strong>{" "}
+                          {plot.area}
                         </span>
                       )}
 
                       {plot.soil && (
                         <span>
-                          Solo: {plot.soil}
+                          <strong>Solo:</strong>{" "}
+                          {plot.soil}
                         </span>
                       )}
 
@@ -191,6 +258,10 @@ function Plots({
                   </div>
 
                 </div>
+
+                {/* =================================================
+                    AÇÕES
+                ================================================= */}
 
                 <div className="plot-actions">
 
