@@ -1,0 +1,609 @@
+/* =========================================================
+   BIBLIOTECA
+========================================================= */
+
+.library-page {
+  width: 100%;
+  max-width: 1000px;
+
+  margin: 0 auto;
+
+  padding: 42px 30px 70px;
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.library-heading {
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  margin-bottom: 25px;
+}
+
+.library-heading-content {
+  min-width: 0;
+}
+
+.library-back-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  margin-bottom: 18px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.library-back-button:hover {
+  color: var(--green);
+
+  transform: translateX(-2px);
+}
+
+.library-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: var(--green);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+}
+
+.library-heading h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 29px;
+  font-weight: 600;
+
+  letter-spacing: -0.5px;
+}
+
+.library-heading p {
+  margin-top: 7px;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   BOTÃO PRINCIPAL
+========================================================= */
+
+.library-primary-button {
+  min-height: 40px;
+
+  padding: 0 17px;
+
+  border: none;
+
+  border-radius: 7px;
+
+  background: var(--green);
+
+  color: var(--white);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.library-primary-button:hover {
+  opacity: 0.92;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   CATEGORIAS
+========================================================= */
+
+.library-categories {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 12px;
+
+  margin-bottom: 28px;
+}
+
+.library-category {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 76px;
+
+  padding: 14px 16px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  box-shadow: var(--shadow-card);
+}
+
+.library-category.active {
+  border-color: var(--green);
+}
+
+.library-category-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: #f0f7f0;
+
+  border-radius: 9px;
+
+  font-size: 19px;
+}
+
+.library-category strong {
+  display: block;
+
+  color: var(--text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.library-category span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.library-content {
+  width: 100%;
+}
+
+.library-section-heading {
+  margin-bottom: 15px;
+}
+
+.library-section-heading h3 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.library-section-heading p {
+  margin-top: 5px;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
+.library-search {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  width: 100%;
+
+  min-height: 43px;
+
+  margin-bottom: 15px;
+
+  padding: 0 13px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 7px;
+}
+
+.library-search span {
+  font-size: 15px;
+
+  opacity: 0.7;
+}
+
+.library-search input {
+  width: 100%;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: var(--text);
+
+  font-size: 13px;
+}
+
+.library-search input::placeholder {
+  color: #999;
+}
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.products-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.product-card {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  width: 100%;
+
+  padding: 18px 20px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  box-shadow: var(--shadow-card);
+
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.product-card:hover {
+  border-color: #c8c8c8;
+
+  transform: translateY(-1px);
+}
+
+.product-card-content {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+
+  flex: 1;
+}
+
+.product-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: #f4f4f1;
+
+  border-radius: 9px;
+
+  font-size: 19px;
+}
+
+.product-info {
+  min-width: 0;
+}
+
+.product-info h4 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  word-break: break-word;
+}
+
+.product-details {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 5px 17px;
+
+  margin-top: 6px;
+}
+
+.product-details span {
+  color: var(--text-secondary);
+
+  font-size: 11px;
+}
+
+.product-details strong {
+  color: #555;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.product-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+.library-secondary-button,
+.library-delete-button {
+  min-height: 36px;
+
+  padding: 0 13px;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.library-secondary-button {
+  border: 1px solid var(--border);
+
+  background: var(--white);
+
+  color: var(--text);
+}
+
+.library-secondary-button:hover {
+  background: #f7f7f7;
+}
+
+.library-delete-button {
+  border: 1px solid #ead0d0;
+
+  background: #fff8f8;
+
+  color: #a33;
+}
+
+.library-delete-button:hover {
+  background: #fff0f0;
+}
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.library-empty {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 300px;
+
+  padding: 40px 25px;
+
+  text-align: center;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  box-shadow: var(--shadow-card);
+}
+
+.library-empty-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 16px;
+
+  background: #f0f7f0;
+
+  border-radius: 12px;
+
+  font-size: 25px;
+}
+
+.library-empty h3 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.library-empty p {
+  max-width: 430px;
+
+  margin: 8px 0 20px;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+
+  .library-page {
+    padding: 34px 24px 55px;
+  }
+
+  .library-heading {
+    align-items: flex-start;
+  }
+
+  .library-categories {
+    gap: 10px;
+  }
+
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .library-page {
+    padding: 27px 15px 40px;
+  }
+
+  .library-heading {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 17px;
+
+    margin-bottom: 20px;
+  }
+
+  .library-heading h2 {
+    font-size: 25px;
+  }
+
+  .library-heading p {
+    font-size: 13px;
+  }
+
+  .library-primary-button {
+    width: 100%;
+  }
+
+  .library-categories {
+    grid-template-columns: 1fr;
+
+    margin-bottom: 22px;
+  }
+
+  .library-category {
+    min-height: 68px;
+  }
+
+  .product-card {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 15px;
+
+    padding: 16px;
+  }
+
+  .product-actions {
+    width: 100%;
+  }
+
+  .library-secondary-button,
+  .library-delete-button {
+    flex: 1;
+
+    width: 100%;
+  }
+
+  .library-empty {
+    min-height: 270px;
+
+    padding: 35px 20px;
+  }
+
+}

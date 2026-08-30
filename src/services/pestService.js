@@ -1,60 +1,62 @@
-
 import db from "../db";
 
 /* =========================================================
-   CRIAR PROPRIEDADE
+   CRIAR PRAGA
 ========================================================= */
 
-export async function createProperty(property) {
-  const newProperty = {
-    ...property,
+export async function createPest(pest) {
+  const newPest = {
+    name: pest.name?.trim() || "",
+    description:
+      pest.description?.trim() || "",
     synced: false,
     createdAt: Date.now(),
   };
 
-  const id = await db.properties.add(newProperty);
+  const id = await db.pests.add(newPest);
 
   return {
     id,
-    ...newProperty,
+    ...newPest,
   };
 }
 
 /* =========================================================
-   BUSCAR TODAS AS PROPRIEDADES
+   BUSCAR PRAGAS
 ========================================================= */
 
-export async function getProperties() {
-  return await db.properties
+export async function getPests() {
+  return await db.pests
     .orderBy("createdAt")
     .reverse()
     .toArray();
 }
 
 /* =========================================================
-   BUSCAR PROPRIEDADE POR ID
+   BUSCAR PRAGA POR ID
 ========================================================= */
 
-export async function getPropertyById(id) {
-  return await db.properties.get(Number(id));
+export async function getPestById(id) {
+  return await db.pests.get(Number(id));
 }
 
 /* =========================================================
-   ATUALIZAR PROPRIEDADE
+   ATUALIZAR PRAGA
 ========================================================= */
 
-export async function updateProperty(id, property) {
-  return await db.properties.update(Number(id), {
-    ...property,
+export async function updatePest(id, pest) {
+  return await db.pests.update(Number(id), {
+    name: pest.name?.trim() || "",
+    description:
+      pest.description?.trim() || "",
     synced: false,
   });
 }
 
 /* =========================================================
-   EXCLUIR PROPRIEDADE
+   EXCLUIR PRAGA
 ========================================================= */
 
-export async function deleteProperty(id) {
-  return await db.properties.delete(Number(id));
+export async function deletePest(id) {
+  return await db.pests.delete(Number(id));
 }
-

@@ -3,11 +3,24 @@ import { useState } from "react";
 import Home from "./pages/home";
 import NewActivity from "./pages/NewActivity";
 import ActivityDetails from "./pages/activityDetails";
+
 import Plots from "./pages/Plots";
 import NewPlot from "./pages/NewPlot";
+
 import Properties from "./pages/Properties";
 import NewProperty from "./pages/NewProperty";
+
 import Diary from "./pages/Diary";
+
+import Library from "./pages/Library";
+import NewProduct from "./pages/NewProduct";
+
+import Pests from "./pages/Pests";
+import NewPest from "./pages/NewPest";
+
+import Diseases from "./pages/Diseases";
+import NewDisease from "./pages/NewDisease";
+
 
 import "./styles/global.css";
 
@@ -16,9 +29,21 @@ function App() {
 
   const [activityToEdit, setActivityToEdit] = useState(null);
   const [activityToView, setActivityToView] = useState(null);
+
   const [plotToEdit, setPlotToEdit] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
+
   const [propertyToEdit, setPropertyToEdit] = useState(null);
+
+  const [productToEdit, setProductToEdit] = useState(null);
+
+  const [pestToEdit, setPestToEdit] = useState(null);
+
+  const [diseaseToEdit, setDiseaseToEdit] = useState(null);
+
+  // =========================================================
+  // ATIVIDADES
+  // =========================================================
 
   function goToEditActivity(activity) {
     setActivityToEdit(activity);
@@ -29,22 +54,23 @@ function App() {
     setActivityToView(activity);
     setPage("activityDetails");
   }
-  function goToDiary() {
-  setPage("diary");
-}
-
-  function goToHome() {
-    setActivityToEdit(null);
-    setActivityToView(null);
-    setPropertyToEdit(null);
-
-    setPage("home");
-  }
 
   function goToNewActivity() {
     setActivityToEdit(null);
     setPage("newActivity");
   }
+
+  // =========================================================
+  // DIÁRIO
+  // =========================================================
+
+  function goToDiary() {
+    setPage("diary");
+  }
+
+  // =========================================================
+  // PROPRIEDADES
+  // =========================================================
 
   function goToProperties() {
     setPropertyToEdit(null);
@@ -65,24 +91,125 @@ function App() {
     setPropertyToEdit(null);
     setPage("properties");
   }
+
+  // =========================================================
+  // TALHÕES
+  // =========================================================
+
   function goToPlots(property) {
-  setSelectedProperty(property);
-  setPlotToEdit(null);
-  setPage("plots");
-}
-
-function goToNewPlot() {
-  if (!selectedProperty) {
-    return;
+    setSelectedProperty(property);
+    setPlotToEdit(null);
+    setPage("plots");
   }
-  setPlotToEdit(null);
-  setPage("newPlot");
+
+  function goToNewPlot() {
+    if (!selectedProperty) {
+      return;
+    }
+
+    setPlotToEdit(null);
+    setPage("newPlot");
+  }
+
+  function goToEditPlot(plot) {
+    setPlotToEdit(plot);
+    setPage("newPlot");
+  }
+
+  // =========================================================
+// BIBLIOTECA
+// =========================================================
+
+function goToLibrary() {
+  setProductToEdit(null);
+  setPage("library");
 }
 
-function goToEditPlot(plot) {
-  setPlotToEdit(plot);
-  setPage("newPlot");
+function goToNewProduct() {
+  setProductToEdit(null);
+  setPage("newProduct");
 }
+
+function goToEditProduct(product) {
+  setProductToEdit(product);
+  setPage("newProduct");
+}
+
+function goToLibraryAfterSave() {
+  setProductToEdit(null);
+  setPage("library");
+}
+
+// =========================================================
+// PRAGAS
+// =========================================================
+
+function goToPests() {
+  setPage("pests");
+}
+
+function goToNewPest() {
+  setPage("newPest");
+}
+
+function goToEditPest(pest) {
+  setPestToEdit(pest);
+  setPage("newPest");
+}
+
+function goToPestsAfterSave() {
+  setPestToEdit(null);
+  setPage("pests");
+}
+
+// =========================================================
+// DOENÇAS
+// =========================================================
+
+function goToDiseases() {
+  setPage("diseases");
+}
+
+function goToNewDisease() {
+  setDiseaseToEdit(null);
+  setPage("newDisease");
+}
+
+function goToEditDisease(disease) {
+  setDiseaseToEdit(disease);
+  setPage("newDisease");
+}
+
+function goToDiseasesAfterSave() {
+  setDiseaseToEdit(null);
+  setPage("diseases");
+}
+// =========================================================
+// DOENÇAS
+// =========================================================
+
+function goToDiseases() {
+  setDiseaseToEdit(null);
+  setPage("diseases");
+}
+
+  // =========================================================
+  // HOME
+  // =========================================================
+
+  function goToHome() {
+    setActivityToEdit(null);
+    setActivityToView(null);
+    setPropertyToEdit(null);
+    setPlotToEdit(null);
+    setProductToEdit(null);
+
+    setPage("home");
+  }
+
+  // =========================================================
+  // RENDER
+  // =========================================================
 
   return (
     <div className="app">
@@ -120,15 +247,24 @@ function goToEditPlot(plot) {
 
       </header>
 
+      {/* =====================================================
+          HOME
+      ===================================================== */}
+
       {page === "home" && (
         <Home
-  onNewActivity={goToNewActivity}
-  onEditActivity={goToEditActivity}
-  onViewActivity={goToActivityDetails}
-  onProperties={goToProperties}
-  onDiary={goToDiary}
-/>
+          onNewActivity={goToNewActivity}
+          onEditActivity={goToEditActivity}
+          onViewActivity={goToActivityDetails}
+          onProperties={goToProperties}
+          onDiary={goToDiary}
+          onLibrary={goToLibrary}
+        />
       )}
+
+      {/* =====================================================
+          NOVA ATIVIDADE
+      ===================================================== */}
 
       {page === "newActivity" && (
         <NewActivity
@@ -138,6 +274,10 @@ function goToEditPlot(plot) {
         />
       )}
 
+      {/* =====================================================
+          DETALHES DA ATIVIDADE
+      ===================================================== */}
+
       {page === "activityDetails" && (
         <ActivityDetails
           activity={activityToView}
@@ -145,46 +285,121 @@ function goToEditPlot(plot) {
           onEdit={goToEditActivity}
         />
       )}
-      {page === "plots" && (
-  <Plots
-  property={selectedProperty}
-  onNewPlot={goToNewPlot}
-  onEditPlot={goToEditPlot}
-  onBack={goToProperties}
-/>
-)}
 
-{page === "newPlot" && (
-  <NewPlot
-    property={selectedProperty}
-    onCancel={() => goToPlots(selectedProperty)}
-    onPlotCreated={() => goToPlots(selectedProperty)}
-    plotToEdit={plotToEdit}
-  />
-)}
-
-{page === "diary" && (
-  <Diary
-    onNewActivity={goToNewActivity}
-    onEditActivity={goToEditActivity}
-    onViewActivity={goToActivityDetails}
-    onBack={goToHome}
-  />
-)}
+      {/* =====================================================
+          PROPRIEDADES
+      ===================================================== */}
 
       {page === "properties" && (
-  <Properties
-    onNewProperty={goToNewProperty}
-    onEditProperty={goToEditProperty}
-    onViewPlots={goToPlots}
-  />
-)}
+        <Properties
+          onNewProperty={goToNewProperty}
+          onEditProperty={goToEditProperty}
+          onViewPlots={goToPlots}
+        />
+      )}
+
+      {/* =====================================================
+          NOVA PROPRIEDADE
+      ===================================================== */}
 
       {page === "newProperty" && (
         <NewProperty
           onCancel={goToProperties}
           onPropertyCreated={goToPropertiesAfterSave}
           propertyToEdit={propertyToEdit}
+        />
+      )}
+
+      {/* =====================================================
+          TALHÕES
+      ===================================================== */}
+
+      {page === "plots" && (
+        <Plots
+          property={selectedProperty}
+          onNewPlot={goToNewPlot}
+          onEditPlot={goToEditPlot}
+          onBack={goToProperties}
+        />
+      )}
+
+      {/* =====================================================
+          NOVO TALHÃO
+      ===================================================== */}
+
+      {page === "newPlot" && (
+        <NewPlot
+          property={selectedProperty}
+          onCancel={() => goToPlots(selectedProperty)}
+          onPlotCreated={() => goToPlots(selectedProperty)}
+          plotToEdit={plotToEdit}
+        />
+      )}
+
+      {/* =====================================================
+          DIÁRIO
+      ===================================================== */}
+
+      {page === "diary" && (
+        <Diary
+          onNewActivity={goToNewActivity}
+          onEditActivity={goToEditActivity}
+          onViewActivity={goToActivityDetails}
+          onBack={goToHome}
+        />
+      )}
+
+      {/* =====================================================
+          BIBLIOTECA
+      ===================================================== */}
+
+      {page === "library" && (
+        <Library
+          onNewProduct={goToNewProduct}
+          onEditProduct={goToEditProduct}
+          onBack={goToHome}
+          onPests={goToPests}
+          onDiseases={goToDiseases}
+        />
+      )}
+      {page === "pests" && (
+  <Pests
+    onNewPest={goToNewPest}
+    onEditPest={goToEditPest}
+    onBack={goToLibrary}
+  />
+)}
+
+{page === "newPest" && (
+  <NewPest
+    onCancel={goToPests}
+    onPestCreated={goToPestsAfterSave}
+    pestToEdit={pestToEdit}
+  />
+)}
+{page === "diseases" && (
+  <Diseases
+    onNewDisease={goToNewDisease}
+    onEditDisease={goToEditDisease}
+    onBack={goToLibrary}
+  />
+)}
+{page === "newDisease" && (
+  <NewDisease
+    onCancel={goToDiseases}
+    onDiseaseCreated={goToDiseasesAfterSave}
+    diseaseToEdit={diseaseToEdit}
+  />
+)}
+      {/* =====================================================
+          NOVO PRODUTO
+      ===================================================== */}
+
+      {page === "newProduct" && (
+        <NewProduct
+          onCancel={goToLibrary}
+          onProductCreated={goToLibraryAfterSave}
+          productToEdit={productToEdit}
         />
       )}
 

@@ -6,6 +6,10 @@ import {
   deleteActivity,
 } from "../services/activityService";
 
+import { getPropertyById } from "../services/propertyService";
+import { getPlotById } from "../services/plotService";
+import { getPhotosByActivity } from "../services/photoService";
+
 import "../styles/diary.css";
 
 function Diary({
@@ -16,25 +20,110 @@ function Diary({
 }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [sortOrder, setSortOrder] = useState("recent");
 
+  /* =========================================================
+     CARREGAR ATIVIDADES
+  ========================================================= */
+
   async function loadActivities() {
+    setLoading(true);
+
     try {
       const data = await getActivities();
-      setActivities(data || []);
+
+      const activitiesData = Array.isArray(data)
+        ? data
+        : [];
+
+      /* =====================================================
+         CARREGAR INFORMAÇÕES RELACIONADAS
+      ===================================================== */
+
+      const enrichedActivities = await Promise.all(
+        activitiesData.map(async (activity) => {
+          let property = null;
+          let plot = null;
+          let photos = [];
+
+          try {
+            /* PROPRIEDADE */
+
+            if (
+              activity.propertyId !== null &&
+              activity.propertyId !== undefined
+            ) {
+              property = await getPropertyById(
+                Number(activity.propertyId)
+              );
+            }
+
+            /* TALHÃO */
+
+            if (
+              activity.plotId !== null &&
+              activity.plotId !== undefined
+            ) {
+              plot = await getPlotById(
+                Number(activity.plotId)
+              );
+            }
+
+            /* FOTOS */
+
+            if (
+              activity.id !== null &&
+              activity.id !== undefined
+            ) {
+              photos = await getPhotosByActivity(
+                activity.id
+              );
+            }
+          } catch (error) {
+            console.error(
+              "ERRO AO CARREGAR DADOS RELACIONADOS:",
+              error
+            );
+          }
+
+          return {
+            ...activity,
+            property: property || null,
+            plot: plot || null,
+            photoCount: Array.isArray(photos)
+              ? photos.length
+              : 0,
+          };
+        })
+      );
+
+      setActivities(enrichedActivities);
     } catch (error) {
-      console.error("ERRO AO CARREGAR DIÁRIO:", error);
+      console.error(
+        "ERRO AO CARREGAR DIÁRIO:",
+        error
+      );
+
       setActivities([]);
     } finally {
       setLoading(false);
     }
   }
 
+  /* =========================================================
+     CARREGAMENTO INICIAL
+  ========================================================= */
+
   useEffect(() => {
     loadActivities();
   }, []);
+
+  /* =========================================================
+     FILTROS
+  ========================================================= */
 
   const filteredActivities = [...activities]
     .filter((activity) => {
@@ -42,12 +131,25 @@ function Diary({
 
       const matchesSearch =
         !term ||
-        activity.title?.toLowerCase().includes(term) ||
-        activity.location?.toLowerCase().includes(term) ||
-        activity.description?.toLowerCase().includes(term);
+        activity.title
+          ?.toLowerCase()
+          .includes(term) ||
+        activity.location
+          ?.toLowerCase()
+          .includes(term) ||
+        activity.description
+          ?.toLowerCase()
+          .includes(term) ||
+        activity.property?.name
+          ?.toLowerCase()
+          .includes(term) ||
+        activity.plot?.name
+          ?.toLowerCase()
+          .includes(term);
 
       const matchesDate =
-        !selectedDate || activity.date === selectedDate;
+        !selectedDate ||
+        activity.date === selectedDate;
 
       return matchesSearch && matchesDate;
     })
@@ -79,6 +181,10 @@ function Diary({
         : createdA - createdB;
     });
 
+  /* =========================================================
+     EXCLUIR
+  ========================================================= */
+
   async function handleDeleteActivity(id) {
     const confirmed = window.confirm(
       "Tem certeza que deseja excluir este registro do diário?"
@@ -103,10 +209,18 @@ function Diary({
     }
   }
 
+  /* =========================================================
+     LIMPAR FILTROS
+  ========================================================= */
+
   function clearFilters() {
     setSearch("");
     setSelectedDate("");
   }
+
+  /* =========================================================
+     FORMATAR DATA
+  ========================================================= */
 
   function formatDate(date) {
     if (!date) {
@@ -123,6 +237,10 @@ function Diary({
 
     return `${day}/${month}/${year}`;
   }
+
+  /* =========================================================
+     LABEL DA DATA
+  ========================================================= */
 
   function getDateLabel(date) {
     if (!date) {
@@ -153,10 +271,31 @@ function Diary({
       .toUpperCase();
   }
 
+  /* =========================================================
+     TOTAL DE FOTOS
+  ========================================================= */
+
+  const totalPhotos = activities.reduce(
+    (total, activity) =>
+      total + (activity.photoCount || 0),
+    0
+  );
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
+
   return (
     <main className="diary">
+
+      {/* =====================================================
+          CABEÇALHO
+      ===================================================== */}
+
       <section className="diary-header">
+
         <div className="diary-header-content">
+
           <button
             type="button"
             className="diary-back-button"
@@ -169,12 +308,15 @@ function Diary({
             REGISTROS DE CAMPO
           </span>
 
-          <h2>Diário de Campo</h2>
+          <h2>
+            Diário de Campo
+          </h2>
 
           <p>
             Acompanhe tudo o que foi registrado
             durante as atividades de campo.
           </p>
+
         </div>
 
         <button
@@ -184,22 +326,41 @@ function Diary({
         >
           + Novo registro
         </button>
+
       </section>
 
+      {/* =====================================================
+          ESTATÍSTICAS
+      ===================================================== */}
+
       <section className="diary-stats">
+
         <div className="diary-stat-card">
-          <span className="diary-stat-icon">📋</span>
+
+          <span className="diary-stat-icon">
+            📋
+          </span>
 
           <div>
-            <strong>{activities.length}</strong>
-            <p>Registros</p>
+            <strong>
+              {activities.length}
+            </strong>
+
+            <p>
+              Registros
+            </p>
           </div>
+
         </div>
 
         <div className="diary-stat-card">
-          <span className="diary-stat-icon">📅</span>
+
+          <span className="diary-stat-icon">
+            📅
+          </span>
 
           <div>
+
             <strong>
               {
                 activities.filter(
@@ -212,34 +373,55 @@ function Diary({
               }
             </strong>
 
-            <p>Hoje</p>
+            <p>
+              Hoje
+            </p>
+
           </div>
+
         </div>
 
         <div className="diary-stat-card">
-          <span className="diary-stat-icon">📷</span>
+
+          <span className="diary-stat-icon">
+            📷
+          </span>
 
           <div>
+
             <strong>
-              {activities.filter(
-                (activity) => activity.id
-              ).length}
+              {totalPhotos}
             </strong>
 
-            <p>Atividades</p>
+            <p>
+              Fotos
+            </p>
+
           </div>
+
         </div>
+
       </section>
 
+      {/* =====================================================
+          CONTEÚDO
+      ===================================================== */}
+
       <section className="diary-content">
+
         <div className="diary-section-heading">
+
           <div>
-            <h3>Registros</h3>
+
+            <h3>
+              Registros
+            </h3>
 
             <p>
               Consulte as informações registradas
               no campo.
             </p>
+
           </div>
 
           {(search || selectedDate) && (
@@ -251,11 +433,20 @@ function Diary({
               Limpar filtros
             </button>
           )}
+
         </div>
 
+        {/* ===================================================
+            FILTROS
+        =================================================== */}
+
         <div className="diary-filters">
+
           <div className="diary-search">
-            <span>🔎</span>
+
+            <span>
+              🔎
+            </span>
 
             <input
               type="text"
@@ -265,10 +456,14 @@ function Diary({
                 setSearch(event.target.value)
               }
             />
+
           </div>
 
           <div className="diary-date-filter">
-            <span>📅</span>
+
+            <span>
+              📅
+            </span>
 
             <input
               type="date"
@@ -279,10 +474,14 @@ function Diary({
                 )
               }
             />
+
           </div>
 
           <div className="diary-sort">
-            <span>↕</span>
+
+            <span>
+              ↕
+            </span>
 
             <select
               value={sortOrder}
@@ -300,29 +499,49 @@ function Diary({
                 Mais antigas
               </option>
             </select>
+
           </div>
+
         </div>
 
+        {/* ===================================================
+            CARREGANDO
+        =================================================== */}
+
         {loading ? (
+
           <div className="diary-empty">
+
             <div className="diary-empty-icon">
               ⏳
             </div>
 
-            <h3>Carregando diário</h3>
+            <h3>
+              Carregando diário
+            </h3>
 
             <p>
               Aguarde enquanto buscamos seus
               registros.
             </p>
+
           </div>
+
         ) : activities.length === 0 ? (
+
+          /* =================================================
+             DIÁRIO VAZIO
+          ================================================= */
+
           <div className="diary-empty">
+
             <div className="diary-empty-icon">
               📖
             </div>
 
-            <h3>Seu diário está vazio</h3>
+            <h3>
+              Seu diário está vazio
+            </h3>
 
             <p>
               Registre sua primeira atividade de
@@ -336,14 +555,24 @@ function Diary({
             >
               + Criar primeiro registro
             </button>
+
           </div>
+
         ) : filteredActivities.length === 0 ? (
+
+          /* =================================================
+             NENHUM RESULTADO
+          ================================================= */
+
           <div className="diary-empty">
+
             <div className="diary-empty-icon">
               🔎
             </div>
 
-            <h3>Nenhum registro encontrado</h3>
+            <h3>
+              Nenhum registro encontrado
+            </h3>
 
             <p>
               Tente alterar sua pesquisa ou os
@@ -357,11 +586,20 @@ function Diary({
             >
               Limpar filtros
             </button>
+
           </div>
+
         ) : (
+
+          /* =================================================
+             LISTA
+          ================================================= */
+
           <div className="diary-list">
+
             {filteredActivities.map(
               (activity) => (
+
                 <article
                   className="diary-card"
                   key={activity.id}
@@ -369,26 +607,40 @@ function Diary({
                     onViewActivity(activity)
                   }
                 >
+
+                  {/* DATA */}
+
                   <div className="diary-card-date">
+
                     <span>
                       {getDateLabel(
                         activity.date
                       )}
                     </span>
+
                   </div>
 
+                  {/* CONTEÚDO */}
+
                   <div className="diary-card-main">
+
                     <div className="diary-card-icon">
                       🌱
                     </div>
 
                     <div className="diary-card-info">
+
                       <h4>
                         {activity.title ||
                           "Registro sem título"}
                       </h4>
 
+                      {/* ============================
+                          METADADOS
+                      ============================ */}
+
                       <div className="diary-card-meta">
+
                         {activity.location && (
                           <span>
                             📍{" "}
@@ -396,18 +648,37 @@ function Diary({
                           </span>
                         )}
 
-                        {activity.propertyId && (
+                        {activity.property && (
                           <span>
-                            🏡 Propriedade
+                            🏡{" "}
+                            {activity.property.name}
                           </span>
                         )}
 
-                        {activity.plotId && (
+                        {activity.plot && (
                           <span>
-                            🌱 Talhão
+                            🌱{" "}
+                            {activity.plot.name}
                           </span>
                         )}
+
+                        {activity.plot?.culture && (
+                          <span>
+                            🌾{" "}
+                            {activity.plot.culture}
+                          </span>
+                        )}
+
+                        {activity.photoCount > 0 && (
+                          <span>
+                            📷{" "}
+                            {activity.photoCount}
+                          </span>
+                        )}
+
                       </div>
+
+                      {/* DESCRIÇÃO */}
 
                       {activity.description && (
                         <p className="diary-card-description">
@@ -415,12 +686,16 @@ function Diary({
                         </p>
                       )}
 
+                      {/* RODAPÉ */}
+
                       <div className="diary-card-footer">
+
                         <button
                           type="button"
                           className="diary-view-button"
                           onClick={(event) => {
                             event.stopPropagation();
+
                             onViewActivity(
                               activity
                             );
@@ -434,6 +709,7 @@ function Diary({
                           className="diary-edit-button"
                           onClick={(event) => {
                             event.stopPropagation();
+
                             onEditActivity(
                               activity
                             );
@@ -447,6 +723,7 @@ function Diary({
                           className="diary-delete-button"
                           onClick={(event) => {
                             event.stopPropagation();
+
                             handleDeleteActivity(
                               activity.id
                             );
@@ -454,17 +731,27 @@ function Diary({
                         >
                           Excluir
                         </button>
+
                       </div>
+
                     </div>
+
                   </div>
+
                 </article>
+
               )
             )}
+
           </div>
+
         )}
+
       </section>
+
     </main>
   );
 }
 
 export default Diary;
+

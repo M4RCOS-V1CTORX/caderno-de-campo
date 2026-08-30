@@ -7,9 +7,7 @@ import {
 } from "../services/activityService";
 
 import { addPhoto } from "../services/photoService";
-
 import { getProperties } from "../services/propertyService";
-
 import { getPlotsByProperty } from "../services/plotService";
 
 import "../styles/newActivity.css";
@@ -24,38 +22,29 @@ function NewActivity({
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
 
-  const [properties, setProperties] = useState([]);
-  const [plots, setPlots] = useState([]);
-
   const [propertyId, setPropertyId] = useState("");
   const [plotId, setPlotId] = useState("");
 
-  const [photos, setPhotos] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [plots, setPlots] = useState([]);
 
-  // =========================================================
-  // MANEJO
-  // =========================================================
+  const [managementType, setManagementType] =
+    useState("");
 
-  const [managementType, setManagementType] = useState("");
-  const [managementStatus, setManagementStatus] = useState("");
-
-  // =========================================================
-  // OCORRÊNCIAS
-  // =========================================================
+  const [managementStatus, setManagementStatus] =
+    useState("");
 
   const [pest, setPest] = useState("");
   const [disease, setDisease] = useState("");
 
-  // =========================================================
-  // PRODUTO
-  // =========================================================
-
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState("");
 
-  // =========================================================
-  // CARREGAR PROPRIEDADES
-  // =========================================================
+  const [photos, setPhotos] = useState([]);
+
+  /* =========================================================
+     CARREGAR PROPRIEDADES
+  ========================================================= */
 
   useEffect(() => {
     async function loadProperties() {
@@ -75,9 +64,9 @@ function NewActivity({
     loadProperties();
   }, []);
 
-  // =========================================================
-  // CARREGAR TALHÕES
-  // =========================================================
+  /* =========================================================
+     CARREGAR TALHÕES
+  ========================================================= */
 
   useEffect(() => {
     async function loadPlots() {
@@ -106,32 +95,33 @@ function NewActivity({
     loadPlots();
   }, [propertyId]);
 
-  // =========================================================
-  // PREENCHER FORMULÁRIO NA EDIÇÃO
-  // =========================================================
+  /* =========================================================
+     PREENCHER FORMULÁRIO NA EDIÇÃO
+  ========================================================= */
 
   useEffect(() => {
     if (activityToEdit) {
       setTitle(activityToEdit.title || "");
       setDate(activityToEdit.date || "");
       setLocation(activityToEdit.location || "");
-      setDescription(activityToEdit.description || "");
+      setDescription(
+        activityToEdit.description || ""
+      );
 
       setPropertyId(
         activityToEdit.propertyId !== null &&
-        activityToEdit.propertyId !== undefined
+          activityToEdit.propertyId !== undefined
           ? String(activityToEdit.propertyId)
           : ""
       );
 
       setPlotId(
         activityToEdit.plotId !== null &&
-        activityToEdit.plotId !== undefined
+          activityToEdit.plotId !== undefined
           ? String(activityToEdit.plotId)
           : ""
       );
 
-      // MANEJO
       setManagementType(
         activityToEdit.managementType || ""
       );
@@ -140,16 +130,19 @@ function NewActivity({
         activityToEdit.managementStatus || ""
       );
 
-      // OCORRÊNCIAS
       setPest(activityToEdit.pest || "");
       setDisease(activityToEdit.disease || "");
 
-      // PRODUTO
       setProduct(activityToEdit.product || "");
       setQuantity(activityToEdit.quantity || "");
 
-      // Fotos antigas permanecem salvas.
-      // Aqui entram somente novas fotos.
+      /*
+       * As fotos antigas continuam vinculadas
+       * à atividade.
+       *
+       * Aqui entram somente novas fotos.
+       */
+
       setPhotos([]);
     } else {
       setTitle("");
@@ -173,9 +166,9 @@ function NewActivity({
     }
   }, [activityToEdit]);
 
-  // =========================================================
-  // PROPRIEDADE
-  // =========================================================
+  /* =========================================================
+     PROPRIEDADE
+  ========================================================= */
 
   function handlePropertyChange(event) {
     const value = event.target.value;
@@ -184,12 +177,13 @@ function NewActivity({
 
     // Ao trocar a propriedade,
     // o talhão anterior deixa de ser válido.
+
     setPlotId("");
   }
 
-  // =========================================================
-  // FOTOS
-  // =========================================================
+  /* =========================================================
+     FOTOS
+  ========================================================= */
 
   function handlePhotoChange(event) {
     const selectedFiles = Array.from(
@@ -217,20 +211,17 @@ function NewActivity({
     );
   }
 
-  // =========================================================
-  // SALVAR
-  // =========================================================
+  /* =========================================================
+     SALVAR
+  ========================================================= */
 
   async function handleSubmit(event) {
     event.preventDefault();
 
     const activity = {
       title: title.trim(),
-
       date,
-
       location: location.trim(),
-
       description: description.trim(),
 
       propertyId: propertyId
@@ -241,19 +232,15 @@ function NewActivity({
         ? Number(plotId)
         : null,
 
-      // MANEJO
       managementType:
         managementType.trim(),
 
-      managementStatus:
-        managementStatus.trim(),
+      managementStatus,
 
-      // OCORRÊNCIAS
       pest: pest.trim(),
 
       disease: disease.trim(),
 
-      // PRODUTO
       product: product.trim(),
 
       quantity: quantity.trim(),
@@ -262,9 +249,9 @@ function NewActivity({
     try {
       let savedActivity;
 
-      // =====================================================
-      // EDITAR
-      // =====================================================
+      /* =====================================================
+         EDITAR
+      ===================================================== */
 
       if (activityToEdit) {
         await updateActivity(
@@ -278,18 +265,18 @@ function NewActivity({
         };
       }
 
-      // =====================================================
-      // NOVA ATIVIDADE
-      // =====================================================
+      /* =====================================================
+         NOVA ATIVIDADE
+      ===================================================== */
 
       else {
         savedActivity =
           await createActivity(activity);
       }
 
-      // =====================================================
-      // SALVAR NOVAS FOTOS
-      // =====================================================
+      /* =====================================================
+         SALVAR NOVAS FOTOS
+      ===================================================== */
 
       if (photos.length > 0) {
         for (const photo of photos) {
@@ -300,9 +287,9 @@ function NewActivity({
         }
       }
 
-      // =====================================================
-      // SUCESSO
-      // =====================================================
+      /* =====================================================
+         SUCESSO
+      ===================================================== */
 
       alert(
         activityToEdit
@@ -327,9 +314,9 @@ function NewActivity({
     }
   }
 
-  // =========================================================
-  // TELA
-  // =========================================================
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
     <main className="new-activity">
@@ -545,7 +532,7 @@ function NewActivity({
               </h3>
 
               <p>
-                Informe o tipo e o status do manejo realizado.
+                Informe o tipo e o andamento do manejo.
               </p>
             </div>
 
@@ -561,61 +548,17 @@ function NewActivity({
                 Tipo de manejo
               </label>
 
-              <select
+              <input
                 id="managementType"
+                type="text"
+                placeholder="Ex.: Adubação"
                 value={managementType}
                 onChange={(event) =>
                   setManagementType(
                     event.target.value
                   )
                 }
-              >
-
-                <option value="">
-                  Selecione o tipo
-                </option>
-
-                <option value="Adubação">
-                  Adubação
-                </option>
-
-                <option value="Aplicação de defensivo">
-                  Aplicação de defensivo
-                </option>
-
-                <option value="Irrigação">
-                  Irrigação
-                </option>
-
-                <option value="Plantio">
-                  Plantio
-                </option>
-
-                <option value="Colheita">
-                  Colheita
-                </option>
-
-                <option value="Capina">
-                  Capina
-                </option>
-
-                <option value="Poda">
-                  Poda
-                </option>
-
-                <option value="Controle de pragas">
-                  Controle de pragas
-                </option>
-
-                <option value="Controle de doenças">
-                  Controle de doenças
-                </option>
-
-                <option value="Outro">
-                  Outro
-                </option>
-
-              </select>
+              />
 
             </div>
 
@@ -679,7 +622,7 @@ function NewActivity({
               </h3>
 
               <p>
-                Registre pragas ou doenças observadas no campo.
+                Registre pragas ou doenças observadas.
               </p>
             </div>
 
@@ -698,7 +641,7 @@ function NewActivity({
               <input
                 id="pest"
                 type="text"
-                placeholder="Ex.: Lagarta, pulgão..."
+                placeholder="Ex.: Broca"
                 value={pest}
                 onChange={(event) =>
                   setPest(event.target.value)
@@ -718,7 +661,7 @@ function NewActivity({
               <input
                 id="disease"
                 type="text"
-                placeholder="Ex.: Ferrugem, oídio..."
+                placeholder="Ex.: Ferrugem"
                 value={disease}
                 onChange={(event) =>
                   setDisease(event.target.value)
@@ -749,7 +692,7 @@ function NewActivity({
               </h3>
 
               <p>
-                Registre o produto utilizado durante a atividade.
+                Registre o produto e a quantidade utilizada.
               </p>
             </div>
 
@@ -768,7 +711,7 @@ function NewActivity({
               <input
                 id="product"
                 type="text"
-                placeholder="Ex.: Fertilizante, defensivo..."
+                placeholder="Ex.: Fertilizante"
                 value={product}
                 onChange={(event) =>
                   setProduct(event.target.value)
@@ -788,7 +731,7 @@ function NewActivity({
               <input
                 id="quantity"
                 type="text"
-                placeholder="Ex.: 20 kg, 10 L..."
+                placeholder="Ex.: 20 kg"
                 value={quantity}
                 onChange={(event) =>
                   setQuantity(event.target.value)
@@ -810,16 +753,16 @@ function NewActivity({
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              📄
+              📝
             </div>
 
             <div>
               <h3>
-                Descrição
+                Observações
               </h3>
 
               <p>
-                Adicione observações ou informações importantes.
+                Descreva o que foi realizado ou observado.
               </p>
             </div>
 
@@ -830,7 +773,7 @@ function NewActivity({
             <div className="form-group full">
 
               <label htmlFor="description">
-                Observações
+                Descrição
               </label>
 
               <textarea
@@ -930,7 +873,6 @@ function NewActivity({
                       );
 
                     return (
-
                       <div
                         className="photo-preview"
                         key={`${photo.name}-${index}`}
@@ -957,7 +899,6 @@ function NewActivity({
                         </button>
 
                       </div>
-
                     );
                   }
                 )}

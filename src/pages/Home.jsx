@@ -13,6 +13,7 @@ function Home({
   onViewActivity,
   onProperties,
   onDiary,
+  onLibrary,
 }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -354,6 +355,29 @@ function Home({
             </span>
 
           </button>
+          <button
+            type="button"
+            className="module-card"
+            onClick={onLibrary}
+          >
+            <span className="module-icon">
+              📚
+            </span>
+
+            <div>
+              <h4>
+                Biblioteca
+              </h4>
+
+              <p>
+                Pragas, doenças e produtos
+              </p>
+            </div>
+
+            <span className="module-arrow">
+              →
+            </span>
+        </button>
 
         </div>
 
