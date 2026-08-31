@@ -10,6 +10,10 @@ import { addPhoto } from "../services/photoService";
 import { getProperties } from "../services/propertyService";
 import { getPlotsByProperty } from "../services/plotService";
 
+import { getProducts } from "../services/productService";
+import { getPests } from "../services/pestService";
+import { getDiseases } from "../services/diseaseService";
+
 import "../styles/newActivity.css";
 
 function NewActivity({
@@ -28,11 +32,8 @@ function NewActivity({
   const [properties, setProperties] = useState([]);
   const [plots, setPlots] = useState([]);
 
-  const [managementType, setManagementType] =
-    useState("");
-
-  const [managementStatus, setManagementStatus] =
-    useState("");
+  const [managementType, setManagementType] = useState("");
+  const [managementStatus, setManagementStatus] = useState("");
 
   const [pest, setPest] = useState("");
   const [disease, setDisease] = useState("");
@@ -40,7 +41,60 @@ function NewActivity({
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState("");
 
+  const [products, setProducts] = useState([]);
+  const [pests, setPests] = useState([]);
+  const [diseases, setDiseases] = useState([]);
+
   const [photos, setPhotos] = useState([]);
+
+  /* =========================================================
+     CARREGAR BIBLIOTECA
+  ========================================================= */
+
+  useEffect(() => {
+    async function loadLibrary() {
+      try {
+        const [
+          productsData,
+          pestsData,
+          diseasesData,
+        ] = await Promise.all([
+          getProducts(),
+          getPests(),
+          getDiseases(),
+        ]);
+
+        setProducts(
+          Array.isArray(productsData)
+            ? productsData
+            : []
+        );
+
+        setPests(
+          Array.isArray(pestsData)
+            ? pestsData
+            : []
+        );
+
+        setDiseases(
+          Array.isArray(diseasesData)
+            ? diseasesData
+            : []
+        );
+      } catch (error) {
+        console.error(
+          "ERRO AO CARREGAR BIBLIOTECA:",
+          error
+        );
+
+        setProducts([]);
+        setPests([]);
+        setDiseases([]);
+      }
+    }
+
+    loadLibrary();
+  }, []);
 
   /* =========================================================
      CARREGAR PROPRIEDADES
@@ -50,7 +104,12 @@ function NewActivity({
     async function loadProperties() {
       try {
         const data = await getProperties();
-        setProperties(data || []);
+
+        setProperties(
+          Array.isArray(data)
+            ? data
+            : []
+        );
       } catch (error) {
         console.error(
           "ERRO AO CARREGAR PROPRIEDADES:",
@@ -81,7 +140,11 @@ function NewActivity({
           Number(propertyId)
         );
 
-        setPlots(data || []);
+        setPlots(
+          Array.isArray(data)
+            ? data
+            : []
+        );
       } catch (error) {
         console.error(
           "ERRO AO CARREGAR TALHÕES:",
@@ -104,20 +167,18 @@ function NewActivity({
       setTitle(activityToEdit.title || "");
       setDate(activityToEdit.date || "");
       setLocation(activityToEdit.location || "");
-      setDescription(
-        activityToEdit.description || ""
-      );
+      setDescription(activityToEdit.description || "");
 
       setPropertyId(
         activityToEdit.propertyId !== null &&
-          activityToEdit.propertyId !== undefined
+        activityToEdit.propertyId !== undefined
           ? String(activityToEdit.propertyId)
           : ""
       );
 
       setPlotId(
         activityToEdit.plotId !== null &&
-          activityToEdit.plotId !== undefined
+        activityToEdit.plotId !== undefined
           ? String(activityToEdit.plotId)
           : ""
       );
@@ -130,11 +191,21 @@ function NewActivity({
         activityToEdit.managementStatus || ""
       );
 
-      setPest(activityToEdit.pest || "");
-      setDisease(activityToEdit.disease || "");
+      setPest(
+        activityToEdit.pest || ""
+      );
 
-      setProduct(activityToEdit.product || "");
-      setQuantity(activityToEdit.quantity || "");
+      setDisease(
+        activityToEdit.disease || ""
+      );
+
+      setProduct(
+        activityToEdit.product || ""
+      );
+
+      setQuantity(
+        activityToEdit.quantity || ""
+      );
 
       /*
        * As fotos antigas continuam vinculadas
@@ -206,7 +277,8 @@ function NewActivity({
   function removePhoto(index) {
     setPhotos((currentPhotos) =>
       currentPhotos.filter(
-        (_, photoIndex) => photoIndex !== index
+        (_, photoIndex) =>
+          photoIndex !== index
       )
     );
   }
@@ -638,15 +710,28 @@ function NewActivity({
                 Praga
               </label>
 
-              <input
+              <select
                 id="pest"
-                type="text"
-                placeholder="Ex.: Broca"
                 value={pest}
                 onChange={(event) =>
                   setPest(event.target.value)
                 }
-              />
+              >
+
+                <option value="">
+                  Selecione uma praga
+                </option>
+
+                {pests.map((item) => (
+                  <option
+                    key={item.id}
+                    value={item.name}
+                  >
+                    {item.name}
+                  </option>
+                ))}
+
+              </select>
 
             </div>
 
@@ -658,15 +743,28 @@ function NewActivity({
                 Doença
               </label>
 
-              <input
+              <select
                 id="disease"
-                type="text"
-                placeholder="Ex.: Ferrugem"
                 value={disease}
                 onChange={(event) =>
                   setDisease(event.target.value)
                 }
-              />
+              >
+
+                <option value="">
+                  Selecione uma doença
+                </option>
+
+                {diseases.map((item) => (
+                  <option
+                    key={item.id}
+                    value={item.name}
+                  >
+                    {item.name}
+                  </option>
+                ))}
+
+              </select>
 
             </div>
 
@@ -708,15 +806,28 @@ function NewActivity({
                 Produto
               </label>
 
-              <input
+              <select
                 id="product"
-                type="text"
-                placeholder="Ex.: Fertilizante"
                 value={product}
                 onChange={(event) =>
                   setProduct(event.target.value)
                 }
-              />
+              >
+
+                <option value="">
+                  Selecione um produto
+                </option>
+
+                {products.map((item) => (
+                  <option
+                    key={item.id}
+                    value={item.name}
+                  >
+                    {item.name}
+                  </option>
+                ))}
+
+              </select>
 
             </div>
 
@@ -959,4 +1070,3 @@ function NewActivity({
 }
 
 export default NewActivity;
-
