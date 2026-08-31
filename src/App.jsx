@@ -3,6 +3,7 @@ import { useState } from "react";
 import Home from "./pages/home";
 import NewActivity from "./pages/NewActivity";
 import ActivityDetails from "./pages/activityDetails";
+<<<<<<< HEAD
 
 import Plots from "./pages/Plots";
 import NewPlot from "./pages/NewPlot";
@@ -22,6 +23,13 @@ import Diseases from "./pages/Diseases";
 import NewDisease from "./pages/NewDisease";
 
 
+=======
+import Plots from "./pages/Plots";
+import NewPlot from "./pages/NewPlot";
+import Properties from "./pages/Properties";
+import NewProperty from "./pages/NewProperty";
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import "./styles/global.css";
 
 function App() {
@@ -29,6 +37,7 @@ function App() {
 
   const [activityToEdit, setActivityToEdit] = useState(null);
   const [activityToView, setActivityToView] = useState(null);
+<<<<<<< HEAD
 
   const [plotToEdit, setPlotToEdit] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -45,6 +54,12 @@ function App() {
   // ATIVIDADES
   // =========================================================
 
+=======
+  const [plotToEdit, setPlotToEdit] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [propertyToEdit, setPropertyToEdit] = useState(null);
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   function goToEditActivity(activity) {
     setActivityToEdit(activity);
     setPage("newActivity");
@@ -55,11 +70,23 @@ function App() {
     setPage("activityDetails");
   }
 
+<<<<<<< HEAD
+=======
+  function goToHome() {
+    setActivityToEdit(null);
+    setActivityToView(null);
+    setPropertyToEdit(null);
+
+    setPage("home");
+  }
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   function goToNewActivity() {
     setActivityToEdit(null);
     setPage("newActivity");
   }
 
+<<<<<<< HEAD
   // =========================================================
   // DIÁRIO
   // =========================================================
@@ -72,6 +99,8 @@ function App() {
   // PROPRIEDADES
   // =========================================================
 
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   function goToProperties() {
     setPropertyToEdit(null);
     setPage("properties");
@@ -91,6 +120,7 @@ function App() {
     setPropertyToEdit(null);
     setPage("properties");
   }
+<<<<<<< HEAD
 
   // =========================================================
   // TALHÕES
@@ -211,6 +241,27 @@ function goToDiseases() {
   // RENDER
   // =========================================================
 
+=======
+  function goToPlots(property) {
+  setSelectedProperty(property);
+  setPlotToEdit(null);
+  setPage("plots");
+}
+
+function goToNewPlot() {
+  if (!selectedProperty) {
+    return;
+  }
+  setPlotToEdit(null);
+  setPage("newPlot");
+}
+
+function goToEditPlot(plot) {
+  setPlotToEdit(plot);
+  setPage("newPlot");
+}
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   return (
     <div className="app">
 
@@ -247,6 +298,7 @@ function goToDiseases() {
 
       </header>
 
+<<<<<<< HEAD
       {/* =====================================================
           HOME
       ===================================================== */}
@@ -266,6 +318,17 @@ function goToDiseases() {
           NOVA ATIVIDADE
       ===================================================== */}
 
+=======
+      {page === "home" && (
+        <Home
+  onNewActivity={goToNewActivity}
+  onEditActivity={goToEditActivity}
+  onViewActivity={goToActivityDetails}
+  onProperties={goToProperties}
+/>
+      )}
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       {page === "newActivity" && (
         <NewActivity
           onCancel={goToHome}
@@ -274,10 +337,13 @@ function goToDiseases() {
         />
       )}
 
+<<<<<<< HEAD
       {/* =====================================================
           DETALHES DA ATIVIDADE
       ===================================================== */}
 
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       {page === "activityDetails" && (
         <ActivityDetails
           activity={activityToView}
@@ -285,6 +351,7 @@ function goToDiseases() {
           onEdit={goToEditActivity}
         />
       )}
+<<<<<<< HEAD
 
       {/* =====================================================
           PROPRIEDADES
@@ -301,6 +368,33 @@ function goToDiseases() {
       {/* =====================================================
           NOVA PROPRIEDADE
       ===================================================== */}
+=======
+      {page === "plots" && (
+  <Plots
+  property={selectedProperty}
+  onNewPlot={goToNewPlot}
+  onEditPlot={goToEditPlot}
+  onBack={goToProperties}
+/>
+)}
+
+{page === "newPlot" && (
+  <NewPlot
+    property={selectedProperty}
+    onCancel={() => goToPlots(selectedProperty)}
+    onPlotCreated={() => goToPlots(selectedProperty)}
+    plotToEdit={plotToEdit}
+  />
+)}
+
+      {page === "properties" && (
+  <Properties
+    onNewProperty={goToNewProperty}
+    onEditProperty={goToEditProperty}
+    onViewPlots={goToPlots}
+  />
+)}
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
       {page === "newProperty" && (
         <NewProperty
@@ -310,6 +404,7 @@ function goToDiseases() {
         />
       )}
 
+<<<<<<< HEAD
       {/* =====================================================
           TALHÕES
       ===================================================== */}
@@ -403,6 +498,8 @@ function goToDiseases() {
         />
       )}
 
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
     </div>
   );
 }

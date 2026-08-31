@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import { useEffect, useState } from "react";
 
 import {
@@ -10,10 +13,13 @@ import { addPhoto } from "../services/photoService";
 import { getProperties } from "../services/propertyService";
 import { getPlotsByProperty } from "../services/plotService";
 
+<<<<<<< HEAD
 import { getProducts } from "../services/productService";
 import { getPests } from "../services/pestService";
 import { getDiseases } from "../services/diseaseService";
 
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import "../styles/newActivity.css";
 
 function NewActivity({
@@ -26,6 +32,7 @@ function NewActivity({
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
 
+<<<<<<< HEAD
   const [propertyId, setPropertyId] = useState("");
   const [plotId, setPlotId] = useState("");
 
@@ -44,10 +51,18 @@ function NewActivity({
   const [products, setProducts] = useState([]);
   const [pests, setPests] = useState([]);
   const [diseases, setDiseases] = useState([]);
+=======
+  const [properties, setProperties] = useState([]);
+  const [plots, setPlots] = useState([]);
+
+  const [propertyId, setPropertyId] = useState("");
+  const [plotId, setPlotId] = useState("");
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
   const [photos, setPhotos] = useState([]);
 
   /* =========================================================
+<<<<<<< HEAD
      CARREGAR BIBLIOTECA
   ========================================================= */
 
@@ -97,6 +112,8 @@ function NewActivity({
   }, []);
 
   /* =========================================================
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
      CARREGAR PROPRIEDADES
   ========================================================= */
 
@@ -105,11 +122,15 @@ function NewActivity({
       try {
         const data = await getProperties();
 
+<<<<<<< HEAD
         setProperties(
           Array.isArray(data)
             ? data
             : []
         );
+=======
+        setProperties(data || []);
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       } catch (error) {
         console.error(
           "ERRO AO CARREGAR PROPRIEDADES:",
@@ -140,11 +161,15 @@ function NewActivity({
           Number(propertyId)
         );
 
+<<<<<<< HEAD
         setPlots(
           Array.isArray(data)
             ? data
             : []
         );
+=======
+        setPlots(data || []);
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       } catch (error) {
         console.error(
           "ERRO AO CARREGAR TALHÕES:",
@@ -167,7 +192,13 @@ function NewActivity({
       setTitle(activityToEdit.title || "");
       setDate(activityToEdit.date || "");
       setLocation(activityToEdit.location || "");
+<<<<<<< HEAD
       setDescription(activityToEdit.description || "");
+=======
+      setDescription(
+        activityToEdit.description || ""
+      );
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
       setPropertyId(
         activityToEdit.propertyId !== null &&
@@ -183,6 +214,7 @@ function NewActivity({
           : ""
       );
 
+<<<<<<< HEAD
       setManagementType(
         activityToEdit.managementType || ""
       );
@@ -214,12 +246,22 @@ function NewActivity({
        * Aqui entram somente novas fotos.
        */
 
+=======
+      /*
+       * Fotos já salvas permanecem vinculadas
+       * à atividade e serão exibidas na tela
+       * de detalhes.
+       *
+       * Aqui entram somente novas fotos.
+       */
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       setPhotos([]);
     } else {
       setTitle("");
       setDate("");
       setLocation("");
       setDescription("");
+<<<<<<< HEAD
 
       setPropertyId("");
       setPlotId("");
@@ -233,6 +275,10 @@ function NewActivity({
       setProduct("");
       setQuantity("");
 
+=======
+      setPropertyId("");
+      setPlotId("");
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       setPhotos([]);
     }
   }, [activityToEdit]);
@@ -248,7 +294,10 @@ function NewActivity({
 
     // Ao trocar a propriedade,
     // o talhão anterior deixa de ser válido.
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
     setPlotId("");
   }
 
@@ -303,6 +352,7 @@ function NewActivity({
       plotId: plotId
         ? Number(plotId)
         : null,
+<<<<<<< HEAD
 
       managementType:
         managementType.trim(),
@@ -316,6 +366,8 @@ function NewActivity({
       product: product.trim(),
 
       quantity: quantity.trim(),
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
     };
 
     try {
@@ -387,7 +439,11 @@ function NewActivity({
   }
 
   /* =========================================================
+<<<<<<< HEAD
      RENDER
+=======
+     TELA
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   ========================================================= */
 
   return (
@@ -398,6 +454,10 @@ function NewActivity({
       ===================================================== */}
 
       <header className="page-heading">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         <div className="page-heading-content">
 
           <span className="home-label">
@@ -417,8 +477,15 @@ function NewActivity({
           </p>
 
         </div>
+<<<<<<< HEAD
       </header>
 
+=======
+
+      </header>
+
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       {/* =====================================================
           FORMULÁRIO
       ===================================================== */}
@@ -452,6 +519,10 @@ function NewActivity({
 
           </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           <div className="form-grid">
 
             {/* NOME */}
@@ -475,6 +546,10 @@ function NewActivity({
 
             </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             {/* DATA */}
 
             <div className="form-group">
@@ -495,6 +570,10 @@ function NewActivity({
 
             </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             {/* LOCAL */}
 
             <div className="form-group">
@@ -515,6 +594,10 @@ function NewActivity({
 
             </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             {/* PROPRIEDADE */}
 
             <div className="form-group">
@@ -546,6 +629,10 @@ function NewActivity({
 
             </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             {/* TALHÃO */}
 
             <div className="form-group">
@@ -582,6 +669,7 @@ function NewActivity({
 
             </div>
 
+<<<<<<< HEAD
           </div>
 
         </section>
@@ -880,6 +968,10 @@ function NewActivity({
           </div>
 
           <div className="form-grid">
+=======
+
+            {/* DESCRIÇÃO */}
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
             <div className="form-group full">
 
@@ -905,6 +997,10 @@ function NewActivity({
 
         </section>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         {/* ===================================================
             FOTOS
         =================================================== */}
@@ -918,6 +1014,10 @@ function NewActivity({
             </div>
 
             <div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
               <h3>
                 Fotos da atividade
               </h3>
@@ -925,10 +1025,18 @@ function NewActivity({
               <p>
                 Registre visualmente o que foi observado no campo.
               </p>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             </div>
 
           </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           {/* UPLOAD */}
 
           <label
@@ -946,6 +1054,10 @@ function NewActivity({
 
           </label>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           <input
             id="activity-photos"
             type="file"
@@ -955,6 +1067,10 @@ function NewActivity({
             className="photo-input"
           />
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           {/* PRÉ-VISUALIZAÇÃO */}
 
           {photos.length > 0 && (
@@ -973,6 +1089,10 @@ function NewActivity({
 
               </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
               <div className="photo-preview-grid">
 
                 {photos.map(
@@ -984,6 +1104,10 @@ function NewActivity({
                       );
 
                     return (
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
                       <div
                         className="photo-preview"
                         key={`${photo.name}-${index}`}
@@ -1010,6 +1134,10 @@ function NewActivity({
                         </button>
 
                       </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
                     );
                   }
                 )}
@@ -1020,6 +1148,10 @@ function NewActivity({
 
           )}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           {/* CONTADOR */}
 
           {photos.length > 0 && (
@@ -1038,6 +1170,10 @@ function NewActivity({
 
         </section>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         {/* ===================================================
             AÇÕES
         =================================================== */}
@@ -1052,13 +1188,25 @@ function NewActivity({
             Cancelar
           </button>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           <button
             type="submit"
             className="primary-button"
           >
+<<<<<<< HEAD
             {activityToEdit
               ? "Salvar alterações"
               : "Salvar atividade"}
+=======
+
+            {activityToEdit
+              ? "Salvar alterações"
+              : "Salvar atividade"}
+
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           </button>
 
         </div>
@@ -1069,4 +1217,8 @@ function NewActivity({
   );
 }
 
+<<<<<<< HEAD
 export default NewActivity;
+=======
+export default NewActivity;
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7

@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "dependencies": "^0.0.1",
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
     "dexie": "^4.4.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

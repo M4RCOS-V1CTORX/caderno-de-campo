@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import Dexie from "dexie";
 
 const db = new Dexie("CadernoDeCampo");
@@ -31,6 +34,7 @@ db.version(2).stores({
     "++id, activityId, createdAt",
 });
 
+<<<<<<< HEAD
 db.version(3).stores({
   activities:
     "++id, propertyId, plotId, title, date, location, synced, createdAt",
@@ -116,3 +120,6 @@ db.version(4).stores({
 });
 
 export default db;
+=======
+export default db;
+>>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
