@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 import {
@@ -16,6 +15,8 @@ function NewProduct({
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [unit, setUnit] = useState("");
+  const [stock, setStock] = useState("");
+  const [minimumStock, setMinimumStock] = useState("");
   const [notes, setNotes] = useState("");
 
   /* =========================================================
@@ -27,11 +28,26 @@ function NewProduct({
       setName(productToEdit.name || "");
       setType(productToEdit.type || "");
       setUnit(productToEdit.unit || "");
+
+      setStock(
+        productToEdit.stock !== undefined
+          ? String(productToEdit.stock)
+          : ""
+      );
+
+      setMinimumStock(
+        productToEdit.minimumStock !== undefined
+          ? String(productToEdit.minimumStock)
+          : ""
+      );
+
       setNotes(productToEdit.notes || "");
     } else {
       setName("");
       setType("");
       setUnit("");
+      setStock("");
+      setMinimumStock("");
       setNotes("");
     }
   }, [productToEdit]);
@@ -48,10 +64,39 @@ function NewProduct({
       return;
     }
 
+    if (!unit) {
+      alert("Selecione a unidade do produto.");
+      return;
+    }
+
+    const stockValue = Number(stock) || 0;
+    const minimumStockValue = Number(minimumStock) || 0;
+
+    if (stockValue < 0) {
+      alert("O estoque não pode ser negativo.");
+      return;
+    }
+
+    if (minimumStockValue < 0) {
+      alert("O estoque mínimo não pode ser negativo.");
+      return;
+    }
+
     const product = {
       name: name.trim(),
       type: type.trim(),
       unit: unit.trim(),
+
+      /*
+        No cadastro novo:
+        estoque = estoque inicial.
+
+        Na edição:
+        o serviço preservará o estoque atual.
+      */
+      stock: stockValue,
+      minimumStock: minimumStockValue,
+
       notes: notes.trim(),
     };
 
@@ -88,7 +133,6 @@ function NewProduct({
       } else if (onCancel) {
         onCancel();
       }
-
     } catch (error) {
       console.error(
         "ERRO AO SALVAR PRODUTO:",
@@ -96,6 +140,7 @@ function NewProduct({
       );
 
       alert(
+        error?.message ||
         "Erro ao salvar o produto. Veja o Console (F12)."
       );
     }
@@ -264,6 +309,7 @@ function NewProduct({
                 onChange={(event) =>
                   setUnit(event.target.value)
                 }
+                required
               >
 
                 <option value="">
@@ -303,6 +349,69 @@ function NewProduct({
                 </option>
 
               </select>
+
+            </div>
+
+            {/* =================================================
+                ESTOQUE INICIAL
+            ================================================= */}
+
+            <div className="form-group">
+
+              <label htmlFor="product-stock">
+
+                {productToEdit
+                  ? "Estoque atual"
+                  : "Estoque inicial"}
+
+              </label>
+
+              <input
+                id="product-stock"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Ex.: 100"
+                value={stock}
+                onChange={(event) =>
+                  setStock(event.target.value)
+                }
+                disabled={!!productToEdit}
+              />
+
+              <small>
+                {productToEdit
+                  ? "O estoque é alterado pelas movimentações."
+                  : "Quantidade disponível atualmente."}
+              </small>
+
+            </div>
+
+            {/* =================================================
+                ESTOQUE MÍNIMO
+            ================================================= */}
+
+            <div className="form-group">
+
+              <label htmlFor="product-minimum-stock">
+                Estoque mínimo
+              </label>
+
+              <input
+                id="product-minimum-stock"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Ex.: 20"
+                value={minimumStock}
+                onChange={(event) =>
+                  setMinimumStock(event.target.value)
+                }
+              />
+
+              <small>
+                Usado para gerar o alerta de estoque baixo.
+              </small>
 
             </div>
 
@@ -362,4 +471,3 @@ function NewProduct({
 }
 
 export default NewProduct;
-

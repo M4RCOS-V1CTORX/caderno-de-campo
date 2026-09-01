@@ -1,9 +1,9 @@
+
 import { useState } from "react";
 
 import Home from "./pages/home";
 import NewActivity from "./pages/NewActivity";
-import ActivityDetails from "./pages/activityDetails";
-<<<<<<< HEAD
+import ActivityDetails from "./pages/ActivityDetails";
 
 import Plots from "./pages/Plots";
 import NewPlot from "./pages/NewPlot";
@@ -22,44 +22,20 @@ import NewPest from "./pages/NewPest";
 import Diseases from "./pages/Diseases";
 import NewDisease from "./pages/NewDisease";
 
+import Reports from "./pages/Reports";
 
-=======
-import Plots from "./pages/Plots";
-import NewPlot from "./pages/NewPlot";
-import Properties from "./pages/Properties";
-import NewProperty from "./pages/NewProperty";
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import "./styles/global.css";
 
 function App() {
   const [page, setPage] = useState("home");
 
-  const [activityToEdit, setActivityToEdit] = useState(null);
-  const [activityToView, setActivityToView] = useState(null);
-<<<<<<< HEAD
-
-  const [plotToEdit, setPlotToEdit] = useState(null);
-  const [selectedProperty, setSelectedProperty] = useState(null);
-
-  const [propertyToEdit, setPropertyToEdit] = useState(null);
-
-  const [productToEdit, setProductToEdit] = useState(null);
-
-  const [pestToEdit, setPestToEdit] = useState(null);
-
-  const [diseaseToEdit, setDiseaseToEdit] = useState(null);
-
   // =========================================================
   // ATIVIDADES
   // =========================================================
 
-=======
-  const [plotToEdit, setPlotToEdit] = useState(null);
-  const [selectedProperty, setSelectedProperty] = useState(null);
-  const [propertyToEdit, setPropertyToEdit] = useState(null);
+  const [activityToEdit, setActivityToEdit] = useState(null);
+  const [activityToView, setActivityToView] = useState(null);
 
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   function goToEditActivity(activity) {
     setActivityToEdit(activity);
     setPage("newActivity");
@@ -70,23 +46,34 @@ function App() {
     setPage("activityDetails");
   }
 
-<<<<<<< HEAD
-=======
-  function goToHome() {
-    setActivityToEdit(null);
-    setActivityToView(null);
-    setPropertyToEdit(null);
-
-    setPage("home");
-  }
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   function goToNewActivity() {
     setActivityToEdit(null);
     setPage("newActivity");
   }
 
-<<<<<<< HEAD
+  // =========================================================
+  // HOME
+  // =========================================================
+
+  function goToHome() {
+    setActivityToEdit(null);
+    setActivityToView(null);
+    setPropertyToEdit(null);
+    setPlotToEdit(null);
+    setProductToEdit(null);
+    setPestToEdit(null);
+    setDiseaseToEdit(null);
+
+    setPage("home");
+  }
+  // =========================================================
+// RELATÓRIOS
+// =========================================================
+
+function goToReports() {
+  setPage("reports");
+}
+
   // =========================================================
   // DIÁRIO
   // =========================================================
@@ -99,8 +86,9 @@ function App() {
   // PROPRIEDADES
   // =========================================================
 
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+  const [propertyToEdit, setPropertyToEdit] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
   function goToProperties() {
     setPropertyToEdit(null);
     setPage("properties");
@@ -120,11 +108,12 @@ function App() {
     setPropertyToEdit(null);
     setPage("properties");
   }
-<<<<<<< HEAD
 
   // =========================================================
   // TALHÕES
   // =========================================================
+
+  const [plotToEdit, setPlotToEdit] = useState(null);
 
   function goToPlots(property) {
     setSelectedProperty(property);
@@ -147,123 +136,93 @@ function App() {
   }
 
   // =========================================================
-// BIBLIOTECA
-// =========================================================
-
-function goToLibrary() {
-  setProductToEdit(null);
-  setPage("library");
-}
-
-function goToNewProduct() {
-  setProductToEdit(null);
-  setPage("newProduct");
-}
-
-function goToEditProduct(product) {
-  setProductToEdit(product);
-  setPage("newProduct");
-}
-
-function goToLibraryAfterSave() {
-  setProductToEdit(null);
-  setPage("library");
-}
-
-// =========================================================
-// PRAGAS
-// =========================================================
-
-function goToPests() {
-  setPage("pests");
-}
-
-function goToNewPest() {
-  setPage("newPest");
-}
-
-function goToEditPest(pest) {
-  setPestToEdit(pest);
-  setPage("newPest");
-}
-
-function goToPestsAfterSave() {
-  setPestToEdit(null);
-  setPage("pests");
-}
-
-// =========================================================
-// DOENÇAS
-// =========================================================
-
-function goToDiseases() {
-  setPage("diseases");
-}
-
-function goToNewDisease() {
-  setDiseaseToEdit(null);
-  setPage("newDisease");
-}
-
-function goToEditDisease(disease) {
-  setDiseaseToEdit(disease);
-  setPage("newDisease");
-}
-
-function goToDiseasesAfterSave() {
-  setDiseaseToEdit(null);
-  setPage("diseases");
-}
-// =========================================================
-// DOENÇAS
-// =========================================================
-
-function goToDiseases() {
-  setDiseaseToEdit(null);
-  setPage("diseases");
-}
-
-  // =========================================================
-  // HOME
+  // BIBLIOTECA
   // =========================================================
 
-  function goToHome() {
-    setActivityToEdit(null);
-    setActivityToView(null);
-    setPropertyToEdit(null);
-    setPlotToEdit(null);
+  const [productToEdit, setProductToEdit] = useState(null);
+
+  function goToLibrary() {
     setProductToEdit(null);
+    setPage("library");
+  }
 
-    setPage("home");
+  function goToNewProduct() {
+    setProductToEdit(null);
+    setPage("newProduct");
+  }
+
+  function goToEditProduct(product) {
+    setProductToEdit(product);
+    setPage("newProduct");
+  }
+
+  function goToLibraryAfterSave() {
+    setProductToEdit(null);
+    setPage("library");
+  }
+
+  // =========================================================
+  // PRAGAS
+  // =========================================================
+
+  const [pestToEdit, setPestToEdit] = useState(null);
+
+  function goToPests() {
+    setPestToEdit(null);
+    setPage("pests");
+  }
+
+  function goToNewPest() {
+    setPestToEdit(null);
+    setPage("newPest");
+  }
+
+  function goToEditPest(pest) {
+    setPestToEdit(pest);
+    setPage("newPest");
+  }
+
+  function goToPestsAfterSave() {
+    setPestToEdit(null);
+    setPage("pests");
+  }
+
+  // =========================================================
+  // DOENÇAS
+  // =========================================================
+
+  const [diseaseToEdit, setDiseaseToEdit] = useState(null);
+
+  function goToDiseases() {
+    setDiseaseToEdit(null);
+    setPage("diseases");
+  }
+
+  function goToNewDisease() {
+    setDiseaseToEdit(null);
+    setPage("newDisease");
+  }
+
+  function goToEditDisease(disease) {
+    setDiseaseToEdit(disease);
+    setPage("newDisease");
+  }
+
+  function goToDiseasesAfterSave() {
+    setDiseaseToEdit(null);
+    setPage("diseases");
   }
 
   // =========================================================
   // RENDER
   // =========================================================
 
-=======
-  function goToPlots(property) {
-  setSelectedProperty(property);
-  setPlotToEdit(null);
-  setPage("plots");
-}
-
-function goToNewPlot() {
-  if (!selectedProperty) {
-    return;
-  }
-  setPlotToEdit(null);
-  setPage("newPlot");
-}
-
-function goToEditPlot(plot) {
-  setPlotToEdit(plot);
-  setPage("newPlot");
-}
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   return (
     <div className="app">
+
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
 
       <header className="header">
 
@@ -298,7 +257,6 @@ function goToEditPlot(plot) {
 
       </header>
 
-<<<<<<< HEAD
       {/* =====================================================
           HOME
       ===================================================== */}
@@ -311,6 +269,7 @@ function goToEditPlot(plot) {
           onProperties={goToProperties}
           onDiary={goToDiary}
           onLibrary={goToLibrary}
+          onReports={goToReports}
         />
       )}
 
@@ -318,17 +277,6 @@ function goToEditPlot(plot) {
           NOVA ATIVIDADE
       ===================================================== */}
 
-=======
-      {page === "home" && (
-        <Home
-  onNewActivity={goToNewActivity}
-  onEditActivity={goToEditActivity}
-  onViewActivity={goToActivityDetails}
-  onProperties={goToProperties}
-/>
-      )}
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       {page === "newActivity" && (
         <NewActivity
           onCancel={goToHome}
@@ -337,13 +285,10 @@ function goToEditPlot(plot) {
         />
       )}
 
-<<<<<<< HEAD
       {/* =====================================================
           DETALHES DA ATIVIDADE
       ===================================================== */}
 
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       {page === "activityDetails" && (
         <ActivityDetails
           activity={activityToView}
@@ -351,7 +296,6 @@ function goToEditPlot(plot) {
           onEdit={goToEditActivity}
         />
       )}
-<<<<<<< HEAD
 
       {/* =====================================================
           PROPRIEDADES
@@ -368,33 +312,6 @@ function goToEditPlot(plot) {
       {/* =====================================================
           NOVA PROPRIEDADE
       ===================================================== */}
-=======
-      {page === "plots" && (
-  <Plots
-  property={selectedProperty}
-  onNewPlot={goToNewPlot}
-  onEditPlot={goToEditPlot}
-  onBack={goToProperties}
-/>
-)}
-
-{page === "newPlot" && (
-  <NewPlot
-    property={selectedProperty}
-    onCancel={() => goToPlots(selectedProperty)}
-    onPlotCreated={() => goToPlots(selectedProperty)}
-    plotToEdit={plotToEdit}
-  />
-)}
-
-      {page === "properties" && (
-  <Properties
-    onNewProperty={goToNewProperty}
-    onEditProperty={goToEditProperty}
-    onViewPlots={goToPlots}
-  />
-)}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
       {page === "newProperty" && (
         <NewProperty
@@ -404,7 +321,6 @@ function goToEditPlot(plot) {
         />
       )}
 
-<<<<<<< HEAD
       {/* =====================================================
           TALHÕES
       ===================================================== */}
@@ -457,35 +373,55 @@ function goToEditPlot(plot) {
           onDiseases={goToDiseases}
         />
       )}
-      {page === "pests" && (
-  <Pests
-    onNewPest={goToNewPest}
-    onEditPest={goToEditPest}
-    onBack={goToLibrary}
-  />
-)}
 
-{page === "newPest" && (
-  <NewPest
-    onCancel={goToPests}
-    onPestCreated={goToPestsAfterSave}
-    pestToEdit={pestToEdit}
-  />
-)}
-{page === "diseases" && (
-  <Diseases
-    onNewDisease={goToNewDisease}
-    onEditDisease={goToEditDisease}
-    onBack={goToLibrary}
-  />
-)}
-{page === "newDisease" && (
-  <NewDisease
-    onCancel={goToDiseases}
-    onDiseaseCreated={goToDiseasesAfterSave}
-    diseaseToEdit={diseaseToEdit}
-  />
-)}
+      {/* =====================================================
+          PRAGAS
+      ===================================================== */}
+
+      {page === "pests" && (
+        <Pests
+          onNewPest={goToNewPest}
+          onEditPest={goToEditPest}
+          onBack={goToLibrary}
+        />
+      )}
+
+      {/* =====================================================
+          NOVA PRAGA
+      ===================================================== */}
+
+      {page === "newPest" && (
+        <NewPest
+          onCancel={goToPests}
+          onPestCreated={goToPestsAfterSave}
+          pestToEdit={pestToEdit}
+        />
+      )}
+
+      {/* =====================================================
+          DOENÇAS
+      ===================================================== */}
+
+      {page === "diseases" && (
+        <Diseases
+          onNewDisease={goToNewDisease}
+          onEditDisease={goToEditDisease}
+          onBack={goToLibrary}
+        />
+      )}
+
+      {/* =====================================================
+          NOVA DOENÇA
+      ===================================================== */}
+
+      {page === "newDisease" && (
+        <NewDisease
+          onCancel={goToDiseases}
+          onDiseaseCreated={goToDiseasesAfterSave}
+          diseaseToEdit={diseaseToEdit}
+        />
+      )}
+
       {/* =====================================================
           NOVO PRODUTO
       ===================================================== */}
@@ -497,9 +433,16 @@ function goToEditPlot(plot) {
           productToEdit={productToEdit}
         />
       )}
+      {/* =====================================================
+    RELATÓRIOS
+===================================================== */}
 
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+      {page === "reports" && (
+        <Reports
+          onBack={goToHome}
+        />
+      )}
+
     </div>
   );
 }

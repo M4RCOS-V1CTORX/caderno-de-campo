@@ -1,23 +1,23 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import { useEffect, useState } from "react";
 
 import { getPropertyById } from "../services/propertyService";
 import { getPlotById } from "../services/plotService";
 import { getPhotosByActivity } from "../services/photoService";
+import { getProductById } from "../services/productService";
 
 import "../styles/activityDetails.css";
 
-function ActivityDetails({
-  activity,
-  onBack,
-  onEdit,
-}) {
+function ActivityDetails({ activity, onBack, onEdit }) {
   const [property, setProperty] = useState(null);
   const [plot, setPlot] = useState(null);
   const [photos, setPhotos] = useState([]);
+  const [photoUrls, setPhotoUrls] = useState([]);
+  const [productData, setProductData] = useState(null);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
+
+  /* =========================================================
+     CARREGAR DADOS
+  ========================================================= */
 
   useEffect(() => {
     let cancelled = false;
@@ -27,105 +27,66 @@ function ActivityDetails({
         setProperty(null);
         setPlot(null);
         setPhotos([]);
+        setProductData(null);
         return;
       }
 
-      setProperty(null);
-      setPlot(null);
-      setPhotos([]);
-
       try {
-        /* ================================
-           PROPRIEDADE
-        ================================= */
+        setProperty(null);
+        setPlot(null);
+        setPhotos([]);
+        setProductData(null);
 
-        if (
-          activity.propertyId !== null &&
-          activity.propertyId !== undefined
-        ) {
-<<<<<<< HEAD
-          const propertyId =
-            Number(activity.propertyId);
-=======
-          const propertyId = Number(activity.propertyId);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+        if (activity.propertyId) {
+          const propertyData = await getPropertyById(
+            activity.propertyId
+          );
 
-          if (!Number.isNaN(propertyId)) {
-            const propertyData =
-              await getPropertyById(propertyId);
-
-            if (!cancelled) {
-<<<<<<< HEAD
-              setProperty(
-                propertyData || null
-              );
-=======
-              setProperty(propertyData || null);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-            }
+          if (!cancelled) {
+            setProperty(propertyData || null);
           }
         }
 
-        /* ================================
-           TALHÃO
-        ================================= */
+        if (activity.plotId) {
+          const plotData = await getPlotById(
+            activity.plotId
+          );
 
-        if (
-          activity.plotId !== null &&
-          activity.plotId !== undefined
-        ) {
-<<<<<<< HEAD
-          const plotId =
-            Number(activity.plotId);
-=======
-          const plotId = Number(activity.plotId);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-
-          if (!Number.isNaN(plotId)) {
-            const plotData =
-              await getPlotById(plotId);
-
-            if (!cancelled) {
-<<<<<<< HEAD
-              setPlot(
-                plotData || null
-              );
-=======
-              setPlot(plotData || null);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-            }
+          if (!cancelled) {
+            setPlot(plotData || null);
           }
         }
 
-        /* ================================
-           FOTOS
-        ================================= */
-
-        if (
-          activity.id !== null &&
-          activity.id !== undefined
-        ) {
-          const photoData =
-<<<<<<< HEAD
-            await getPhotosByActivity(
-              activity.id
-            );
+        if (activity.id) {
+          const photosData = await getPhotosByActivity(
+            activity.id
+          );
 
           if (!cancelled) {
-            setPhotos(
-              photoData || []
-            );
-=======
-            await getPhotosByActivity(activity.id);
+            setPhotos(photosData || []);
+          }
+        }
+
+        /* =====================================================
+           CARREGAR PRODUTO
+
+           Registros novos possuem productId.
+           Registros antigos continuam funcionando apenas
+           com o nome salvo em activity.product.
+        ===================================================== */
+
+        if (activity.productId) {
+          const product = await getProductById(
+            activity.productId
+          );
 
           if (!cancelled) {
-            setPhotos(photoData || []);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+            setProductData(product || null);
           }
         }
       } catch (error) {
         console.error(
-          "ERRO AO CARREGAR DETALHES DA ATIVIDADE:",
+          "ERRO AO CARREGAR DETALHES:",
           error
         );
       }
@@ -138,339 +99,400 @@ function ActivityDetails({
     };
   }, [activity]);
 
-  if (!activity) {
-    return null;
-  }
-
-<<<<<<< HEAD
   /* =========================================================
-     CULTURA
+     CRIAR URLS DAS FOTOS
   ========================================================= */
 
-  const culture =
-    plot?.culture ||
-    "Cultura não informada";
+  useEffect(() => {
+    const urls = photos
+      .filter((photo) => photo?.file)
+      .map((photo) => ({
+        ...photo,
+        url: URL.createObjectURL(photo.file),
+      }));
+
+    setPhotoUrls(urls);
+
+    return () => {
+      urls.forEach((photo) => {
+        URL.revokeObjectURL(photo.url);
+      });
+    };
+  }, [photos]);
+
+  /* =========================================================
+     TECLADO DA GALERIA
+  ========================================================= */
+
+  useEffect(() => {
+    if (selectedPhotoIndex === null) {
+      return;
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        setSelectedPhotoIndex(null);
+      }
+
+      if (event.key === "ArrowLeft") {
+        setSelectedPhotoIndex((current) => {
+          if (photoUrls.length === 0) {
+            return null;
+          }
+
+          if (current === 0) {
+            return photoUrls.length - 1;
+          }
+
+          return current - 1;
+        });
+      }
+
+      if (event.key === "ArrowRight") {
+        setSelectedPhotoIndex((current) => {
+          if (photoUrls.length === 0) {
+            return null;
+          }
+
+          if (current === photoUrls.length - 1) {
+            return 0;
+          }
+
+          return current + 1;
+        });
+      }
+    }
+
+    window.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+    };
+  }, [selectedPhotoIndex, photoUrls.length]);
+
+  /* =========================================================
+     FUNÇÕES DA GALERIA
+  ========================================================= */
+
+  function openPhoto(index) {
+    setSelectedPhotoIndex(index);
+  }
+
+  function closePhoto() {
+    setSelectedPhotoIndex(null);
+  }
+
+  function previousPhoto() {
+    setSelectedPhotoIndex((current) => {
+      if (photoUrls.length === 0) {
+        return null;
+      }
+
+      if (current === 0) {
+        return photoUrls.length - 1;
+      }
+
+      return current - 1;
+    });
+  }
+
+  function nextPhoto() {
+    setSelectedPhotoIndex((current) => {
+      if (photoUrls.length === 0) {
+        return null;
+      }
+
+      if (current === photoUrls.length - 1) {
+        return 0;
+      }
+
+      return current + 1;
+    });
+  }
+
+  /* =========================================================
+     FORMATADORES
+  ========================================================= */
+
+  function formatDate(date) {
+    if (!date) return "Sem data";
+
+    const [year, month, day] = date.split("-");
+
+    if (!year || !month || !day) {
+      return date;
+    }
+
+    return `${day}/${month}/${year}`;
+  }
+
+  function normalizeStatus(status) {
+    return status
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "-");
+  }
+
+  /* =========================================================
+     QUANTIDADE DO PRODUTO
+  ========================================================= */
+
+  function getProductQuantity() {
+    /*
+      Registro novo:
+      quantityValue = "20"
+      productData.unit = "kg"
+
+      Registro antigo:
+      quantity = "20 kg"
+    */
+
+    if (activity.quantityValue) {
+      const numericQuantity = Number(
+        activity.quantityValue
+      );
+
+      if (!Number.isNaN(numericQuantity)) {
+        const unit =
+          productData?.unit ||
+          "";
+
+        return unit
+          ? `${numericQuantity} ${unit}`
+          : `${numericQuantity}`;
+      }
+    }
+
+    return activity.quantity || "Não informado";
+  }
+
+  /* =========================================================
+     PRODUTO SELECIONADO
+  ========================================================= */
+
+  const hasProduct = Boolean(
+    activity.product ||
+    activity.productId
+  );
+
+  /* =========================================================
+     FOTO SELECIONADA
+  ========================================================= */
+
+  const selectedPhoto =
+    selectedPhotoIndex !== null
+      ? photoUrls[selectedPhotoIndex]
+      : null;
 
   /* =========================================================
      RENDER
   ========================================================= */
 
+  if (!activity) {
+    return null;
+  }
+
   return (
     <main className="activity-details">
 
       {/* =====================================================
           CABEÇALHO
       ===================================================== */}
-=======
-  return (
-    <main className="activity-details">
-
-      {/* =========================================
-          CABEÇALHO
-      ========================================== */}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
       <header className="details-header">
-
         <div className="details-header-content">
-
           <span className="details-eyebrow">
             REGISTRO DE CAMPO
           </span>
 
-          <h2>
-<<<<<<< HEAD
-            {activity.title ||
-              "Atividade sem título"}
-=======
-            {activity.title}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-          </h2>
+          <h2>{activity.title}</h2>
 
-          <p>
-            Detalhes completos da atividade registrada.
-          </p>
-
+          {activity.description && (
+            <p>{activity.description}</p>
+          )}
         </div>
 
         <div className="details-header-badge">
-<<<<<<< HEAD
-
-          <span className="details-status-dot" />
-
+          <span className="details-status-dot"></span>
           Registro salvo
-
-=======
-          <span className="details-status-dot" />
-          Registro salvo
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         </div>
-
       </header>
 
-<<<<<<< HEAD
       {/* =====================================================
-          RESUMO PRINCIPAL
+          RESUMO
       ===================================================== */}
-=======
-
-      {/* =========================================
-          RESUMO PRINCIPAL
-      ========================================== */}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
       <section className="activity-summary">
 
         <div className="summary-main">
-
           <div className="summary-icon">
             📋
           </div>
 
           <div>
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             <span className="summary-label">
               ATIVIDADE
             </span>
 
-            <strong>
-<<<<<<< HEAD
-              {activity.title ||
-                "Atividade sem título"}
-            </strong>
-
-            <span className="summary-date">
-              Registrada em{" "}
-              {formatDate(
-                activity.date
-              )}
-            </span>
-
-=======
+            <strong className="summary-date">
               {activity.title}
             </strong>
-
-            <span className="summary-date">
-              Registrada em {formatDate(activity.date)}
-            </span>
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           </div>
-
         </div>
 
-        <div className="summary-divider" />
+        <div className="summary-divider"></div>
 
-        <div className="summary-location">
-
-          <span className="summary-mini-icon">
-            📍
-          </span>
+        <div className="summary-main">
+          <div className="summary-mini-icon">
+            📅
+          </div>
 
           <div>
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             <span className="summary-label">
-              LOCAL
+              DATA
             </span>
 
-            <strong>
-              {activity.location ||
-                "Local não informado"}
+            <strong className="summary-date">
+              {formatDate(activity.date)}
             </strong>
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           </div>
-
         </div>
 
+        {activity.location && (
+          <>
+            <div className="summary-divider"></div>
+
+            <div className="summary-location">
+              <span className="summary-label">
+                LOCAL
+              </span>
+
+              <strong>
+                {activity.location}
+              </strong>
+            </div>
+          </>
+        )}
       </section>
 
-<<<<<<< HEAD
       {/* =====================================================
           INFORMAÇÕES
       ===================================================== */}
-=======
-
-      {/* =========================================
-          INFORMAÇÕES
-      ========================================== */}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
       <section className="details-card information-card">
 
         <div className="card-heading">
 
           <div className="card-heading-icon">
-            ◈
+            📍
           </div>
 
           <div>
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             <h3>
-              Informações da atividade
+              Informações do registro
             </h3>
 
             <p>
-              Dados relacionados ao registro de campo.
+              Localização e vínculo da atividade
             </p>
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           </div>
 
         </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         <div className="details-grid">
 
-          {/* DATA */}
-
           <div className="detail-item">
-
             <div className="detail-icon">
               📅
             </div>
 
             <div className="detail-content">
-
               <span className="detail-label">
-                Data
+                DATA
               </span>
 
               <strong>
-<<<<<<< HEAD
-                {formatDate(
-                  activity.date
-                )}
-=======
                 {formatDate(activity.date)}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
               </strong>
-
             </div>
-
           </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-          {/* LOCAL */}
-
           <div className="detail-item">
-
             <div className="detail-icon">
               📍
             </div>
 
             <div className="detail-content">
-
               <span className="detail-label">
-                Local
+                LOCAL
               </span>
 
               <strong>
                 {activity.location ||
-                  "Local não informado"}
+                  "Não informado"}
               </strong>
-
             </div>
-
           </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-          {/* PROPRIEDADE */}
-
           <div className="detail-item">
-
             <div className="detail-icon">
               🏡
             </div>
 
             <div className="detail-content">
-
               <span className="detail-label">
-                Propriedade
+                PROPRIEDADE
               </span>
 
               <strong>
                 {property?.name ||
-                  "Propriedade não informada"}
+                  "Não informado"}
               </strong>
-
             </div>
-
           </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-          {/* TALHÃO */}
-
           <div className="detail-item">
-
             <div className="detail-icon">
               🌱
             </div>
 
             <div className="detail-content">
-
               <span className="detail-label">
-                Talhão
+                TALHÃO
               </span>
 
               <strong>
                 {plot?.name ||
-                  "Talhão não informado"}
+                  "Não informado"}
               </strong>
-
             </div>
-
           </div>
 
-<<<<<<< HEAD
-          {/* CULTURA */}
-
           <div className="detail-item">
-
             <div className="detail-icon">
               🌾
             </div>
 
             <div className="detail-content">
-
               <span className="detail-label">
-                Cultura
+                CULTURA
               </span>
 
               <strong>
-                {culture}
+                {plot?.culture ||
+                  "Não informado"}
               </strong>
-
             </div>
-
           </div>
 
         </div>
-
       </section>
 
       {/* =====================================================
@@ -485,39 +507,32 @@ function ActivityDetails({
           <div className="card-heading">
 
             <div className="card-heading-icon">
-              🔧
+              🛠️
             </div>
 
             <div>
-
-              <h3>
-                Manejo
-              </h3>
+              <h3>Manejo</h3>
 
               <p>
-                Informações sobre o manejo realizado.
+                Informações sobre o manejo realizado
               </p>
-
             </div>
 
           </div>
 
           <div className="details-grid">
 
-            {/* TIPO */}
-
             {activity.managementType && (
-
               <div className="detail-item">
 
                 <div className="detail-icon">
-                  🔧
+                  🛠️
                 </div>
 
                 <div className="detail-content">
 
                   <span className="detail-label">
-                    Tipo de manejo
+                    TIPO DE MANEJO
                   </span>
 
                   <strong>
@@ -525,29 +540,24 @@ function ActivityDetails({
                   </strong>
 
                 </div>
-
               </div>
-
             )}
 
-            {/* STATUS */}
-
             {activity.managementStatus && (
-
               <div className="detail-item">
 
                 <div className="detail-icon">
-                  🚦
+                  📊
                 </div>
 
                 <div className="detail-content">
 
                   <span className="detail-label">
-                    Status
+                    STATUS
                   </span>
 
                   <strong
-                    className={`management-status status-${normalizeStatus(
+                    className={`status-${normalizeStatus(
                       activity.managementStatus
                     )}`}
                   >
@@ -555,13 +565,10 @@ function ActivityDetails({
                   </strong>
 
                 </div>
-
               </div>
-
             )}
 
           </div>
-
         </section>
       )}
 
@@ -577,29 +584,22 @@ function ActivityDetails({
           <div className="card-heading">
 
             <div className="card-heading-icon">
-              🔎
+              ⚠️
             </div>
 
             <div>
-
-              <h3>
-                Ocorrências
-              </h3>
+              <h3>Ocorrências</h3>
 
               <p>
-                Problemas observados durante a atividade.
+                Pragas e doenças identificadas
               </p>
-
             </div>
 
           </div>
 
           <div className="details-grid">
 
-            {/* PRAGA */}
-
             {activity.pest && (
-
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -609,7 +609,7 @@ function ActivityDetails({
                 <div className="detail-content">
 
                   <span className="detail-label">
-                    Praga
+                    PRAGA
                   </span>
 
                   <strong>
@@ -617,15 +617,10 @@ function ActivityDetails({
                   </strong>
 
                 </div>
-
               </div>
-
             )}
 
-            {/* DOENÇA */}
-
             {activity.disease && (
-
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -635,7 +630,7 @@ function ActivityDetails({
                 <div className="detail-content">
 
                   <span className="detail-label">
-                    Doença
+                    DOENÇA
                   </span>
 
                   <strong>
@@ -643,41 +638,36 @@ function ActivityDetails({
                   </strong>
 
                 </div>
-
               </div>
-
             )}
 
           </div>
-
         </section>
       )}
 
       {/* =====================================================
-          PRODUTO
+          PRODUTO / ESTOQUE
       ===================================================== */}
 
-      {(activity.product ||
-        activity.quantity) && (
+      {hasProduct ? (
 
         <section className="details-card">
 
           <div className="card-heading">
 
             <div className="card-heading-icon">
-              🧪
+              🧴
             </div>
 
             <div>
-
               <h3>
                 Produto utilizado
               </h3>
 
               <p>
-                Informações do produto utilizado no campo.
+                Produto retirado do estoque
+                para este registro
               </p>
-
             </div>
 
           </div>
@@ -686,34 +676,53 @@ function ActivityDetails({
 
             {/* PRODUTO */}
 
-            {activity.product && (
+            <div className="detail-item">
 
-              <div className="detail-item">
+              <div className="detail-icon">
+                🧴
+              </div>
 
-                <div className="detail-icon">
-                  🧪
-                </div>
+              <div className="detail-content">
 
-                <div className="detail-content">
+                <span className="detail-label">
+                  PRODUTO
+                </span>
 
-                  <span className="detail-label">
-                    Produto
-                  </span>
-
-                  <strong>
-                    {activity.product}
-                  </strong>
-
-                </div>
+                <strong>
+                  {productData?.name ||
+                    activity.product ||
+                    "Não informado"}
+                </strong>
 
               </div>
 
-            )}
+            </div>
 
             {/* QUANTIDADE */}
 
-            {activity.quantity && (
+            <div className="detail-item">
 
+              <div className="detail-icon">
+                ⚖️
+              </div>
+
+              <div className="detail-content">
+
+                <span className="detail-label">
+                  QUANTIDADE UTILIZADA
+                </span>
+
+                <strong>
+                  {getProductQuantity()}
+                </strong>
+
+              </div>
+
+            </div>
+
+            {/* UNIDADE */}
+
+            {productData?.unit && (
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -723,19 +732,121 @@ function ActivityDetails({
                 <div className="detail-content">
 
                   <span className="detail-label">
-                    Quantidade
+                    UNIDADE
                   </span>
 
                   <strong>
-                    {activity.quantity}
+                    {productData.unit}
                   </strong>
 
                 </div>
 
               </div>
-
             )}
 
+            {/* ESTOQUE */}
+
+            <div className="detail-item">
+
+              <div className="detail-icon">
+                📦
+              </div>
+
+              <div className="detail-content">
+
+                <span className="detail-label">
+                  ESTOQUE
+                </span>
+
+                <strong>
+                  Retirado do estoque
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* AVISO DO MOVIMENTO */}
+
+          <div
+            style={{
+              marginTop: "18px",
+              padding: "14px 16px",
+              borderRadius: "10px",
+              background: "#f4f8f4",
+              border: "1px solid #dce9dc",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+
+            <span
+              style={{
+                fontSize: "20px",
+              }}
+            >
+              📦
+            </span>
+
+            <span
+              style={{
+                fontSize: "14px",
+                lineHeight: "1.4",
+              }}
+            >
+              <strong>
+                Movimentação de estoque registrada.
+              </strong>
+              <br />
+
+              A quantidade utilizada nesta atividade
+              foi descontada do estoque do produto.
+            </span>
+
+          </div>
+
+        </section>
+
+      ) : (
+
+        /* =====================================================
+           SEM PRODUTO
+        ===================================================== */
+
+        <section className="details-card">
+
+          <div className="card-heading">
+
+            <div className="card-heading-icon">
+              🧴
+            </div>
+
+            <div>
+              <h3>
+                Produto utilizado
+              </h3>
+
+              <p>
+                Controle de consumo de produtos
+              </p>
+            </div>
+
+          </div>
+
+          <div
+            style={{
+              padding: "18px",
+              borderRadius: "10px",
+              background: "#f7f7f7",
+              border: "1px solid #e5e5e5",
+              color: "#666",
+            }}
+          >
+            Nenhum produto foi utilizado
+            neste registro.
           </div>
 
         </section>
@@ -746,14 +857,22 @@ function ActivityDetails({
       ===================================================== */}
 
       <section className="details-card">
-=======
+
+        <div className="card-heading">
+
+          <div className="card-heading-icon">
+            📝
+          </div>
+
+          <div>
+            <h3>Observações</h3>
+
+            <p>
+              Informações adicionais do registro
+            </p>
+          </div>
+
         </div>
-
-
-        {/* =====================================
-            DESCRIÇÃO
-        ====================================== */}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
         <div className="detail-description">
 
@@ -763,30 +882,11 @@ function ActivityDetails({
               📝
             </div>
 
-            <div>
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-              <span className="detail-label">
-                DESCRIÇÃO
-              </span>
-
-              <strong>
-                Observações da atividade
-              </strong>
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-            </div>
-
           </div>
 
           <div className="description-content">
 
             {activity.description ? (
-<<<<<<< HEAD
 
               <p>
                 {activity.description}
@@ -794,21 +894,11 @@ function ActivityDetails({
 
             ) : (
 
-              <p className="description-empty">
-                Nenhuma descrição foi adicionada
-                a esta atividade.
-              </p>
+              <span className="description-empty">
+                Nenhuma observação foi adicionada
+                a este registro.
+              </span>
 
-=======
-              <p>
-                {activity.description}
-              </p>
-            ) : (
-              <p className="description-empty">
-                Nenhuma descrição foi adicionada a
-                esta atividade.
-              </p>
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             )}
 
           </div>
@@ -817,18 +907,11 @@ function ActivityDetails({
 
       </section>
 
-<<<<<<< HEAD
       {/* =====================================================
           FOTOS
       ===================================================== */}
-=======
 
-      {/* =========================================
-          FOTOS
-      ========================================== */}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-
-      {photos.length > 0 && (
+      {photoUrls.length > 0 && (
 
         <section className="details-card photos-details">
 
@@ -836,201 +919,191 @@ function ActivityDetails({
 
             <div className="card-heading">
 
-              <div className="card-heading-icon photo-card-icon">
+              <div className="card-heading-icon">
                 📷
               </div>
 
               <div>
-
                 <h3>
-                  Fotos da atividade
+                  Fotos do registro
                 </h3>
 
                 <p>
-                  Registros visuais associados ao campo.
+                  Imagens anexadas à atividade
                 </p>
-
               </div>
 
             </div>
 
             <span className="photos-count">
-<<<<<<< HEAD
 
-              {photos.length}
+              {photoUrls.length}{" "}
 
-              {photos.length === 1
-                ? " foto"
-                : " fotos"}
+              {photoUrls.length === 1
+                ? "foto"
+                : "fotos"}
 
-=======
-              {photos.length}
-              {photos.length === 1
-                ? " foto"
-                : " fotos"}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             </span>
 
           </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           <div className="details-photo-grid">
 
-            {photos.map((photo) => {
+            {photoUrls.map((photo, index) => (
 
-              const imageUrl =
-<<<<<<< HEAD
-                URL.createObjectURL(
-                  photo.file
-                );
-=======
-                URL.createObjectURL(photo.file);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+              <button
+                type="button"
+                className="details-photo"
+                key={photo.id || index}
+                onClick={() => openPhoto(index)}
+                aria-label={`Abrir foto ${
+                  index + 1
+                }`}
+              >
 
-              return (
+                <img
+                  src={photo.url}
+                  alt={
+                    photo.name ||
+                    `Foto ${index + 1}`
+                  }
+                />
 
-                <div
-                  className="details-photo"
-                  key={photo.id}
-                >
+                <span className="photo-card-icon">
+                  🔍
+                </span>
 
-                  <img
-                    src={imageUrl}
-                    alt={
-                      photo.name ||
-                      "Foto da atividade"
-                    }
-                  />
+              </button>
 
-                  <div className="photo-overlay">
-<<<<<<< HEAD
-
-                    <span>
-                      Foto da atividade
-                    </span>
-
-=======
-                    <span>
-                      Foto da atividade
-                    </span>
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-                  </div>
-
-                </div>
-
-              );
-            })}
+            ))}
 
           </div>
 
         </section>
-
       )}
 
-<<<<<<< HEAD
       {/* =====================================================
           AÇÕES
       ===================================================== */}
-=======
 
-      {/* =========================================
-          AÇÕES
-      ========================================== */}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-
-      <footer className="details-actions">
+      <div className="details-actions">
 
         <button
           type="button"
-          className="secondary-button details-back-button"
+          className="details-back-button"
           onClick={onBack}
         >
-<<<<<<< HEAD
-
-          <span>
-            ←
-          </span>
-
-          Voltar
-
-=======
-          <span>←</span>
-          Voltar
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+          ← Voltar
         </button>
 
         <button
           type="button"
-          className="primary-button details-edit-button"
-<<<<<<< HEAD
-          onClick={() =>
-            onEdit(activity)
-          }
-        >
-
-          <span>
-            ✎
-          </span>
-
-          Editar atividade
-
-=======
+          className="details-edit-button"
           onClick={() => onEdit(activity)}
         >
-          <span>✎</span>
-          Editar atividade
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+          ✎ Editar registro
         </button>
 
-      </footer>
+      </div>
+
+      {/* =====================================================
+          LIGHTBOX / FOTO AMPLIADA
+      ===================================================== */}
+
+      {selectedPhoto && (
+
+        <div
+          className="photo-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Visualização da foto"
+          onClick={closePhoto}
+        >
+
+          <button
+            type="button"
+            className="photo-lightbox-close"
+            onClick={closePhoto}
+            aria-label="Fechar visualização"
+          >
+            ×
+          </button>
+
+          {photoUrls.length > 1 && (
+
+            <button
+              type="button"
+              className="photo-lightbox-nav photo-lightbox-prev"
+              onClick={(event) => {
+                event.stopPropagation();
+                previousPhoto();
+              }}
+              aria-label="Foto anterior"
+            >
+              ‹
+            </button>
+
+          )}
+
+          <div
+            className="photo-lightbox-content"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+
+            <img
+              className="photo-lightbox-image"
+              src={selectedPhoto.url}
+              alt={
+                selectedPhoto.name ||
+                `Foto ${
+                  selectedPhotoIndex + 1
+                }`
+              }
+            />
+
+            <div className="photo-lightbox-footer">
+
+              <span className="photo-lightbox-counter">
+                {selectedPhotoIndex + 1} /{" "}
+                {photoUrls.length}
+              </span>
+
+              {selectedPhoto.name && (
+
+                <span className="photo-lightbox-name">
+                  {selectedPhoto.name}
+                </span>
+
+              )}
+
+            </div>
+
+          </div>
+
+          {photoUrls.length > 1 && (
+
+            <button
+              type="button"
+              className="photo-lightbox-nav photo-lightbox-next"
+              onClick={(event) => {
+                event.stopPropagation();
+                nextPhoto();
+              }}
+              aria-label="Próxima foto"
+            >
+              ›
+            </button>
+
+          )}
+
+        </div>
+
+      )}
 
     </main>
   );
 }
 
-<<<<<<< HEAD
-/* =========================================================
-   FORMATAÇÃO DA DATA
-========================================================= */
-=======
-
-/* =========================================
-   FORMATAÇÃO DA DATA
-========================================= */
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-
-function formatDate(date) {
-  if (!date) {
-    return "Sem data";
-  }
-
-  const [year, month, day] =
-    date.split("-");
-
-  if (!year || !month || !day) {
-    return date;
-  }
-
-  return `${day}/${month}/${year}`;
-}
-
-<<<<<<< HEAD
-/* =========================================================
-   NORMALIZAR STATUS PARA CSS
-========================================================= */
-
-function normalizeStatus(status) {
-  return status
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, "-");
-}
-
 export default ActivityDetails;
-=======
-export default ActivityDetails;
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7

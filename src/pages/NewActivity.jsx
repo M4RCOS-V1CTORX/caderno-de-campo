@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import { useEffect, useState } from "react";
 
 import {
@@ -10,16 +6,22 @@ import {
 } from "../services/activityService";
 
 import { addPhoto } from "../services/photoService";
+
 import { getProperties } from "../services/propertyService";
+
 import { getPlotsByProperty } from "../services/plotService";
 
-<<<<<<< HEAD
-import { getProducts } from "../services/productService";
+import {
+  getProducts,
+  getProductById,
+  addStock,
+  removeStock,
+} from "../services/productService";
+
 import { getPests } from "../services/pestService";
+
 import { getDiseases } from "../services/diseaseService";
 
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 import "../styles/newActivity.css";
 
 function NewActivity({
@@ -27,42 +29,69 @@ function NewActivity({
   onActivityCreated,
   activityToEdit,
 }) {
+  /* =========================================================
+     ESTADOS PRINCIPAIS
+  ========================================================= */
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
 
-<<<<<<< HEAD
   const [propertyId, setPropertyId] = useState("");
   const [plotId, setPlotId] = useState("");
 
   const [properties, setProperties] = useState([]);
   const [plots, setPlots] = useState([]);
 
-  const [managementType, setManagementType] = useState("");
-  const [managementStatus, setManagementStatus] = useState("");
+  /* =========================================================
+     MANEJO
+  ========================================================= */
+
+  const [managementType, setManagementType] =
+    useState("");
+
+  const [managementStatus, setManagementStatus] =
+    useState("");
+
+  /* =========================================================
+     OCORRÊNCIAS
+  ========================================================= */
 
   const [pest, setPest] = useState("");
   const [disease, setDisease] = useState("");
 
+  /* =========================================================
+     PRODUTOS / ESTOQUE
+  ========================================================= */
+
   const [product, setProduct] = useState("");
+  const [productId, setProductId] = useState("");
+
   const [quantity, setQuantity] = useState("");
+  const [quantityValue, setQuantityValue] =
+    useState("");
 
   const [products, setProducts] = useState([]);
+
   const [pests, setPests] = useState([]);
   const [diseases, setDiseases] = useState([]);
-=======
-  const [properties, setProperties] = useState([]);
-  const [plots, setPlots] = useState([]);
-
-  const [propertyId, setPropertyId] = useState("");
-  const [plotId, setPlotId] = useState("");
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-
-  const [photos, setPhotos] = useState([]);
 
   /* =========================================================
-<<<<<<< HEAD
+     FOTOS
+  ========================================================= */
+
+  const [photos, setPhotos] = useState([]);
+  const [photoPreviews, setPhotoPreviews] =
+    useState([]);
+
+  /* =========================================================
+     CONTROLE DE SALVAMENTO
+  ========================================================= */
+
+  const [saving, setSaving] = useState(false);
+
+  /* =========================================================
      CARREGAR BIBLIOTECA
   ========================================================= */
 
@@ -112,8 +141,6 @@ function NewActivity({
   }, []);
 
   /* =========================================================
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
      CARREGAR PROPRIEDADES
   ========================================================= */
 
@@ -122,15 +149,11 @@ function NewActivity({
       try {
         const data = await getProperties();
 
-<<<<<<< HEAD
         setProperties(
           Array.isArray(data)
             ? data
             : []
         );
-=======
-        setProperties(data || []);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       } catch (error) {
         console.error(
           "ERRO AO CARREGAR PROPRIEDADES:",
@@ -157,19 +180,16 @@ function NewActivity({
       }
 
       try {
-        const data = await getPlotsByProperty(
-          Number(propertyId)
-        );
+        const data =
+          await getPlotsByProperty(
+            Number(propertyId)
+          );
 
-<<<<<<< HEAD
         setPlots(
           Array.isArray(data)
             ? data
             : []
         );
-=======
-        setPlots(data || []);
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       } catch (error) {
         console.error(
           "ERRO AO CARREGAR TALHÕES:",
@@ -189,32 +209,36 @@ function NewActivity({
 
   useEffect(() => {
     if (activityToEdit) {
-      setTitle(activityToEdit.title || "");
-      setDate(activityToEdit.date || "");
-      setLocation(activityToEdit.location || "");
-<<<<<<< HEAD
-      setDescription(activityToEdit.description || "");
-=======
+      setTitle(
+        activityToEdit.title || ""
+      );
+
+      setDate(
+        activityToEdit.date || ""
+      );
+
+      setLocation(
+        activityToEdit.location || ""
+      );
+
       setDescription(
         activityToEdit.description || ""
       );
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
       setPropertyId(
         activityToEdit.propertyId !== null &&
-        activityToEdit.propertyId !== undefined
+          activityToEdit.propertyId !== undefined
           ? String(activityToEdit.propertyId)
           : ""
       );
 
       setPlotId(
         activityToEdit.plotId !== null &&
-        activityToEdit.plotId !== undefined
+          activityToEdit.plotId !== undefined
           ? String(activityToEdit.plotId)
           : ""
       );
 
-<<<<<<< HEAD
       setManagementType(
         activityToEdit.managementType || ""
       );
@@ -235,33 +259,32 @@ function NewActivity({
         activityToEdit.product || ""
       );
 
+      setProductId(
+        activityToEdit.productId
+          ? String(activityToEdit.productId)
+          : ""
+      );
+
       setQuantity(
         activityToEdit.quantity || ""
       );
 
-      /*
-       * As fotos antigas continuam vinculadas
-       * à atividade.
-       *
-       * Aqui entram somente novas fotos.
-       */
+      setQuantityValue(
+        activityToEdit.quantityValue !==
+          undefined &&
+          activityToEdit.quantityValue !== null
+          ? String(
+              activityToEdit.quantityValue
+            )
+          : ""
+      );
 
-=======
-      /*
-       * Fotos já salvas permanecem vinculadas
-       * à atividade e serão exibidas na tela
-       * de detalhes.
-       *
-       * Aqui entram somente novas fotos.
-       */
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       setPhotos([]);
     } else {
       setTitle("");
       setDate("");
       setLocation("");
       setDescription("");
-<<<<<<< HEAD
 
       setPropertyId("");
       setPlotId("");
@@ -273,32 +296,151 @@ function NewActivity({
       setDisease("");
 
       setProduct("");
-      setQuantity("");
+      setProductId("");
 
-=======
-      setPropertyId("");
-      setPlotId("");
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+      setQuantity("");
+      setQuantityValue("");
+
       setPhotos([]);
     }
   }, [activityToEdit]);
+
+  /* =========================================================
+     COMPATIBILIDADE COM DIÁRIOS ANTIGOS
+  ========================================================= */
+
+  useEffect(() => {
+    if (!activityToEdit) {
+      return;
+    }
+
+    if (
+      !productId &&
+      activityToEdit.product &&
+      products.length > 0
+    ) {
+      const matchingProduct =
+        products.find(
+          (item) =>
+            String(item.name)
+              .trim()
+              .toLowerCase() ===
+            String(
+              activityToEdit.product
+            )
+              .trim()
+              .toLowerCase()
+        );
+
+      if (matchingProduct) {
+        setProductId(
+          String(matchingProduct.id)
+        );
+      }
+    }
+  }, [
+    activityToEdit,
+    products,
+    productId,
+  ]);
+
+  /* =========================================================
+     CRIAR PRÉ-VISUALIZAÇÕES DAS FOTOS
+  ========================================================= */
+
+  useEffect(() => {
+    const previews = photos.map(
+      (photo) => ({
+        file: photo,
+        url: URL.createObjectURL(photo),
+      })
+    );
+
+    setPhotoPreviews(previews);
+
+    return () => {
+      previews.forEach(
+        (preview) => {
+          URL.revokeObjectURL(
+            preview.url
+          );
+        }
+      );
+    };
+  }, [photos]);
 
   /* =========================================================
      PROPRIEDADE
   ========================================================= */
 
   function handlePropertyChange(event) {
-    const value = event.target.value;
+    const value =
+      event.target.value;
 
     setPropertyId(value);
 
-    // Ao trocar a propriedade,
-    // o talhão anterior deixa de ser válido.
-<<<<<<< HEAD
-
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
     setPlotId("");
+  }
+
+  /* =========================================================
+     PRODUTO
+  ========================================================= */
+
+  function handleProductChange(event) {
+    const selectedId =
+      event.target.value;
+
+    setProductId(selectedId);
+
+    if (!selectedId) {
+      setProduct("");
+      setQuantity("");
+      setQuantityValue("");
+      return;
+    }
+
+    const selectedProduct =
+      products.find(
+        (item) =>
+          String(item.id) ===
+          String(selectedId)
+      );
+
+    if (!selectedProduct) {
+      setProduct("");
+      return;
+    }
+
+    setProduct(
+      selectedProduct.name
+    );
+  }
+
+  function handleQuantityChange(event) {
+    const value =
+      event.target.value;
+
+    setQuantityValue(value);
+
+    const selectedProduct =
+      products.find(
+        (item) =>
+          String(item.id) ===
+          String(productId)
+      );
+
+    if (
+      selectedProduct &&
+      value !== ""
+    ) {
+      setQuantity(
+        `${value} ${
+          selectedProduct.unit || ""
+        }`.trim()
+      );
+    } else {
+      setQuantity(value);
+    }
   }
 
   /* =========================================================
@@ -306,30 +448,594 @@ function NewActivity({
   ========================================================= */
 
   function handlePhotoChange(event) {
-    const selectedFiles = Array.from(
-      event.target.files || []
-    );
+    const selectedFiles =
+      Array.from(
+        event.target.files || []
+      );
 
-    if (selectedFiles.length === 0) {
+    if (
+      selectedFiles.length === 0
+    ) {
       return;
     }
 
-    setPhotos((currentPhotos) => [
-      ...currentPhotos,
-      ...selectedFiles,
-    ]);
+    setPhotos(
+      (currentPhotos) => [
+        ...currentPhotos,
+        ...selectedFiles,
+      ]
+    );
 
-    // Permite selecionar novamente a mesma foto.
     event.target.value = "";
   }
 
   function removePhoto(index) {
-    setPhotos((currentPhotos) =>
-      currentPhotos.filter(
-        (_, photoIndex) =>
-          photoIndex !== index
-      )
+    setPhotos(
+      (currentPhotos) =>
+        currentPhotos.filter(
+          (_, photoIndex) =>
+            photoIndex !== index
+        )
     );
+  }
+
+  /* =========================================================
+     VERIFICAR ESTOQUE
+  ========================================================= */
+
+  async function validateStockForNewActivity() {
+    if (!productId) {
+      return null;
+    }
+
+    const amount =
+      Number(quantityValue);
+
+    if (!amount || amount <= 0) {
+      throw new Error(
+        "Informe uma quantidade válida para o produto."
+      );
+    }
+
+    const selectedProduct =
+      await getProductById(
+        productId
+      );
+
+    if (!selectedProduct) {
+      throw new Error(
+        "O produto selecionado não foi encontrado no estoque."
+      );
+    }
+
+    const currentStock =
+      Number(
+        selectedProduct.stock
+      ) || 0;
+
+    if (amount > currentStock) {
+      throw new Error(
+        `Estoque insuficiente para "${selectedProduct.name}". Disponível: ${currentStock} ${selectedProduct.unit || ""}.`
+      );
+    }
+
+    return selectedProduct;
+  }
+
+  /* =========================================================
+     PRODUTO SELECIONADO
+  ========================================================= */
+
+  const selectedProduct =
+    products.find(
+      (item) =>
+        String(item.id) ===
+        String(productId)
+    );
+
+  /* =========================================================
+     PROPRIEDADE SELECIONADA
+  ========================================================= */
+
+  const selectedProperty =
+    properties.find(
+      (item) =>
+        String(item.id) ===
+        String(propertyId)
+    );
+
+  /* =========================================================
+     TALHÃO SELECIONADO
+  ========================================================= */
+
+  const selectedPlot =
+    plots.find(
+      (item) =>
+        String(item.id) ===
+        String(plotId)
+    );
+
+  /* =========================================================
+     INFORMAÇÕES DA ORIGEM DO ESTOQUE
+  ========================================================= */
+
+  function getStockMetadata() {
+    return {
+      source: "diario",
+
+      activityId:
+        activityToEdit?.id || null,
+
+      activityTitle:
+        title?.trim() || "",
+
+      propertyId:
+        propertyId
+          ? Number(propertyId)
+          : null,
+
+      propertyName:
+        selectedProperty?.name || "",
+
+      plotId:
+        plotId
+          ? Number(plotId)
+          : null,
+
+      plotName:
+        selectedPlot?.name || "",
+    };
+  }
+
+  /* =========================================================
+     AJUSTAR ESTOQUE NA EDIÇÃO
+  ========================================================= */
+
+  async function adjustStockForEdit() {
+    /*
+      Se o registro antigo não possui
+      productId ou quantityValue,
+      não fazemos ajuste retroativo.
+    */
+
+    if (
+      !activityToEdit ||
+      !activityToEdit.productId ||
+      activityToEdit.quantityValue ===
+        undefined ||
+      activityToEdit.quantityValue ===
+        null
+    ) {
+      /*
+        Se o usuário adicionou um produto
+        novo a um registro antigo,
+        tratamos como nova saída.
+      */
+
+      if (productId) {
+        const newAmount =
+          Number(quantityValue);
+
+        if (
+          !newAmount ||
+          newAmount <= 0
+        ) {
+          throw new Error(
+            "Informe uma quantidade válida para o produto."
+          );
+        }
+
+        const newProduct =
+          await getProductById(
+            productId
+          );
+
+        if (!newProduct) {
+          throw new Error(
+            "Produto selecionado não encontrado."
+          );
+        }
+
+        const currentStock =
+          Number(
+            newProduct.stock
+          ) || 0;
+
+        if (
+          newAmount >
+          currentStock
+        ) {
+          throw new Error(
+            `Estoque insuficiente para "${newProduct.name}". Disponível: ${currentStock} ${newProduct.unit || ""}.`
+          );
+        }
+
+        await removeStock(
+          newProduct.id,
+          newAmount,
+          `Uso no diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+
+        return {
+          type: "new",
+
+          productId:
+            newProduct.id,
+
+          quantity:
+            newAmount,
+        };
+      }
+
+      return null;
+    }
+
+    const oldProductId =
+      Number(
+        activityToEdit.productId
+      );
+
+    const oldQuantity =
+      Number(
+        activityToEdit.quantityValue
+      ) || 0;
+
+    const newProductId =
+      productId
+        ? Number(productId)
+        : null;
+
+    const newQuantity =
+      productId
+        ? Number(quantityValue) || 0
+        : 0;
+
+    /* =======================================================
+       REMOVER PRODUTO DO DIÁRIO
+    ======================================================= */
+
+    if (!newProductId) {
+      if (
+        oldProductId &&
+        oldQuantity > 0
+      ) {
+        await addStock(
+          oldProductId,
+          oldQuantity,
+          `Estorno de uso do diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+
+        return {
+          type: "remove",
+
+          productId:
+            oldProductId,
+
+          quantity:
+            oldQuantity,
+        };
+      }
+
+      return null;
+    }
+
+    /* =======================================================
+       PRODUTO NÃO MUDOU
+    ======================================================= */
+
+    if (
+      oldProductId ===
+      newProductId
+    ) {
+      const difference =
+        newQuantity -
+        oldQuantity;
+
+      if (difference === 0) {
+        return null;
+      }
+
+      /* =====================================================
+         AUMENTOU A QUANTIDADE
+      ===================================================== */
+
+      if (difference > 0) {
+        const currentProduct =
+          await getProductById(
+            newProductId
+          );
+
+        if (!currentProduct) {
+          throw new Error(
+            "Produto não encontrado."
+          );
+        }
+
+        const currentStock =
+          Number(
+            currentProduct.stock
+          ) || 0;
+
+        if (
+          difference >
+          currentStock
+        ) {
+          throw new Error(
+            `Estoque insuficiente para aumentar a quantidade. Disponível: ${currentStock} ${currentProduct.unit || ""}.`
+          );
+        }
+
+        await removeStock(
+          newProductId,
+          difference,
+          `Ajuste de uso no diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+
+        return {
+          type: "increase",
+
+          productId:
+            newProductId,
+
+          quantity:
+            difference,
+        };
+      }
+
+      /* =====================================================
+         DIMINUIU A QUANTIDADE
+      ===================================================== */
+
+      const returnedQuantity =
+        Math.abs(
+          difference
+        );
+
+      await addStock(
+        newProductId,
+        returnedQuantity,
+        `Estorno de quantidade no diário: ${title.trim()}`,
+        getStockMetadata()
+      );
+
+      return {
+        type: "decrease",
+
+        productId:
+          newProductId,
+
+        quantity:
+          returnedQuantity,
+      };
+    }
+
+    /* =======================================================
+       PRODUTO MUDOU
+    ======================================================= */
+
+    if (
+      oldProductId &&
+      oldQuantity > 0
+    ) {
+      await addStock(
+        oldProductId,
+        oldQuantity,
+        `Estorno por troca de produto no diário: ${title.trim()}`,
+        getStockMetadata()
+      );
+    }
+
+    if (
+      !newQuantity ||
+      newQuantity <= 0
+    ) {
+      return {
+        type: "change-remove-new",
+
+        oldProductId,
+
+        oldQuantity,
+      };
+    }
+
+    const newProduct =
+      await getProductById(
+        newProductId
+      );
+
+    if (!newProduct) {
+      /*
+        Tenta restaurar o estado anterior.
+      */
+
+      if (
+        oldProductId &&
+        oldQuantity > 0
+      ) {
+        await removeStock(
+          oldProductId,
+          oldQuantity,
+          `Reversão de troca de produto no diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+      }
+
+      throw new Error(
+        "Novo produto não encontrado."
+      );
+    }
+
+    const currentStock =
+      Number(
+        newProduct.stock
+      ) || 0;
+
+    if (
+      newQuantity >
+      currentStock
+    ) {
+      /*
+        Devolve o produto antigo
+        caso a troca não possa
+        ser concluída.
+      */
+
+      if (
+        oldProductId &&
+        oldQuantity > 0
+      ) {
+        await removeStock(
+          oldProductId,
+          oldQuantity,
+          `Reversão de troca de produto no diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+      }
+
+      throw new Error(
+        `Estoque insuficiente para "${newProduct.name}". Disponível: ${currentStock} ${newProduct.unit || ""}.`
+      );
+    }
+
+    await removeStock(
+      newProductId,
+      newQuantity,
+      `Uso no diário: ${title.trim()}`,
+      getStockMetadata()
+    );
+
+    return {
+      type: "change",
+
+      oldProductId,
+
+      oldQuantity,
+
+      newProductId,
+
+      newQuantity,
+    };
+  }
+
+  /* =========================================================
+     DESFAZER AJUSTE DE ESTOQUE EM CASO DE ERRO
+  ========================================================= */
+
+  async function rollbackStockAdjustment(
+    adjustment
+  ) {
+    if (!adjustment) {
+      return;
+    }
+
+    try {
+      if (
+        adjustment.type ===
+        "new"
+      ) {
+        await addStock(
+          adjustment.productId,
+          adjustment.quantity,
+          `Estorno por erro ao salvar diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+      }
+
+      if (
+        adjustment.type ===
+        "remove"
+      ) {
+        await removeStock(
+          adjustment.productId,
+          adjustment.quantity,
+          `Reversão de estorno por erro no diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+      }
+
+      if (
+        adjustment.type ===
+        "increase"
+      ) {
+        await addStock(
+          adjustment.productId,
+          adjustment.quantity,
+          `Estorno de ajuste por erro no diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+      }
+
+      if (
+        adjustment.type ===
+        "decrease"
+      ) {
+        await removeStock(
+          adjustment.productId,
+          adjustment.quantity,
+          `Reversão de ajuste por erro no diário: ${title.trim()}`,
+          getStockMetadata()
+        );
+      }
+
+      if (
+        adjustment.type ===
+        "change"
+      ) {
+        if (
+          adjustment.newProductId &&
+          adjustment.newQuantity >
+            0
+        ) {
+          await addStock(
+            adjustment.newProductId,
+            adjustment.newQuantity,
+            `Estorno por erro ao salvar troca no diário: ${title.trim()}`,
+            getStockMetadata()
+          );
+        }
+
+        if (
+          adjustment.oldProductId &&
+          adjustment.oldQuantity >
+            0
+        ) {
+          await removeStock(
+            adjustment.oldProductId,
+            adjustment.oldQuantity,
+            `Reversão por erro ao salvar troca no diário: ${title.trim()}`,
+            getStockMetadata()
+          );
+        }
+      }
+
+      if (
+        adjustment.type ===
+        "change-remove-new"
+      ) {
+        if (
+          adjustment.oldProductId &&
+          adjustment.oldQuantity >
+            0
+        ) {
+          await removeStock(
+            adjustment.oldProductId,
+            adjustment.oldQuantity,
+            `Reversão por erro na troca do diário: ${title.trim()}`,
+            getStockMetadata()
+          );
+        }
+      }
+    } catch (
+      rollbackError
+    ) {
+      console.error(
+        "ERRO AO REVERTER ESTOQUE:",
+        rollbackError
+      );
+    }
   }
 
   /* =========================================================
@@ -339,45 +1045,196 @@ function NewActivity({
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (saving) {
+      return;
+    }
+
+    if (productId) {
+      const amount =
+        Number(quantityValue);
+
+      if (
+        !amount ||
+        amount <= 0
+      ) {
+        alert(
+          "Informe uma quantidade válida para o produto utilizado."
+        );
+
+        return;
+      }
+    }
+
+    const selectedProduct =
+      productId
+        ? products.find(
+            (item) =>
+              String(item.id) ===
+              String(productId)
+          )
+        : null;
+
+    const formattedQuantity =
+      selectedProduct &&
+      quantityValue !== ""
+        ? `${quantityValue} ${
+            selectedProduct.unit ||
+            ""
+          }`.trim()
+        : quantity;
+
     const activity = {
-      title: title.trim(),
+      title:
+        title.trim(),
+
       date,
-      location: location.trim(),
-      description: description.trim(),
 
-      propertyId: propertyId
-        ? Number(propertyId)
-        : null,
+      location:
+        location.trim(),
 
-      plotId: plotId
-        ? Number(plotId)
-        : null,
-<<<<<<< HEAD
+      description:
+        description.trim(),
+
+      propertyId:
+        propertyId
+          ? Number(propertyId)
+          : null,
+
+      plotId:
+        plotId
+          ? Number(plotId)
+          : null,
 
       managementType:
         managementType.trim(),
 
       managementStatus,
 
-      pest: pest.trim(),
+      pest:
+        pest.trim(),
 
-      disease: disease.trim(),
+      disease:
+        disease.trim(),
 
-      product: product.trim(),
+      /*
+        Mantemos o nome para
+        compatibilidade.
+      */
+      product:
+        selectedProduct?.name ||
+        product.trim(),
 
-      quantity: quantity.trim(),
-=======
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+      /*
+        Vínculo com o estoque.
+      */
+      productId:
+        productId
+          ? Number(productId)
+          : null,
+
+      /*
+        Texto antigo.
+      */
+      quantity:
+        formattedQuantity,
+
+      /*
+        Valor numérico.
+      */
+      quantityValue:
+        productId
+          ? Number(
+              quantityValue
+            )
+          : null,
     };
 
+    let stockAdjustment =
+      null;
+
     try {
+      setSaving(true);
+
       let savedActivity;
 
       /* =====================================================
-         EDITAR
+         NOVA ATIVIDADE
       ===================================================== */
 
-      if (activityToEdit) {
+      if (!activityToEdit) {
+        /*
+          Primeiro verifica o estoque.
+        */
+
+        if (productId) {
+          await validateStockForNewActivity();
+        }
+
+        /*
+          Salva o diário.
+        */
+
+        savedActivity =
+          await createActivity(
+            activity
+          );
+
+        /*
+          Registra a saída no estoque
+          com rastreabilidade.
+        */
+
+        if (productId) {
+          const amount =
+            Number(
+              quantityValue
+            );
+
+          await removeStock(
+            productId,
+            amount,
+            `Uso no diário: ${title.trim()}`,
+            {
+              ...getStockMetadata(),
+
+              /*
+                Agora conseguimos guardar
+                o ID real da atividade criada.
+              */
+              activityId:
+                savedActivity?.id ||
+                null,
+            }
+          );
+
+          stockAdjustment = {
+            type: "new",
+
+            productId:
+              Number(productId),
+
+            quantity:
+              amount,
+          };
+        }
+      }
+
+      /* =====================================================
+         EDITAR ATIVIDADE
+      ===================================================== */
+
+      else {
+        /*
+          Ajusta o estoque pela diferença.
+        */
+
+        stockAdjustment =
+          await adjustStockForEdit();
+
+        /*
+          Atualiza o diário.
+        */
+
         await updateActivity(
           activityToEdit.id,
           activity
@@ -387,15 +1244,6 @@ function NewActivity({
           ...activityToEdit,
           ...activity,
         };
-      }
-
-      /* =====================================================
-         NOVA ATIVIDADE
-      ===================================================== */
-
-      else {
-        savedActivity =
-          await createActivity(activity);
       }
 
       /* =====================================================
@@ -432,18 +1280,29 @@ function NewActivity({
         error
       );
 
+      /*
+        Se o estoque já foi alterado
+        e alguma etapa posterior falhou,
+        tenta desfazer.
+      */
+
+      if (stockAdjustment) {
+        await rollbackStockAdjustment(
+          stockAdjustment
+        );
+      }
+
       alert(
-        "Erro ao salvar a atividade. Veja o Console (F12)."
+        error?.message ||
+          "Erro ao salvar a atividade. Veja o Console (F12)."
       );
+    } finally {
+      setSaving(false);
     }
   }
 
   /* =========================================================
-<<<<<<< HEAD
      RENDER
-=======
-     TELA
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
   ========================================================= */
 
   return (
@@ -454,10 +1313,6 @@ function NewActivity({
       ===================================================== */}
 
       <header className="page-heading">
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         <div className="page-heading-content">
 
           <span className="home-label">
@@ -477,15 +1332,8 @@ function NewActivity({
           </p>
 
         </div>
-<<<<<<< HEAD
       </header>
 
-=======
-
-      </header>
-
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
       {/* =====================================================
           FORMULÁRIO
       ===================================================== */}
@@ -519,13 +1367,7 @@ function NewActivity({
 
           </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           <div className="form-grid">
-
-            {/* NOME */}
 
             <div className="form-group full">
 
@@ -539,18 +1381,14 @@ function NewActivity({
                 placeholder="Ex.: Visita à propriedade"
                 value={title}
                 onChange={(event) =>
-                  setTitle(event.target.value)
+                  setTitle(
+                    event.target.value
+                  )
                 }
                 required
               />
 
             </div>
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-            {/* DATA */}
 
             <div className="form-group">
 
@@ -563,18 +1401,14 @@ function NewActivity({
                 type="date"
                 value={date}
                 onChange={(event) =>
-                  setDate(event.target.value)
+                  setDate(
+                    event.target.value
+                  )
                 }
                 required
               />
 
             </div>
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-            {/* LOCAL */}
 
             <div className="form-group">
 
@@ -588,17 +1422,13 @@ function NewActivity({
                 placeholder="Ex.: Fazenda Boa Vista"
                 value={location}
                 onChange={(event) =>
-                  setLocation(event.target.value)
+                  setLocation(
+                    event.target.value
+                  )
                 }
               />
 
             </div>
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-            {/* PROPRIEDADE */}
 
             <div className="form-group">
 
@@ -609,31 +1439,33 @@ function NewActivity({
               <select
                 id="property"
                 value={propertyId}
-                onChange={handlePropertyChange}
+                onChange={
+                  handlePropertyChange
+                }
               >
 
                 <option value="">
                   Selecione uma propriedade
                 </option>
 
-                {properties.map((property) => (
-                  <option
-                    key={property.id}
-                    value={property.id}
-                  >
-                    {property.name}
-                  </option>
-                ))}
+                {properties.map(
+                  (property) => (
+                    <option
+                      key={
+                        property.id
+                      }
+                      value={
+                        property.id
+                      }
+                    >
+                      {property.name}
+                    </option>
+                  )
+                )}
 
               </select>
 
             </div>
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-            {/* TALHÃO */}
 
             <div className="form-group">
 
@@ -645,7 +1477,9 @@ function NewActivity({
                 id="plot"
                 value={plotId}
                 onChange={(event) =>
-                  setPlotId(event.target.value)
+                  setPlotId(
+                    event.target.value
+                  )
                 }
                 disabled={!propertyId}
               >
@@ -656,20 +1490,21 @@ function NewActivity({
                     : "Selecione uma propriedade primeiro"}
                 </option>
 
-                {plots.map((plot) => (
-                  <option
-                    key={plot.id}
-                    value={plot.id}
-                  >
-                    {plot.name}
-                  </option>
-                ))}
+                {plots.map(
+                  (plot) => (
+                    <option
+                      key={plot.id}
+                      value={plot.id}
+                    >
+                      {plot.name}
+                    </option>
+                  )
+                )}
 
               </select>
 
             </div>
 
-<<<<<<< HEAD
           </div>
 
         </section>
@@ -687,6 +1522,7 @@ function NewActivity({
             </div>
 
             <div>
+
               <h3>
                 Manejo
               </h3>
@@ -694,13 +1530,12 @@ function NewActivity({
               <p>
                 Informe o tipo e o andamento do manejo.
               </p>
+
             </div>
 
           </div>
 
           <div className="form-grid">
-
-            {/* TIPO DE MANEJO */}
 
             <div className="form-group">
 
@@ -722,8 +1557,6 @@ function NewActivity({
 
             </div>
 
-            {/* STATUS */}
-
             <div className="form-group">
 
               <label htmlFor="managementStatus">
@@ -732,7 +1565,9 @@ function NewActivity({
 
               <select
                 id="managementStatus"
-                value={managementStatus}
+                value={
+                  managementStatus
+                }
                 onChange={(event) =>
                   setManagementStatus(
                     event.target.value
@@ -777,6 +1612,7 @@ function NewActivity({
             </div>
 
             <div>
+
               <h3>
                 Ocorrências
               </h3>
@@ -784,13 +1620,12 @@ function NewActivity({
               <p>
                 Registre pragas ou doenças observadas.
               </p>
+
             </div>
 
           </div>
 
           <div className="form-grid">
-
-            {/* PRAGA */}
 
             <div className="form-group">
 
@@ -802,7 +1637,9 @@ function NewActivity({
                 id="pest"
                 value={pest}
                 onChange={(event) =>
-                  setPest(event.target.value)
+                  setPest(
+                    event.target.value
+                  )
                 }
               >
 
@@ -810,20 +1647,20 @@ function NewActivity({
                   Selecione uma praga
                 </option>
 
-                {pests.map((item) => (
-                  <option
-                    key={item.id}
-                    value={item.name}
-                  >
-                    {item.name}
-                  </option>
-                ))}
+                {pests.map(
+                  (item) => (
+                    <option
+                      key={item.id}
+                      value={item.name}
+                    >
+                      {item.name}
+                    </option>
+                  )
+                )}
 
               </select>
 
             </div>
-
-            {/* DOENÇA */}
 
             <div className="form-group">
 
@@ -835,7 +1672,9 @@ function NewActivity({
                 id="disease"
                 value={disease}
                 onChange={(event) =>
-                  setDisease(event.target.value)
+                  setDisease(
+                    event.target.value
+                  )
                 }
               >
 
@@ -843,14 +1682,16 @@ function NewActivity({
                   Selecione uma doença
                 </option>
 
-                {diseases.map((item) => (
-                  <option
-                    key={item.id}
-                    value={item.name}
-                  >
-                    {item.name}
-                  </option>
-                ))}
+                {diseases.map(
+                  (item) => (
+                    <option
+                      key={item.id}
+                      value={item.name}
+                    >
+                      {item.name}
+                    </option>
+                  )
+                )}
 
               </select>
 
@@ -861,7 +1702,7 @@ function NewActivity({
         </section>
 
         {/* ===================================================
-            PRODUTO
+            PRODUTO / ESTOQUE
         =================================================== */}
 
         <section className="form-section">
@@ -873,20 +1714,20 @@ function NewActivity({
             </div>
 
             <div>
+
               <h3>
                 Produto utilizado
               </h3>
 
               <p>
-                Registre o produto e a quantidade utilizada.
+                Registre o produto e a quantidade retirada do estoque.
               </p>
+
             </div>
 
           </div>
 
           <div className="form-grid">
-
-            {/* PRODUTO */}
 
             <div className="form-group">
 
@@ -896,46 +1737,95 @@ function NewActivity({
 
               <select
                 id="product"
-                value={product}
-                onChange={(event) =>
-                  setProduct(event.target.value)
+                value={productId}
+                onChange={
+                  handleProductChange
                 }
               >
 
                 <option value="">
-                  Selecione um produto
+                  Nenhum produto
                 </option>
 
-                {products.map((item) => (
-                  <option
-                    key={item.id}
-                    value={item.name}
-                  >
-                    {item.name}
-                  </option>
-                ))}
+                {products.map(
+                  (item) => (
+                    <option
+                      key={item.id}
+                      value={item.id}
+                    >
+                      {item.name}
+                    </option>
+                  )
+                )}
 
               </select>
 
             </div>
 
-            {/* QUANTIDADE */}
-
             <div className="form-group">
 
               <label htmlFor="quantity">
-                Quantidade
+                Quantidade utilizada
               </label>
 
-              <input
-                id="quantity"
-                type="text"
-                placeholder="Ex.: 20 kg"
-                value={quantity}
-                onChange={(event) =>
-                  setQuantity(event.target.value)
-                }
-              />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+
+                <input
+                  id="quantity"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Ex.: 20"
+                  value={quantityValue}
+                  onChange={
+                    handleQuantityChange
+                  }
+                  disabled={!productId}
+                />
+
+                {selectedProduct && (
+                  <span
+                    style={{
+                      whiteSpace:
+                        "nowrap",
+                      fontWeight: "600",
+                      color: "#555",
+                    }}
+                  >
+                    {selectedProduct.unit}
+                  </span>
+                )}
+
+              </div>
+
+              {selectedProduct && (
+                <small
+                  style={{
+                    display: "block",
+                    marginTop: "6px",
+                    color: "#666",
+                  }}
+                >
+                  Estoque disponível:{" "}
+
+                  <strong>
+                    {
+                      Number(
+                        selectedProduct.stock
+                      ) || 0
+                    }{" "}
+                    {
+                      selectedProduct.unit
+                    }
+                  </strong>
+                </small>
+              )}
 
             </div>
 
@@ -944,7 +1834,7 @@ function NewActivity({
         </section>
 
         {/* ===================================================
-            DESCRIÇÃO
+            OBSERVAÇÕES
         =================================================== */}
 
         <section className="form-section">
@@ -952,10 +1842,11 @@ function NewActivity({
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              📝
+              📋
             </div>
 
             <div>
+
               <h3>
                 Observações
               </h3>
@@ -963,15 +1854,12 @@ function NewActivity({
               <p>
                 Descreva o que foi realizado ou observado.
               </p>
+
             </div>
 
           </div>
 
           <div className="form-grid">
-=======
-
-            {/* DESCRIÇÃO */}
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
 
             <div className="form-group full">
 
@@ -997,10 +1885,6 @@ function NewActivity({
 
         </section>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         {/* ===================================================
             FOTOS
         =================================================== */}
@@ -1014,10 +1898,7 @@ function NewActivity({
             </div>
 
             <div>
-<<<<<<< HEAD
-=======
 
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
               <h3>
                 Fotos da atividade
               </h3>
@@ -1025,19 +1906,10 @@ function NewActivity({
               <p>
                 Registre visualmente o que foi observado no campo.
               </p>
-<<<<<<< HEAD
-=======
 
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
             </div>
 
           </div>
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-          {/* UPLOAD */}
 
           <label
             htmlFor="activity-photos"
@@ -1054,27 +1926,18 @@ function NewActivity({
 
           </label>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           <input
             id="activity-photos"
             type="file"
             accept="image/*"
             multiple
-            onChange={handlePhotoChange}
+            onChange={
+              handlePhotoChange
+            }
             className="photo-input"
           />
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-          {/* PRÉ-VISUALIZAÇÃO */}
-
           {photos.length > 0 && (
-
             <div className="photo-preview-area">
 
               <div className="photo-preview-heading">
@@ -1089,73 +1952,51 @@ function NewActivity({
 
               </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
               <div className="photo-preview-grid">
 
-                {photos.map(
-                  (photo, index) => {
+                {photoPreviews.map(
+                  (
+                    preview,
+                    index
+                  ) => (
+                    <div
+                      className="photo-preview"
+                      key={`${preview.file.name}-${index}`}
+                    >
 
-                    const previewUrl =
-                      URL.createObjectURL(
-                        photo
-                      );
+                      <img
+                        src={preview.url}
+                        alt={
+                          preview.file
+                            .name ||
+                          "Pré-visualização"
+                        }
+                      />
 
-                    return (
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-                      <div
-                        className="photo-preview"
-                        key={`${photo.name}-${index}`}
+                      <button
+                        type="button"
+                        className="remove-photo-button"
+                        onClick={() =>
+                          removePhoto(
+                            index
+                          )
+                        }
+                        aria-label="Remover foto"
+                        title="Remover foto"
                       >
+                        ×
+                      </button>
 
-                        <img
-                          src={previewUrl}
-                          alt={
-                            photo.name ||
-                            "Pré-visualização"
-                          }
-                        />
-
-                        <button
-                          type="button"
-                          className="remove-photo-button"
-                          onClick={() =>
-                            removePhoto(index)
-                          }
-                          aria-label="Remover foto"
-                          title="Remover foto"
-                        >
-                          ×
-                        </button>
-
-                      </div>
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-                    );
-                  }
+                    </div>
+                  )
                 )}
 
               </div>
 
             </div>
-
           )}
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
-          {/* CONTADOR */}
-
           {photos.length > 0 && (
-
             <p className="photos-selected-count">
 
               {photos.length}
@@ -1165,15 +2006,10 @@ function NewActivity({
                 : " fotos prontas para serem salvas"}
 
             </p>
-
           )}
 
         </section>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
         {/* ===================================================
             AÇÕES
         =================================================== */}
@@ -1184,29 +2020,21 @@ function NewActivity({
             type="button"
             className="cancel-button"
             onClick={onCancel}
+            disabled={saving}
           >
             Cancelar
           </button>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
           <button
             type="submit"
             className="primary-button"
+            disabled={saving}
           >
-<<<<<<< HEAD
-            {activityToEdit
-              ? "Salvar alterações"
-              : "Salvar atividade"}
-=======
-
-            {activityToEdit
-              ? "Salvar alterações"
-              : "Salvar atividade"}
-
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
+            {saving
+              ? "Salvando..."
+              : activityToEdit
+                ? "Salvar alterações"
+                : "Salvar atividade"}
           </button>
 
         </div>
@@ -1217,8 +2045,4 @@ function NewActivity({
   );
 }
 
-<<<<<<< HEAD
 export default NewActivity;
-=======
-export default NewActivity;
->>>>>>> 1a50bfbf5bd6e360b7dd9a807481a9661ef5ead7
