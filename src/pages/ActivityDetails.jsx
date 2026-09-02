@@ -1,19 +1,40 @@
 import { useEffect, useState } from "react";
 
 import { getPropertyById } from "../services/propertyService";
+
 import { getPlotById } from "../services/plotService";
+
 import { getPhotosByActivity } from "../services/photoService";
+
 import { getProductById } from "../services/productService";
+
+import { getCultures } from "../services/cultureService";
 
 import "../styles/activityDetails.css";
 
-function ActivityDetails({ activity, onBack, onEdit }) {
+function ActivityDetails({
+  activity,
+  onBack,
+  onEdit,
+}) {
   const [property, setProperty] = useState(null);
+
   const [plot, setPlot] = useState(null);
+
+  const [cultureData, setCultureData] =
+    useState(null);
+
+  const [cultures, setCultures] = useState([]);
+
   const [photos, setPhotos] = useState([]);
+
   const [photoUrls, setPhotoUrls] = useState([]);
-  const [productData, setProductData] = useState(null);
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
+
+  const [productData, setProductData] =
+    useState(null);
+
+  const [selectedPhotoIndex, setSelectedPhotoIndex] =
+    useState(null);
 
   /* =========================================================
      CARREGAR DADOS
@@ -28,6 +49,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
         setPlot(null);
         setPhotos([]);
         setProductData(null);
+        setCultureData(null);
         return;
       }
 
@@ -36,39 +58,61 @@ function ActivityDetails({ activity, onBack, onEdit }) {
         setPlot(null);
         setPhotos([]);
         setProductData(null);
+        setCultureData(null);
+
+        /* =====================================================
+           PROPRIEDADE
+        ===================================================== */
 
         if (activity.propertyId) {
-          const propertyData = await getPropertyById(
-            activity.propertyId
-          );
+          const propertyData =
+            await getPropertyById(
+              activity.propertyId
+            );
 
           if (!cancelled) {
-            setProperty(propertyData || null);
-          }
-        }
-
-        if (activity.plotId) {
-          const plotData = await getPlotById(
-            activity.plotId
-          );
-
-          if (!cancelled) {
-            setPlot(plotData || null);
-          }
-        }
-
-        if (activity.id) {
-          const photosData = await getPhotosByActivity(
-            activity.id
-          );
-
-          if (!cancelled) {
-            setPhotos(photosData || []);
+            setProperty(
+              propertyData || null
+            );
           }
         }
 
         /* =====================================================
-           CARREGAR PRODUTO
+           TALHÃO
+        ===================================================== */
+
+        if (activity.plotId) {
+          const plotData =
+            await getPlotById(
+              activity.plotId
+            );
+
+          if (!cancelled) {
+            setPlot(
+              plotData || null
+            );
+          }
+        }
+
+        /* =====================================================
+           FOTOS
+        ===================================================== */
+
+        if (activity.id) {
+          const photosData =
+            await getPhotosByActivity(
+              activity.id
+            );
+
+          if (!cancelled) {
+            setPhotos(
+              photosData || []
+            );
+          }
+        }
+
+        /* =====================================================
+           PRODUTO
 
            Registros novos possuem productId.
            Registros antigos continuam funcionando apenas
@@ -76,12 +120,15 @@ function ActivityDetails({ activity, onBack, onEdit }) {
         ===================================================== */
 
         if (activity.productId) {
-          const product = await getProductById(
-            activity.productId
-          );
+          const product =
+            await getProductById(
+              activity.productId
+            );
 
           if (!cancelled) {
-            setProductData(product || null);
+            setProductData(
+              product || null
+            );
           }
         }
       } catch (error) {
@@ -100,22 +147,85 @@ function ActivityDetails({ activity, onBack, onEdit }) {
   }, [activity]);
 
   /* =========================================================
+     CARREGAR CULTURAS
+  ========================================================= */
+
+  useEffect(() => {
+    async function loadCultures() {
+      try {
+        const data =
+          await getCultures();
+
+        setCultures(
+          Array.isArray(data)
+            ? data
+            : []
+        );
+      } catch (error) {
+        console.error(
+          "ERRO AO CARREGAR CULTURAS:",
+          error
+        );
+
+        setCultures([]);
+      }
+    }
+
+    loadCultures();
+  }, []);
+
+  /* =========================================================
+     LOCALIZAR CULTURA DO TALHÃO
+  ========================================================= */
+
+  useEffect(() => {
+    if (
+      !plot?.culture ||
+      cultures.length === 0
+    ) {
+      setCultureData(null);
+      return;
+    }
+
+    const matchingCulture =
+      cultures.find(
+        (culture) =>
+          String(culture.name)
+            .trim()
+            .toLowerCase() ===
+          String(plot.culture)
+            .trim()
+            .toLowerCase()
+      );
+
+    setCultureData(
+      matchingCulture || null
+    );
+  }, [plot, cultures]);
+
+  /* =========================================================
      CRIAR URLS DAS FOTOS
   ========================================================= */
 
   useEffect(() => {
     const urls = photos
-      .filter((photo) => photo?.file)
+      .filter(
+        (photo) => photo?.file
+      )
       .map((photo) => ({
         ...photo,
-        url: URL.createObjectURL(photo.file),
+        url: URL.createObjectURL(
+          photo.file
+        ),
       }));
 
     setPhotoUrls(urls);
 
     return () => {
       urls.forEach((photo) => {
-        URL.revokeObjectURL(photo.url);
+        URL.revokeObjectURL(
+          photo.url
+        );
       });
     };
   }, [photos]);
@@ -125,7 +235,9 @@ function ActivityDetails({ activity, onBack, onEdit }) {
   ========================================================= */
 
   useEffect(() => {
-    if (selectedPhotoIndex === null) {
+    if (
+      selectedPhotoIndex === null
+    ) {
       return;
     }
 
@@ -135,31 +247,44 @@ function ActivityDetails({ activity, onBack, onEdit }) {
       }
 
       if (event.key === "ArrowLeft") {
-        setSelectedPhotoIndex((current) => {
-          if (photoUrls.length === 0) {
-            return null;
-          }
+        setSelectedPhotoIndex(
+          (current) => {
+            if (
+              photoUrls.length === 0
+            ) {
+              return null;
+            }
 
-          if (current === 0) {
-            return photoUrls.length - 1;
-          }
+            if (current === 0) {
+              return (
+                photoUrls.length - 1
+              );
+            }
 
-          return current - 1;
-        });
+            return current - 1;
+          }
+        );
       }
 
       if (event.key === "ArrowRight") {
-        setSelectedPhotoIndex((current) => {
-          if (photoUrls.length === 0) {
-            return null;
-          }
+        setSelectedPhotoIndex(
+          (current) => {
+            if (
+              photoUrls.length === 0
+            ) {
+              return null;
+            }
 
-          if (current === photoUrls.length - 1) {
-            return 0;
-          }
+            if (
+              current ===
+              photoUrls.length - 1
+            ) {
+              return 0;
+            }
 
-          return current + 1;
-        });
+            return current + 1;
+          }
+        );
       }
     }
 
@@ -174,7 +299,10 @@ function ActivityDetails({ activity, onBack, onEdit }) {
         handleKeyDown
       );
     };
-  }, [selectedPhotoIndex, photoUrls.length]);
+  }, [
+    selectedPhotoIndex,
+    photoUrls.length,
+  ]);
 
   /* =========================================================
      FUNÇÕES DA GALERIA
@@ -189,31 +317,44 @@ function ActivityDetails({ activity, onBack, onEdit }) {
   }
 
   function previousPhoto() {
-    setSelectedPhotoIndex((current) => {
-      if (photoUrls.length === 0) {
-        return null;
-      }
+    setSelectedPhotoIndex(
+      (current) => {
+        if (
+          photoUrls.length === 0
+        ) {
+          return null;
+        }
 
-      if (current === 0) {
-        return photoUrls.length - 1;
-      }
+        if (current === 0) {
+          return (
+            photoUrls.length - 1
+          );
+        }
 
-      return current - 1;
-    });
+        return current - 1;
+      }
+    );
   }
 
   function nextPhoto() {
-    setSelectedPhotoIndex((current) => {
-      if (photoUrls.length === 0) {
-        return null;
-      }
+    setSelectedPhotoIndex(
+      (current) => {
+        if (
+          photoUrls.length === 0
+        ) {
+          return null;
+        }
 
-      if (current === photoUrls.length - 1) {
-        return 0;
-      }
+        if (
+          current ===
+          photoUrls.length - 1
+        ) {
+          return 0;
+        }
 
-      return current + 1;
-    });
+        return current + 1;
+      }
+    );
   }
 
   /* =========================================================
@@ -221,11 +362,21 @@ function ActivityDetails({ activity, onBack, onEdit }) {
   ========================================================= */
 
   function formatDate(date) {
-    if (!date) return "Sem data";
+    if (!date) {
+      return "Sem data";
+    }
 
-    const [year, month, day] = date.split("-");
+    const [
+      year,
+      month,
+      day,
+    ] = date.split("-");
 
-    if (!year || !month || !day) {
+    if (
+      !year ||
+      !month ||
+      !day
+    ) {
       return date;
     }
 
@@ -236,8 +387,14 @@ function ActivityDetails({ activity, onBack, onEdit }) {
     return status
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, "-");
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .replace(
+        /\s+/g,
+        "-"
+      );
   }
 
   /* =========================================================
@@ -255,11 +412,16 @@ function ActivityDetails({ activity, onBack, onEdit }) {
     */
 
     if (activity.quantityValue) {
-      const numericQuantity = Number(
-        activity.quantityValue
-      );
+      const numericQuantity =
+        Number(
+          activity.quantityValue
+        );
 
-      if (!Number.isNaN(numericQuantity)) {
+      if (
+        !Number.isNaN(
+          numericQuantity
+        )
+      ) {
         const unit =
           productData?.unit ||
           "";
@@ -270,7 +432,10 @@ function ActivityDetails({ activity, onBack, onEdit }) {
       }
     }
 
-    return activity.quantity || "Não informado";
+    return (
+      activity.quantity ||
+      "Não informado"
+    );
   }
 
   /* =========================================================
@@ -279,7 +444,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
 
   const hasProduct = Boolean(
     activity.product ||
-    activity.productId
+      activity.productId
   );
 
   /* =========================================================
@@ -288,7 +453,9 @@ function ActivityDetails({ activity, onBack, onEdit }) {
 
   const selectedPhoto =
     selectedPhotoIndex !== null
-      ? photoUrls[selectedPhotoIndex]
+      ? photoUrls[
+          selectedPhotoIndex
+        ]
       : null;
 
   /* =========================================================
@@ -307,22 +474,33 @@ function ActivityDetails({ activity, onBack, onEdit }) {
       ===================================================== */}
 
       <header className="details-header">
+
         <div className="details-header-content">
+
           <span className="details-eyebrow">
             REGISTRO DE CAMPO
           </span>
 
-          <h2>{activity.title}</h2>
+          <h2>
+            {activity.title}
+          </h2>
 
           {activity.description && (
-            <p>{activity.description}</p>
+            <p>
+              {activity.description}
+            </p>
           )}
+
         </div>
 
         <div className="details-header-badge">
+
           <span className="details-status-dot"></span>
+
           Registro salvo
+
         </div>
+
       </header>
 
       {/* =====================================================
@@ -332,11 +510,13 @@ function ActivityDetails({ activity, onBack, onEdit }) {
       <section className="activity-summary">
 
         <div className="summary-main">
+
           <div className="summary-icon">
             📋
           </div>
 
           <div>
+
             <span className="summary-label">
               ATIVIDADE
             </span>
@@ -344,25 +524,33 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             <strong className="summary-date">
               {activity.title}
             </strong>
+
           </div>
+
         </div>
 
         <div className="summary-divider"></div>
 
         <div className="summary-main">
+
           <div className="summary-mini-icon">
             📅
           </div>
 
           <div>
+
             <span className="summary-label">
               DATA
             </span>
 
             <strong className="summary-date">
-              {formatDate(activity.date)}
+              {formatDate(
+                activity.date
+              )}
             </strong>
+
           </div>
+
         </div>
 
         {activity.location && (
@@ -370,6 +558,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             <div className="summary-divider"></div>
 
             <div className="summary-location">
+
               <span className="summary-label">
                 LOCAL
               </span>
@@ -377,9 +566,11 @@ function ActivityDetails({ activity, onBack, onEdit }) {
               <strong>
                 {activity.location}
               </strong>
+
             </div>
           </>
         )}
+
       </section>
 
       {/* =====================================================
@@ -395,6 +586,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
           </div>
 
           <div>
+
             <h3>
               Informações do registro
             </h3>
@@ -402,34 +594,47 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             <p>
               Localização e vínculo da atividade
             </p>
+
           </div>
 
         </div>
 
         <div className="details-grid">
 
+          {/* DATA */}
+
           <div className="detail-item">
+
             <div className="detail-icon">
               📅
             </div>
 
             <div className="detail-content">
+
               <span className="detail-label">
                 DATA
               </span>
 
               <strong>
-                {formatDate(activity.date)}
+                {formatDate(
+                  activity.date
+                )}
               </strong>
+
             </div>
+
           </div>
 
+          {/* LOCAL */}
+
           <div className="detail-item">
+
             <div className="detail-icon">
               📍
             </div>
 
             <div className="detail-content">
+
               <span className="detail-label">
                 LOCAL
               </span>
@@ -438,15 +643,21 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 {activity.location ||
                   "Não informado"}
               </strong>
+
             </div>
+
           </div>
 
+          {/* PROPRIEDADE */}
+
           <div className="detail-item">
+
             <div className="detail-icon">
               🏡
             </div>
 
             <div className="detail-content">
+
               <span className="detail-label">
                 PROPRIEDADE
               </span>
@@ -455,15 +666,21 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 {property?.name ||
                   "Não informado"}
               </strong>
+
             </div>
+
           </div>
 
+          {/* TALHÃO */}
+
           <div className="detail-item">
+
             <div className="detail-icon">
               🌱
             </div>
 
             <div className="detail-content">
+
               <span className="detail-label">
                 TALHÃO
               </span>
@@ -472,15 +689,21 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 {plot?.name ||
                   "Não informado"}
               </strong>
+
             </div>
+
           </div>
 
+          {/* CULTURA */}
+
           <div className="detail-item">
+
             <div className="detail-icon">
               🌾
             </div>
 
             <div className="detail-content">
+
               <span className="detail-label">
                 CULTURA
               </span>
@@ -489,10 +712,109 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 {plot?.culture ||
                   "Não informado"}
               </strong>
+
             </div>
+
           </div>
 
+          {/* VARIEDADE */}
+
+          {cultureData?.variety && (
+            <div className="detail-item">
+
+              <div className="detail-icon">
+                🌿
+              </div>
+
+              <div className="detail-content">
+
+                <span className="detail-label">
+                  VARIEDADE
+                </span>
+
+                <strong>
+                  {cultureData.variety}
+                </strong>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* CICLO */}
+
+          {cultureData?.cycle && (
+            <div className="detail-item">
+
+              <div className="detail-icon">
+                🔄
+              </div>
+
+              <div className="detail-content">
+
+                <span className="detail-label">
+                  CICLO
+                </span>
+
+                <strong>
+                  {cultureData.cycle}
+                </strong>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* ÁREA */}
+
+          {plot?.area && (
+            <div className="detail-item">
+
+              <div className="detail-icon">
+                📐
+              </div>
+
+              <div className="detail-content">
+
+                <span className="detail-label">
+                  ÁREA
+                </span>
+
+                <strong>
+                  {plot.area}
+                </strong>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* SOLO */}
+
+          {plot?.soil && (
+            <div className="detail-item">
+
+              <div className="detail-icon">
+                🪨
+              </div>
+
+              <div className="detail-content">
+
+                <span className="detail-label">
+                  SOLO
+                </span>
+
+                <strong>
+                  {plot.soil}
+                </strong>
+
+              </div>
+
+            </div>
+          )}
+
         </div>
+
       </section>
 
       {/* =====================================================
@@ -511,11 +833,15 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             </div>
 
             <div>
-              <h3>Manejo</h3>
+
+              <h3>
+                Manejo
+              </h3>
 
               <p>
                 Informações sobre o manejo realizado
               </p>
+
             </div>
 
           </div>
@@ -523,6 +849,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
           <div className="details-grid">
 
             {activity.managementType && (
+
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -540,10 +867,13 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                   </strong>
 
                 </div>
+
               </div>
+
             )}
 
             {activity.managementStatus && (
+
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -565,10 +895,52 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                   </strong>
 
                 </div>
+
+              </div>
+
+            )}
+            {activity.managementPlannedDate && (
+              <div className="detail-item">
+                <div className="detail-icon">
+                  📅
+                </div>
+
+                <div className="detail-content">
+                  <span className="detail-label">
+                    DATA PREVISTA
+                  </span>
+
+                  <strong>
+                    {formatDate(
+                      activity.managementPlannedDate
+                    )}
+                  </strong>
+                </div>
+              </div>
+            )}
+
+            {activity.managementCompletedDate && (
+              <div className="detail-item">
+                <div className="detail-icon">
+                  ✅
+                </div>
+
+                <div className="detail-content">
+                  <span className="detail-label">
+                    DATA DE CONCLUSÃO
+                  </span>
+
+                  <strong>
+                    {formatDate(
+                      activity.managementCompletedDate
+                    )}
+                  </strong>
+                </div>
               </div>
             )}
 
           </div>
+
         </section>
       )}
 
@@ -588,11 +960,15 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             </div>
 
             <div>
-              <h3>Ocorrências</h3>
+
+              <h3>
+                Ocorrências
+              </h3>
 
               <p>
                 Pragas e doenças identificadas
               </p>
+
             </div>
 
           </div>
@@ -600,6 +976,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
           <div className="details-grid">
 
             {activity.pest && (
+
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -617,10 +994,13 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                   </strong>
 
                 </div>
+
               </div>
+
             )}
 
             {activity.disease && (
+
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -638,10 +1018,13 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                   </strong>
 
                 </div>
+
               </div>
+
             )}
 
           </div>
+
         </section>
       )}
 
@@ -660,6 +1043,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             </div>
 
             <div>
+
               <h3>
                 Produto utilizado
               </h3>
@@ -668,6 +1052,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 Produto retirado do estoque
                 para este registro
               </p>
+
             </div>
 
           </div>
@@ -723,6 +1108,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             {/* UNIDADE */}
 
             {productData?.unit && (
+
               <div className="detail-item">
 
                 <div className="detail-icon">
@@ -742,6 +1128,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 </div>
 
               </div>
+
             )}
 
             {/* ESTOQUE */}
@@ -797,13 +1184,16 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 lineHeight: "1.4",
               }}
             >
+
               <strong>
                 Movimentação de estoque registrada.
               </strong>
+
               <br />
 
               A quantidade utilizada nesta atividade
               foi descontada do estoque do produto.
+
             </span>
 
           </div>
@@ -825,6 +1215,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             </div>
 
             <div>
+
               <h3>
                 Produto utilizado
               </h3>
@@ -832,6 +1223,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
               <p>
                 Controle de consumo de produtos
               </p>
+
             </div>
 
           </div>
@@ -865,11 +1257,15 @@ function ActivityDetails({ activity, onBack, onEdit }) {
           </div>
 
           <div>
-            <h3>Observações</h3>
+
+            <h3>
+              Observações
+            </h3>
 
             <p>
               Informações adicionais do registro
             </p>
+
           </div>
 
         </div>
@@ -924,6 +1320,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
               </div>
 
               <div>
+
                 <h3>
                   Fotos do registro
                 </h3>
@@ -931,6 +1328,7 @@ function ActivityDetails({ activity, onBack, onEdit }) {
                 <p>
                   Imagens anexadas à atividade
                 </p>
+
               </div>
 
             </div>
@@ -949,33 +1347,41 @@ function ActivityDetails({ activity, onBack, onEdit }) {
 
           <div className="details-photo-grid">
 
-            {photoUrls.map((photo, index) => (
+            {photoUrls.map(
+              (photo, index) => (
 
-              <button
-                type="button"
-                className="details-photo"
-                key={photo.id || index}
-                onClick={() => openPhoto(index)}
-                aria-label={`Abrir foto ${
-                  index + 1
-                }`}
-              >
-
-                <img
-                  src={photo.url}
-                  alt={
-                    photo.name ||
-                    `Foto ${index + 1}`
+                <button
+                  type="button"
+                  className="details-photo"
+                  key={
+                    photo.id || index
                   }
-                />
+                  onClick={() =>
+                    openPhoto(index)
+                  }
+                  aria-label={`Abrir foto ${
+                    index + 1
+                  }`}
+                >
 
-                <span className="photo-card-icon">
-                  🔍
-                </span>
+                  <img
+                    src={photo.url}
+                    alt={
+                      photo.name ||
+                      `Foto ${
+                        index + 1
+                      }`
+                    }
+                  />
 
-              </button>
+                  <span className="photo-card-icon">
+                    🔍
+                  </span>
 
-            ))}
+                </button>
+
+              )
+            )}
 
           </div>
 
@@ -999,7 +1405,9 @@ function ActivityDetails({ activity, onBack, onEdit }) {
         <button
           type="button"
           className="details-edit-button"
-          onClick={() => onEdit(activity)}
+          onClick={() =>
+            onEdit(activity)
+          }
         >
           ✎ Editar registro
         </button>
@@ -1066,8 +1474,11 @@ function ActivityDetails({ activity, onBack, onEdit }) {
             <div className="photo-lightbox-footer">
 
               <span className="photo-lightbox-counter">
+
                 {selectedPhotoIndex + 1} /{" "}
+
                 {photoUrls.length}
+
               </span>
 
               {selectedPhoto.name && (

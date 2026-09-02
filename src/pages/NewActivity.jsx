@@ -10,6 +10,7 @@ import { addPhoto } from "../services/photoService";
 import { getProperties } from "../services/propertyService";
 
 import { getPlotsByProperty } from "../services/plotService";
+import { getCultures } from "../services/cultureService";
 
 import {
   getProducts,
@@ -44,15 +45,17 @@ function NewActivity({
   const [properties, setProperties] = useState([]);
   const [plots, setPlots] = useState([]);
 
+  const [selectedCulture, setSelectedCulture] = useState("");
+  const [cultures, setCultures] = useState([]);
+
   /* =========================================================
      MANEJO
   ========================================================= */
 
-  const [managementType, setManagementType] =
-    useState("");
-
-  const [managementStatus, setManagementStatus] =
-    useState("");
+ const [managementType, setManagementType] = useState("");
+const [managementStatus, setManagementStatus] = useState("");
+const [managementPlannedDate, setManagementPlannedDate] = useState("");
+const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
   /* =========================================================
      OCORRÊNCIAS
@@ -69,11 +72,9 @@ function NewActivity({
   const [productId, setProductId] = useState("");
 
   const [quantity, setQuantity] = useState("");
-  const [quantityValue, setQuantityValue] =
-    useState("");
+  const [quantityValue, setQuantityValue] = useState("");
 
   const [products, setProducts] = useState([]);
-
   const [pests, setPests] = useState([]);
   const [diseases, setDiseases] = useState([]);
 
@@ -82,8 +83,7 @@ function NewActivity({
   ========================================================= */
 
   const [photos, setPhotos] = useState([]);
-  const [photoPreviews, setPhotoPreviews] =
-    useState([]);
+  const [photoPreviews, setPhotoPreviews] = useState([]);
 
   /* =========================================================
      CONTROLE DE SALVAMENTO
@@ -176,14 +176,14 @@ function NewActivity({
       if (!propertyId) {
         setPlots([]);
         setPlotId("");
+        setSelectedCulture("");
         return;
       }
 
       try {
-        const data =
-          await getPlotsByProperty(
-            Number(propertyId)
-          );
+        const data = await getPlotsByProperty(
+          Number(propertyId)
+        );
 
         setPlots(
           Array.isArray(data)
@@ -202,39 +202,51 @@ function NewActivity({
 
     loadPlots();
   }, [propertyId]);
+        useEffect(() => {
+          async function loadCultures() {
+            try {
+              const data = await getCultures();
 
+              setCultures(
+                Array.isArray(data)
+                  ? data
+                  : []
+              );
+            } catch (error) {
+              console.error(
+                "ERRO AO CARREGAR CULTURAS:",
+                error
+              );
+
+              setCultures([]);
+            }
+          }
+
+          loadCultures();
+        }, []);
   /* =========================================================
      PREENCHER FORMULÁRIO NA EDIÇÃO
   ========================================================= */
 
   useEffect(() => {
     if (activityToEdit) {
-      setTitle(
-        activityToEdit.title || ""
-      );
-
-      setDate(
-        activityToEdit.date || ""
-      );
-
-      setLocation(
-        activityToEdit.location || ""
-      );
-
+      setTitle(activityToEdit.title || "");
+      setDate(activityToEdit.date || "");
+      setLocation(activityToEdit.location || "");
       setDescription(
         activityToEdit.description || ""
       );
 
       setPropertyId(
         activityToEdit.propertyId !== null &&
-          activityToEdit.propertyId !== undefined
+        activityToEdit.propertyId !== undefined
           ? String(activityToEdit.propertyId)
           : ""
       );
 
       setPlotId(
         activityToEdit.plotId !== null &&
-          activityToEdit.plotId !== undefined
+        activityToEdit.plotId !== undefined
           ? String(activityToEdit.plotId)
           : ""
       );
@@ -246,18 +258,18 @@ function NewActivity({
       setManagementStatus(
         activityToEdit.managementStatus || ""
       );
-
-      setPest(
-        activityToEdit.pest || ""
+      setManagementPlannedDate(
+        activityToEdit.managementPlannedDate || ""
       );
 
-      setDisease(
-        activityToEdit.disease || ""
+      setManagementCompletedDate(
+        activityToEdit.managementCompletedDate || ""
       );
 
-      setProduct(
-        activityToEdit.product || ""
-      );
+      setPest(activityToEdit.pest || "");
+      setDisease(activityToEdit.disease || "");
+
+      setProduct(activityToEdit.product || "");
 
       setProductId(
         activityToEdit.productId
@@ -270,14 +282,15 @@ function NewActivity({
       );
 
       setQuantityValue(
-        activityToEdit.quantityValue !==
-          undefined &&
-          activityToEdit.quantityValue !== null
+        activityToEdit.quantityValue !== undefined &&
+        activityToEdit.quantityValue !== null
           ? String(
               activityToEdit.quantityValue
             )
           : ""
       );
+
+      setSelectedCulture("");
 
       setPhotos([]);
     } else {
@@ -288,9 +301,12 @@ function NewActivity({
 
       setPropertyId("");
       setPlotId("");
+      setSelectedCulture("");
 
       setManagementType("");
       setManagementStatus("");
+      setManagementPlannedDate("");
+      setManagementCompletedDate("");
 
       setPest("");
       setDisease("");
@@ -319,18 +335,15 @@ function NewActivity({
       activityToEdit.product &&
       products.length > 0
     ) {
-      const matchingProduct =
-        products.find(
-          (item) =>
-            String(item.name)
-              .trim()
-              .toLowerCase() ===
-            String(
-              activityToEdit.product
-            )
-              .trim()
-              .toLowerCase()
-        );
+      const matchingProduct = products.find(
+        (item) =>
+          String(item.name)
+            .trim()
+            .toLowerCase() ===
+          String(activityToEdit.product)
+            .trim()
+            .toLowerCase()
+      );
 
       if (matchingProduct) {
         setProductId(
@@ -374,12 +387,11 @@ function NewActivity({
   ========================================================= */
 
   function handlePropertyChange(event) {
-    const value =
-      event.target.value;
+    const value = event.target.value;
 
     setPropertyId(value);
-
     setPlotId("");
+    setSelectedCulture("");
   }
 
   /* =========================================================
@@ -554,6 +566,12 @@ function NewActivity({
         String(item.id) ===
         String(plotId)
     );
+    const selectedCultureData =
+  cultures.find(
+    (item) =>
+      String(item.name).trim().toLowerCase() ===
+      String(selectedPlot?.culture || "").trim().toLowerCase()
+  );
 
   /* =========================================================
      INFORMAÇÕES DA ORIGEM DO ESTOQUE
@@ -592,12 +610,6 @@ function NewActivity({
   ========================================================= */
 
   async function adjustStockForEdit() {
-    /*
-      Se o registro antigo não possui
-      productId ou quantityValue,
-      não fazemos ajuste retroativo.
-    */
-
     if (
       !activityToEdit ||
       !activityToEdit.productId ||
@@ -606,12 +618,6 @@ function NewActivity({
       activityToEdit.quantityValue ===
         null
     ) {
-      /*
-        Se o usuário adicionou um produto
-        novo a um registro antigo,
-        tratamos como nova saída.
-      */
-
       if (productId) {
         const newAmount =
           Number(quantityValue);
@@ -659,10 +665,8 @@ function NewActivity({
 
         return {
           type: "new",
-
           productId:
             newProduct.id,
-
           quantity:
             newAmount,
         };
@@ -709,10 +713,8 @@ function NewActivity({
 
         return {
           type: "remove",
-
           productId:
             oldProductId,
-
           quantity:
             oldQuantity,
         };
@@ -776,10 +778,8 @@ function NewActivity({
 
         return {
           type: "increase",
-
           productId:
             newProductId,
-
           quantity:
             difference,
         };
@@ -803,10 +803,8 @@ function NewActivity({
 
       return {
         type: "decrease",
-
         productId:
           newProductId,
-
         quantity:
           returnedQuantity,
       };
@@ -834,9 +832,7 @@ function NewActivity({
     ) {
       return {
         type: "change-remove-new",
-
         oldProductId,
-
         oldQuantity,
       };
     }
@@ -847,10 +843,6 @@ function NewActivity({
       );
 
     if (!newProduct) {
-      /*
-        Tenta restaurar o estado anterior.
-      */
-
       if (
         oldProductId &&
         oldQuantity > 0
@@ -877,12 +869,6 @@ function NewActivity({
       newQuantity >
       currentStock
     ) {
-      /*
-        Devolve o produto antigo
-        caso a troca não possa
-        ser concluída.
-      */
-
       if (
         oldProductId &&
         oldQuantity > 0
@@ -909,13 +895,9 @@ function NewActivity({
 
     return {
       type: "change",
-
       oldProductId,
-
       oldQuantity,
-
       newProductId,
-
       newQuantity,
     };
   }
@@ -1028,9 +1010,7 @@ function NewActivity({
           );
         }
       }
-    } catch (
-      rollbackError
-    ) {
+    } catch (rollbackError) {
       console.error(
         "ERRO AO REVERTER ESTOQUE:",
         rollbackError
@@ -1110,37 +1090,28 @@ function NewActivity({
 
       managementStatus,
 
+      managementPlannedDate,
+
+      managementCompletedDate,  
+
       pest:
         pest.trim(),
 
       disease:
         disease.trim(),
 
-      /*
-        Mantemos o nome para
-        compatibilidade.
-      */
       product:
         selectedProduct?.name ||
         product.trim(),
 
-      /*
-        Vínculo com o estoque.
-      */
       productId:
         productId
           ? Number(productId)
           : null,
 
-      /*
-        Texto antigo.
-      */
       quantity:
         formattedQuantity,
 
-      /*
-        Valor numérico.
-      */
       quantityValue:
         productId
           ? Number(
@@ -1149,8 +1120,7 @@ function NewActivity({
           : null,
     };
 
-    let stockAdjustment =
-      null;
+    let stockAdjustment = null;
 
     try {
       setSaving(true);
@@ -1162,27 +1132,14 @@ function NewActivity({
       ===================================================== */
 
       if (!activityToEdit) {
-        /*
-          Primeiro verifica o estoque.
-        */
-
         if (productId) {
           await validateStockForNewActivity();
         }
-
-        /*
-          Salva o diário.
-        */
 
         savedActivity =
           await createActivity(
             activity
           );
-
-        /*
-          Registra a saída no estoque
-          com rastreabilidade.
-        */
 
         if (productId) {
           const amount =
@@ -1197,10 +1154,6 @@ function NewActivity({
             {
               ...getStockMetadata(),
 
-              /*
-                Agora conseguimos guardar
-                o ID real da atividade criada.
-              */
               activityId:
                 savedActivity?.id ||
                 null,
@@ -1224,16 +1177,8 @@ function NewActivity({
       ===================================================== */
 
       else {
-        /*
-          Ajusta o estoque pela diferença.
-        */
-
         stockAdjustment =
           await adjustStockForEdit();
-
-        /*
-          Atualiza o diário.
-        */
 
         await updateActivity(
           activityToEdit.id,
@@ -1280,12 +1225,6 @@ function NewActivity({
         error
       );
 
-      /*
-        Se o estoque já foi alterado
-        e alguma etapa posterior falhou,
-        tenta desfazer.
-      */
-
       if (stockAdjustment) {
         await rollbackStockAdjustment(
           stockAdjustment
@@ -1313,6 +1252,7 @@ function NewActivity({
       ===================================================== */}
 
       <header className="page-heading">
+
         <div className="page-heading-content">
 
           <span className="home-label">
@@ -1332,6 +1272,7 @@ function NewActivity({
           </p>
 
         </div>
+
       </header>
 
       {/* =====================================================
@@ -1356,6 +1297,7 @@ function NewActivity({
             </div>
 
             <div>
+
               <h3>
                 Informações da atividade
               </h3>
@@ -1363,6 +1305,7 @@ function NewActivity({
               <p>
                 Preencha os dados principais do registro.
               </p>
+
             </div>
 
           </div>
@@ -1476,11 +1419,26 @@ function NewActivity({
               <select
                 id="plot"
                 value={plotId}
-                onChange={(event) =>
-                  setPlotId(
-                    event.target.value
-                  )
-                }
+                onChange={(event) => {
+
+                  const value =
+                    event.target.value;
+
+                  setPlotId(value);
+
+                  const selected =
+                    plots.find(
+                      (plot) =>
+                        String(plot.id) ===
+                        String(value)
+                    );
+
+                  setSelectedCulture(
+                    selected?.culture ||
+                      ""
+                  );
+
+                }}
                 disabled={!propertyId}
               >
 
@@ -1502,6 +1460,66 @@ function NewActivity({
                 )}
 
               </select>
+
+              {selectedCulture && (
+                <div className="selected-culture-info">
+
+                  <div className="culture-info-main">
+
+                    <span className="culture-info-icon">
+                      🌱
+                    </span>
+
+                    <div>
+                      <span>
+                        Cultura do talhão
+                      </span>
+
+                      <strong>
+                        {selectedCulture}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  {selectedCultureData?.variety && (
+                    <div className="culture-info-item">
+                      <span>Variedade</span>
+                      <strong>
+                        {selectedCultureData.variety}
+                      </strong>
+                    </div>
+                  )}
+
+                  {selectedCultureData?.cycle && (
+                    <div className="culture-info-item">
+                      <span>Ciclo</span>
+                      <strong>
+                        {selectedCultureData.cycle}
+                      </strong>
+                    </div>
+                  )}
+
+                  {selectedPlot?.area && (
+                    <div className="culture-info-item">
+                      <span>Área</span>
+                      <strong>
+                        {selectedPlot.area}
+                      </strong>
+                    </div>
+                  )}
+
+                  {selectedPlot?.soil && (
+                    <div className="culture-info-item">
+                      <span>Solo</span>
+                      <strong>
+                        {selectedPlot.soil}
+                      </strong>
+                    </div>
+                  )}
+
+                </div>
+              )}
 
             </div>
 
@@ -1543,17 +1561,69 @@ function NewActivity({
                 Tipo de manejo
               </label>
 
-              <input
+              <select
                 id="managementType"
-                type="text"
-                placeholder="Ex.: Adubação"
                 value={managementType}
                 onChange={(event) =>
                   setManagementType(
                     event.target.value
                   )
                 }
-              />
+              >
+
+                <option value="">
+                  Selecione o tipo de manejo
+                </option>
+
+                <option value="Adubação">
+                  Adubação
+                </option>
+
+                <option value="Irrigação">
+                  Irrigação
+                </option>
+
+                <option value="Pulverização">
+                  Pulverização
+                </option>
+
+                <option value="Aplicação de defensivo">
+                  Aplicação de defensivo
+                </option>
+
+                <option value="Controle de pragas">
+                  Controle de pragas
+                </option>
+
+                <option value="Controle de doenças">
+                  Controle de doenças
+                </option>
+
+                <option value="Capina">
+                  Capina
+                </option>
+
+                <option value="Poda">
+                  Poda
+                </option>
+
+                <option value="Plantio">
+                  Plantio
+                </option>
+
+                <option value="Colheita">
+                  Colheita
+                </option>
+
+                <option value="Preparo do solo">
+                  Preparo do solo
+                </option>
+
+                <option value="Outro">
+                  Outro
+                </option>
+
+              </select>
 
             </div>
 
@@ -1594,6 +1664,42 @@ function NewActivity({
               </select>
 
             </div>
+            
+            <div className="form-group">
+              <label htmlFor="managementPlannedDate">
+                Data prevista
+              </label>
+
+              <input
+                id="managementPlannedDate"
+                type="date"
+                value={managementPlannedDate}
+                onChange={(event) =>
+                  setManagementPlannedDate(
+                    event.target.value
+                  )
+                }
+              />
+            </div>
+
+            {managementStatus === "Concluído" && (
+              <div className="form-group">
+                <label htmlFor="managementCompletedDate">
+                  Data de conclusão
+                </label>
+
+                <input
+                  id="managementCompletedDate"
+                  type="date"
+                  value={managementCompletedDate}
+                  onChange={(event) =>
+                    setManagementCompletedDate(
+                      event.target.value
+                    )
+                  }
+                />
+              </div>
+            )}
 
           </div>
 
@@ -1813,7 +1919,6 @@ function NewActivity({
                   }}
                 >
                   Estoque disponível:{" "}
-
                   <strong>
                     {
                       Number(
@@ -1959,6 +2064,7 @@ function NewActivity({
                     preview,
                     index
                   ) => (
+
                     <div
                       className="photo-preview"
                       key={`${preview.file.name}-${index}`}
@@ -1988,6 +2094,7 @@ function NewActivity({
                       </button>
 
                     </div>
+
                   )
                 )}
 

@@ -1,30 +1,42 @@
-
 import { useState } from "react";
 
 import Home from "./pages/home";
+
 import NewActivity from "./pages/NewActivity";
+
 import ActivityDetails from "./pages/ActivityDetails";
 
 import Plots from "./pages/Plots";
+
 import NewPlot from "./pages/NewPlot";
 
 import Properties from "./pages/Properties";
+
 import NewProperty from "./pages/NewProperty";
 
 import Diary from "./pages/Diary";
 
 import Library from "./pages/Library";
+
 import NewProduct from "./pages/NewProduct";
 
 import Pests from "./pages/Pests";
+
 import NewPest from "./pages/NewPest";
 
 import Diseases from "./pages/Diseases";
+
 import NewDisease from "./pages/NewDisease";
+
+import Cultures from "./pages/Cultures";
+
+import NewCulture from "./pages/NewCulture";
 
 import Reports from "./pages/Reports";
 
 import "./styles/global.css";
+
+import Management from "./pages/Management";
 
 function App() {
   const [page, setPage] = useState("home");
@@ -34,22 +46,27 @@ function App() {
   // =========================================================
 
   const [activityToEdit, setActivityToEdit] = useState(null);
+
   const [activityToView, setActivityToView] = useState(null);
 
   function goToEditActivity(activity) {
     setActivityToEdit(activity);
+
     setPage("newActivity");
   }
 
   function goToActivityDetails(activity) {
     setActivityToView(activity);
+
     setPage("activityDetails");
   }
 
   function goToNewActivity() {
     setActivityToEdit(null);
+
     setPage("newActivity");
   }
+  
 
   // =========================================================
   // HOME
@@ -57,22 +74,31 @@ function App() {
 
   function goToHome() {
     setActivityToEdit(null);
+
     setActivityToView(null);
+
     setPropertyToEdit(null);
+
     setPlotToEdit(null);
+
     setProductToEdit(null);
+
     setPestToEdit(null);
+
     setDiseaseToEdit(null);
+
+    setCultureToEdit(null);
 
     setPage("home");
   }
-  // =========================================================
-// RELATÓRIOS
-// =========================================================
 
-function goToReports() {
-  setPage("reports");
-}
+  // =========================================================
+  // RELATÓRIOS
+  // =========================================================
+
+  function goToReports() {
+    setPage("reports");
+  }
 
   // =========================================================
   // DIÁRIO
@@ -87,25 +113,30 @@ function goToReports() {
   // =========================================================
 
   const [propertyToEdit, setPropertyToEdit] = useState(null);
+
   const [selectedProperty, setSelectedProperty] = useState(null);
 
   function goToProperties() {
     setPropertyToEdit(null);
+
     setPage("properties");
   }
 
   function goToNewProperty() {
     setPropertyToEdit(null);
+
     setPage("newProperty");
   }
 
   function goToEditProperty(property) {
     setPropertyToEdit(property);
+
     setPage("newProperty");
   }
 
   function goToPropertiesAfterSave() {
     setPropertyToEdit(null);
+
     setPage("properties");
   }
 
@@ -117,7 +148,9 @@ function goToReports() {
 
   function goToPlots(property) {
     setSelectedProperty(property);
+
     setPlotToEdit(null);
+
     setPage("plots");
   }
 
@@ -127,11 +160,13 @@ function goToReports() {
     }
 
     setPlotToEdit(null);
+
     setPage("newPlot");
   }
 
   function goToEditPlot(plot) {
     setPlotToEdit(plot);
+
     setPage("newPlot");
   }
 
@@ -143,21 +178,25 @@ function goToReports() {
 
   function goToLibrary() {
     setProductToEdit(null);
+
     setPage("library");
   }
 
   function goToNewProduct() {
     setProductToEdit(null);
+
     setPage("newProduct");
   }
 
   function goToEditProduct(product) {
     setProductToEdit(product);
+
     setPage("newProduct");
   }
 
   function goToLibraryAfterSave() {
     setProductToEdit(null);
+
     setPage("library");
   }
 
@@ -169,21 +208,25 @@ function goToReports() {
 
   function goToPests() {
     setPestToEdit(null);
+
     setPage("pests");
   }
 
   function goToNewPest() {
     setPestToEdit(null);
+
     setPage("newPest");
   }
 
   function goToEditPest(pest) {
     setPestToEdit(pest);
+
     setPage("newPest");
   }
 
   function goToPestsAfterSave() {
     setPestToEdit(null);
+
     setPage("pests");
   }
 
@@ -195,23 +238,60 @@ function goToReports() {
 
   function goToDiseases() {
     setDiseaseToEdit(null);
+
     setPage("diseases");
   }
 
   function goToNewDisease() {
     setDiseaseToEdit(null);
+
     setPage("newDisease");
   }
 
   function goToEditDisease(disease) {
     setDiseaseToEdit(disease);
+
     setPage("newDisease");
   }
 
   function goToDiseasesAfterSave() {
     setDiseaseToEdit(null);
+
     setPage("diseases");
   }
+
+  // =========================================================
+  // CULTURAS
+  // =========================================================
+
+  const [cultureToEdit, setCultureToEdit] = useState(null);
+
+  function goToCultures() {
+    setCultureToEdit(null);
+
+    setPage("cultures");
+  }
+
+  function goToNewCulture() {
+    setCultureToEdit(null);
+
+    setPage("newCulture");
+  }
+
+  function goToEditCulture(culture) {
+    setCultureToEdit(culture);
+
+    setPage("newCulture");
+  }
+
+  function goToCulturesAfterSave() {
+    setCultureToEdit(null);
+
+    setPage("cultures");
+  }
+  function goToManagement() {
+  setPage("management");
+}
 
   // =========================================================
   // RENDER
@@ -232,11 +312,13 @@ function goToReports() {
           role="button"
           tabIndex={0}
         >
+
           <span className="logo-icon">
             🌱
           </span>
 
           <div>
+
             <h1>
               Caderno de Campo
             </h1>
@@ -244,15 +326,19 @@ function goToReports() {
             <p>
               Organize suas atividades de campo
             </p>
+
           </div>
+
         </div>
 
         <div className="connection-status">
+
           <span className="status-dot"></span>
 
           <span>
             Offline
           </span>
+
         </div>
 
       </header>
@@ -262,6 +348,7 @@ function goToReports() {
       ===================================================== */}
 
       {page === "home" && (
+
         <Home
           onNewActivity={goToNewActivity}
           onEditActivity={goToEditActivity}
@@ -270,7 +357,10 @@ function goToReports() {
           onDiary={goToDiary}
           onLibrary={goToLibrary}
           onReports={goToReports}
+          onCultures={goToCultures}
+          onManagement={goToManagement}
         />
+
       )}
 
       {/* =====================================================
@@ -278,11 +368,13 @@ function goToReports() {
       ===================================================== */}
 
       {page === "newActivity" && (
+
         <NewActivity
           onCancel={goToHome}
           onActivityCreated={goToHome}
           activityToEdit={activityToEdit}
         />
+
       )}
 
       {/* =====================================================
@@ -290,11 +382,13 @@ function goToReports() {
       ===================================================== */}
 
       {page === "activityDetails" && (
+
         <ActivityDetails
           activity={activityToView}
           onBack={goToHome}
           onEdit={goToEditActivity}
         />
+
       )}
 
       {/* =====================================================
@@ -302,11 +396,13 @@ function goToReports() {
       ===================================================== */}
 
       {page === "properties" && (
+
         <Properties
           onNewProperty={goToNewProperty}
           onEditProperty={goToEditProperty}
           onViewPlots={goToPlots}
         />
+
       )}
 
       {/* =====================================================
@@ -314,11 +410,13 @@ function goToReports() {
       ===================================================== */}
 
       {page === "newProperty" && (
+
         <NewProperty
           onCancel={goToProperties}
           onPropertyCreated={goToPropertiesAfterSave}
           propertyToEdit={propertyToEdit}
         />
+
       )}
 
       {/* =====================================================
@@ -326,12 +424,14 @@ function goToReports() {
       ===================================================== */}
 
       {page === "plots" && (
+
         <Plots
           property={selectedProperty}
           onNewPlot={goToNewPlot}
           onEditPlot={goToEditPlot}
           onBack={goToProperties}
         />
+
       )}
 
       {/* =====================================================
@@ -339,12 +439,18 @@ function goToReports() {
       ===================================================== */}
 
       {page === "newPlot" && (
+
         <NewPlot
           property={selectedProperty}
-          onCancel={() => goToPlots(selectedProperty)}
-          onPlotCreated={() => goToPlots(selectedProperty)}
+          onCancel={() =>
+            goToPlots(selectedProperty)
+          }
+          onPlotCreated={() =>
+            goToPlots(selectedProperty)
+          }
           plotToEdit={plotToEdit}
         />
+
       )}
 
       {/* =====================================================
@@ -352,12 +458,14 @@ function goToReports() {
       ===================================================== */}
 
       {page === "diary" && (
+
         <Diary
           onNewActivity={goToNewActivity}
           onEditActivity={goToEditActivity}
           onViewActivity={goToActivityDetails}
           onBack={goToHome}
         />
+
       )}
 
       {/* =====================================================
@@ -365,6 +473,7 @@ function goToReports() {
       ===================================================== */}
 
       {page === "library" && (
+
         <Library
           onNewProduct={goToNewProduct}
           onEditProduct={goToEditProduct}
@@ -372,6 +481,7 @@ function goToReports() {
           onPests={goToPests}
           onDiseases={goToDiseases}
         />
+
       )}
 
       {/* =====================================================
@@ -379,11 +489,13 @@ function goToReports() {
       ===================================================== */}
 
       {page === "pests" && (
+
         <Pests
           onNewPest={goToNewPest}
           onEditPest={goToEditPest}
           onBack={goToLibrary}
         />
+
       )}
 
       {/* =====================================================
@@ -391,11 +503,13 @@ function goToReports() {
       ===================================================== */}
 
       {page === "newPest" && (
+
         <NewPest
           onCancel={goToPests}
           onPestCreated={goToPestsAfterSave}
           pestToEdit={pestToEdit}
         />
+
       )}
 
       {/* =====================================================
@@ -403,11 +517,13 @@ function goToReports() {
       ===================================================== */}
 
       {page === "diseases" && (
+
         <Diseases
           onNewDisease={goToNewDisease}
           onEditDisease={goToEditDisease}
           onBack={goToLibrary}
         />
+
       )}
 
       {/* =====================================================
@@ -415,11 +531,46 @@ function goToReports() {
       ===================================================== */}
 
       {page === "newDisease" && (
+
         <NewDisease
           onCancel={goToDiseases}
           onDiseaseCreated={goToDiseasesAfterSave}
           diseaseToEdit={diseaseToEdit}
         />
+
+      )}
+
+      {/* =====================================================
+          CULTURAS
+      ===================================================== */}
+
+      {page === "cultures" && (
+
+        <Cultures
+          onNewCulture={goToNewCulture}
+          onEditCulture={goToEditCulture}
+          onBack={goToHome}
+        />
+
+      )}
+      {page === "management" && (
+  <Management
+    onBack={goToHome}
+  />
+)}
+
+      {/* =====================================================
+          NOVA CULTURA
+      ===================================================== */}
+
+      {page === "newCulture" && (
+
+        <NewCulture
+          onCancel={goToCultures}
+          onCultureCreated={goToCulturesAfterSave}
+          cultureToEdit={cultureToEdit}
+        />
+
       )}
 
       {/* =====================================================
@@ -427,20 +578,25 @@ function goToReports() {
       ===================================================== */}
 
       {page === "newProduct" && (
+
         <NewProduct
           onCancel={goToLibrary}
           onProductCreated={goToLibraryAfterSave}
           productToEdit={productToEdit}
         />
+
       )}
+
       {/* =====================================================
-    RELATÓRIOS
-===================================================== */}
+          RELATÓRIOS
+      ===================================================== */}
 
       {page === "reports" && (
+
         <Reports
           onBack={goToHome}
         />
+
       )}
 
     </div>

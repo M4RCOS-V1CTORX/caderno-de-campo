@@ -1,0 +1,444 @@
+/* =========================================================
+   CULTURAS
+========================================================= */
+
+.cultures-page {
+  width: 100%;
+  max-width: 1000px;
+
+  margin: 0 auto;
+
+  padding: 42px 30px 70px;
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.cultures-heading {
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  margin-bottom: 18px;
+}
+
+.cultures-heading-content {
+  min-width: 0;
+}
+
+.cultures-heading .home-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: var(--green);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+}
+
+.cultures-heading h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 29px;
+  font-weight: 600;
+
+  letter-spacing: -0.5px;
+}
+
+.cultures-heading p {
+  margin-top: 7px;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   BOTÃO NOVA CULTURA
+========================================================= */
+
+.cultures-new-button {
+  flex-shrink: 0;
+
+  min-width: 145px;
+}
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.cultures-content {
+  width: 100%;
+}
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.cultures-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  width: 100%;
+}
+
+/* =========================================================
+   CARD DA CULTURA
+========================================================= */
+
+.culture-card {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  width: 100%;
+
+  padding: 20px 22px;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  box-shadow: var(--shadow-card);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.culture-card:hover {
+  border-color: #c8c8c8;
+
+  box-shadow: var(--shadow-card);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   CONTEÚDO DO CARD
+========================================================= */
+
+.culture-card-content {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  min-width: 0;
+
+  flex: 1;
+}
+
+/* =========================================================
+   ÍCONE
+========================================================= */
+
+.culture-icon {
+  flex: 0 0 46px;
+
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #f0f7f0;
+
+  border-radius: 9px;
+
+  font-size: 21px;
+}
+
+/* =========================================================
+   INFORMAÇÕES
+========================================================= */
+
+.culture-info {
+  min-width: 0;
+}
+
+.culture-info h3 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  word-break: break-word;
+}
+
+/* =========================================================
+   DETALHES
+========================================================= */
+
+.culture-details {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px 15px;
+
+  margin-top: 8px;
+}
+
+.culture-details span {
+  color: var(--text-secondary);
+
+  font-size: 12px;
+
+  line-height: 1.4;
+}
+
+.culture-details strong {
+  color: #555555;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   OBSERVAÇÕES
+========================================================= */
+
+.culture-observations {
+  max-width: 650px;
+
+  margin: 8px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.culture-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+.culture-actions button {
+  min-height: 38px;
+}
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.empty-state {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 320px;
+
+  padding: 45px 30px;
+
+  text-align: center;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  box-shadow: var(--shadow-card);
+}
+
+.empty-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 17px;
+
+  background: #f0f7f0;
+
+  border-radius: 12px;
+
+  font-size: 27px;
+}
+
+.empty-state h3 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 16px;
+
+  font-weight: 600;
+}
+
+.empty-state p {
+  max-width: 430px;
+
+  margin: 8px 0 20px;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+
+  .cultures-page {
+    padding: 34px 24px 55px;
+  }
+
+  .cultures-heading {
+    align-items: flex-start;
+  }
+
+  .culture-card {
+    padding: 18px;
+  }
+
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .cultures-page {
+    padding: 27px 15px 40px;
+  }
+
+  .cultures-heading {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 17px;
+
+    margin-bottom: 12px;
+  }
+
+  .cultures-heading h2 {
+    font-size: 25px;
+  }
+
+  .cultures-heading p {
+    font-size: 13px;
+  }
+
+  .cultures-new-button {
+    width: 100%;
+  }
+
+  .culture-card {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 17px;
+
+    padding: 17px;
+  }
+
+  .culture-card-content {
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+  .culture-icon {
+    flex-basis: 40px;
+
+    width: 40px;
+    height: 40px;
+
+    font-size: 18px;
+  }
+
+  .culture-info h3 {
+    font-size: 14px;
+  }
+
+  .culture-details {
+    flex-direction: column;
+
+    gap: 4px;
+  }
+
+  .culture-details span {
+    font-size: 11px;
+  }
+
+  .culture-observations {
+    font-size: 11px;
+  }
+
+  .culture-actions {
+    width: 100%;
+  }
+
+  .culture-actions button {
+    flex: 1;
+
+    width: 100%;
+  }
+
+  .empty-state {
+    min-height: 280px;
+
+    padding: 35px 20px;
+  }
+
+  .empty-state h3 {
+    font-size: 15px;
+  }
+
+  .empty-state p {
+    font-size: 12px;
+  }
+
+}

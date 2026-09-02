@@ -6,6 +6,7 @@ import {
   addStock,
   removeStock,
   getStockMovements,
+  getStockSummary,
 } from "../services/productService";
 
 import "../styles/library.css";
@@ -32,6 +33,7 @@ function Library({
   const [historyProduct, setHistoryProduct] = useState(null);
   const [historyMovements, setHistoryMovements] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [historySummary, setHistorySummary] = useState(null);
 
   /* =========================================================
      CARREGAR PRODUTOS
@@ -342,10 +344,16 @@ function Library({
     try {
       setHistoryProduct(product);
       setHistoryMovements([]);
+      setHistorySummary(null);
       setLoadingHistory(true);
 
       const movements =
         await getStockMovements(
+          product.id
+        );
+
+      const summary =
+        await getStockSummary(
           product.id
         );
 
@@ -354,6 +362,10 @@ function Library({
           ? movements
           : []
       );
+
+      setHistorySummary(summary);
+    
+    
     } catch (error) {
       console.error(
         "ERRO AO CARREGAR HISTÓRICO:",
@@ -374,12 +386,12 @@ function Library({
      FECHAR HISTÓRICO
   ========================================================= */
 
-  const closeHistory = () => {
-    if (loadingHistory) return;
-
-    setHistoryProduct(null);
-    setHistoryMovements([]);
-  };
+ const closeHistory = () => {
+  if (loadingHistory) return;
+  setHistoryProduct(null);
+  setHistoryMovements([]);
+  setHistorySummary(null);
+};
 
   /* =========================================================
      DATA
@@ -1503,7 +1515,49 @@ function Library({
 
               </div>
 
-            </div>
+            </div>{historySummary && (
+              
+              <div className="history-summary">
+                <div className="history-summary-item">
+                  <span>Estoque atual</span>
+                  <strong>
+                    {historySummary.currentStock}{" "}
+                    {historySummary.unit}
+                  </strong>
+                </div>
+
+                <div className="history-summary-item">
+                  <span>Total de entradas</span>
+                  <strong>
+                    +{historySummary.totalEntries}{" "}
+                    {historySummary.unit}
+                  </strong>
+                </div>
+
+                <div className="history-summary-item">
+                  <span>Total de saídas</span>
+                  <strong>
+                    -{historySummary.totalExits}{" "}
+                    {historySummary.unit}
+                  </strong>
+                </div>
+
+                <div className="history-summary-item">
+                  <span>Consumido no Diário</span>
+                  <strong>
+                    {historySummary.diaryConsumption}{" "}
+                    {historySummary.unit}
+                  </strong>
+                </div>
+
+                <div className="history-summary-item">
+                  <span>Movimentações</span>
+                  <strong>
+                    {historySummary.movementCount}
+                  </strong>
+                </div>
+              </div>
+            )}
 
             {/* =============================================
                 CARREGANDO
@@ -1621,15 +1675,41 @@ function Library({
                             </div>
 
                             <p>
-                              {movement.reason ||
-                                "Sem motivo informado"}
-                            </p>
+  {movement.reason ||
+    "Sem motivo informado"}
+</p>
 
-                            <small>
-                              {formatMovementDate(
-                                movement.date
-                              )}
-                            </small>
+{movement.source === "diario" && (
+  <div className="history-traceability">
+    <span className="history-traceability-badge">
+      📋 Diário de Campo
+    </span>
+
+    {movement.propertyName && (
+      <span>
+        🏠 {movement.propertyName}
+      </span>
+    )}
+
+    {movement.plotName && (
+      <span>
+        🌱 {movement.plotName}
+      </span>
+    )}
+
+    {movement.activityTitle && (
+      <span>
+        📝 {movement.activityTitle}
+      </span>
+    )}
+  </div>
+)}
+
+<small>
+  {formatMovementDate(
+    movement.date
+  )}
+</small>
 
                           </div>
 

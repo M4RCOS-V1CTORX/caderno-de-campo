@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 
 import { getActivities } from "../services/activityService";
 
-
-
 import "../styles/home.css";
 
 function Home({
@@ -13,7 +11,9 @@ function Home({
   onProperties,
   onDiary,
   onLibrary,
-  onReports
+  onReports,
+  onCultures,
+  onManagement,
 }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +29,7 @@ function Home({
       setActivities(data || []);
     } catch (error) {
       console.error("ERRO AO CARREGAR ATIVIDADES:", error);
+
       setActivities([]);
     } finally {
       setLoading(false);
@@ -93,6 +94,11 @@ function Home({
             SISTEMA DE GESTÃO AGRÍCOLA
           </div>
 
+          <div className="hero-client">
+            <span>RESPONSÁVEL TÉCNICA</span>
+            <strong>Laís L. Andrade</strong>
+          </div>
+
           <h1>
             Seu campo.
             <br />
@@ -112,14 +118,23 @@ function Home({
               className="hero-primary-button"
               onClick={onDiary}
             >
-              <span className="button-icon">📖</span>
-
-              <span>
-                <strong>Abrir Diário de Campo</strong>
-                <small>Registrar e acompanhar atividades</small>
+              <span className="button-icon">
+                DC
               </span>
 
-              <span className="button-arrow">→</span>
+              <span>
+                <strong>
+                  Abrir Diário de Campo
+                </strong>
+
+                <small>
+                  Registrar e acompanhar atividades
+                </small>
+              </span>
+
+              <span className="button-arrow">
+                →
+              </span>
             </button>
 
             <button
@@ -141,6 +156,7 @@ function Home({
         <div className="hero-visual">
 
           <div className="hero-circle hero-circle-one"></div>
+
           <div className="hero-circle hero-circle-two"></div>
 
           <div className="field-scene">
@@ -148,6 +164,7 @@ function Home({
             <div className="sun"></div>
 
             <div className="mountain mountain-back"></div>
+
             <div className="mountain mountain-front"></div>
 
             <div className="field-lines">
@@ -189,8 +206,13 @@ function Home({
               </div>
 
               <div>
-                <strong>Campo organizado</strong>
-                <span>Dados salvos localmente</span>
+                <strong>
+                  Campo organizado
+                </strong>
+
+                <span>
+                  Dados salvos localmente
+                </span>
               </div>
 
             </div>
@@ -211,6 +233,7 @@ function Home({
         <div className="intro-line"></div>
 
         <div>
+
           <span className="intro-label">
             TUDO EM UM SÓ LUGAR
           </span>
@@ -219,6 +242,7 @@ function Home({
             Gestão agrícola feita
             <span> para o seu dia a dia.</span>
           </h2>
+
         </div>
 
         <p>
@@ -239,11 +263,15 @@ function Home({
         <div className="home-section-heading">
 
           <div>
-            <span>EXPLORE O SISTEMA</span>
+
+            <span>
+              EXPLORE O SISTEMA
+            </span>
 
             <h3>
               Tudo o que você precisa
             </h3>
+
           </div>
 
           <p>
@@ -256,7 +284,9 @@ function Home({
 
         <div className="premium-modules">
 
-          {/* PROPRIEDADES */}
+          {/* =================================================
+              PROPRIEDADES
+          ================================================= */}
 
           <button
             type="button"
@@ -277,7 +307,7 @@ function Home({
             </div>
 
             <div className="large-module-icon">
-              🏡
+              PR
             </div>
 
             <div className="module-text">
@@ -294,6 +324,7 @@ function Home({
             </div>
 
             <div className="module-bottom">
+
               <span>
                 Acessar módulo
               </span>
@@ -301,12 +332,15 @@ function Home({
               <strong>
                 →
               </strong>
+
             </div>
 
           </button>
 
 
-          {/* CADERNO */}
+          {/* =================================================
+              DIÁRIO DE CAMPO
+          ================================================= */}
 
           <button
             type="button"
@@ -327,7 +361,7 @@ function Home({
             </div>
 
             <div className="large-module-icon">
-              📖
+              DC
             </div>
 
             <div className="module-text">
@@ -344,6 +378,7 @@ function Home({
             </div>
 
             <div className="module-bottom">
+
               <span>
                 Acessar módulo
               </span>
@@ -351,12 +386,15 @@ function Home({
               <strong>
                 →
               </strong>
+
             </div>
 
           </button>
 
 
-          {/* BIBLIOTECA */}
+          {/* =================================================
+              BIBLIOTECA
+          ================================================= */}
 
           <button
             type="button"
@@ -377,7 +415,7 @@ function Home({
             </div>
 
             <div className="large-module-icon">
-              📚
+              BL
             </div>
 
             <div className="module-text">
@@ -394,6 +432,7 @@ function Home({
             </div>
 
             <div className="module-bottom">
+
               <span>
                 Acessar módulo
               </span>
@@ -401,49 +440,172 @@ function Home({
               <strong>
                 →
               </strong>
+
             </div>
 
           </button>
+
+
+          {/* =================================================
+              MANEJO
+          ================================================= */}
+
           <button
-              type="button"
-              className="premium-module reports-module"
-              onClick={onReports}
-            >
-              <div className="module-top">
-                <span className="module-number">
-                  04
-                </span>
+            type="button"
+            className="premium-module management-module"
+            onClick={onManagement}
+          >
 
-                <span className="module-open">
-                  ↗
-                </span>
-              </div>
+            <div className="module-top">
 
-              <div className="large-module-icon">
-                📊
-              </div>
+              <span className="module-number">
+                04
+              </span>
 
-              <div className="module-text">
-                <h4>
-                  Relatórios
-                </h4>
+              <span className="module-open">
+                ↗
+              </span>
 
-                <p>
-                  Analise atividades, manejos,
-                  ocorrências e resultados do campo.
-                </p>
-              </div>
+            </div>
 
-              <div className="module-bottom">
-                <span>
-                  Acessar módulo
-                </span>
+            <div className="large-module-icon">
+              MN
+            </div>
 
-                <strong>
-                  →
-                </strong>
-              </div>
-            </button>
+            <div className="module-text">
+
+              <h4>
+                Manejo
+              </h4>
+
+              <p>
+                Acompanhe os manejos planejados,
+                em andamento e concluídos.
+              </p>
+
+            </div>
+
+            <div className="module-bottom">
+
+              <span>
+                Acessar módulo
+              </span>
+
+              <strong>
+                →
+              </strong>
+
+            </div>
+
+          </button>
+
+
+          {/* =================================================
+              CULTURAS
+          ================================================= */}
+
+          <button
+            type="button"
+            className="premium-module culture-module"
+            onClick={onCultures}
+          >
+
+            <div className="module-top">
+
+              <span className="module-number">
+                05
+              </span>
+
+              <span className="module-open">
+                ↗
+              </span>
+
+            </div>
+
+            <div className="large-module-icon">
+              CT
+            </div>
+
+            <div className="module-text">
+
+              <h4>
+                Culturas
+              </h4>
+
+              <p>
+                Cadastre e organize as culturas
+                utilizadas nas propriedades.
+              </p>
+
+            </div>
+
+            <div className="module-bottom">
+
+              <span>
+                Acessar módulo
+              </span>
+
+              <strong>
+                →
+              </strong>
+
+            </div>
+
+          </button>
+
+
+          {/* =================================================
+              RELATÓRIOS
+          ================================================= */}
+
+          <button
+            type="button"
+            className="premium-module reports-module"
+            onClick={onReports}
+          >
+
+            <div className="module-top">
+
+              <span className="module-number">
+                06
+              </span>
+
+              <span className="module-open">
+                ↗
+              </span>
+
+            </div>
+
+            <div className="large-module-icon">
+              RP
+            </div>
+
+            <div className="module-text">
+
+              <h4>
+                Relatórios
+              </h4>
+
+              <p>
+                Analise atividades, manejos,
+                ocorrências e resultados do campo.
+              </p>
+
+            </div>
+
+            <div className="module-bottom">
+
+              <span>
+                Acessar módulo
+              </span>
+
+              <strong>
+                →
+              </strong>
+
+            </div>
+
+          </button>
 
         </div>
 
@@ -461,6 +623,7 @@ function Home({
           <div className="overview-heading">
 
             <div>
+
               <span>
                 VISÃO DO SISTEMA
               </span>
@@ -468,11 +631,15 @@ function Home({
               <h3>
                 Seu campo em números
               </h3>
+
             </div>
 
             <div className="online-status">
+
               <span></span>
+
               Sistema disponível
+
             </div>
 
           </div>
@@ -480,13 +647,16 @@ function Home({
 
           <div className="overview-stats">
 
+            {/* REGISTROS */}
+
             <div className="overview-stat">
 
               <span className="overview-stat-icon">
-                📋
+                REG
               </span>
 
               <div>
+
                 <strong>
                   {loading ? "—" : activities.length}
                 </strong>
@@ -494,18 +664,22 @@ function Home({
                 <span>
                   Registros
                 </span>
+
               </div>
 
             </div>
 
 
+            {/* LOCAIS */}
+
             <div className="overview-stat">
 
               <span className="overview-stat-icon">
-                📍
+                LOC
               </span>
 
               <div>
+
                 <strong>
                   {loading ? "—" : locationsCount}
                 </strong>
@@ -513,18 +687,22 @@ function Home({
                 <span>
                   Locais registrados
                 </span>
+
               </div>
 
             </div>
 
 
+            {/* REGISTROS DE HOJE */}
+
             <div className="overview-stat">
 
               <span className="overview-stat-icon">
-                📅
+                DIA
               </span>
 
               <div>
+
                 <strong>
                   {loading ? "—" : todayActivities.length}
                 </strong>
@@ -532,6 +710,7 @@ function Home({
                 <span>
                   Registros hoje
                 </span>
+
               </div>
 
             </div>
@@ -550,6 +729,7 @@ function Home({
           <div className="recent-mini-heading">
 
             <div>
+
               <span>
                 ATIVIDADE
               </span>
@@ -557,6 +737,7 @@ function Home({
               <h3>
                 Últimos registros
               </h3>
+
             </div>
 
             <button
@@ -574,7 +755,7 @@ function Home({
             <div className="recent-empty">
 
               <span>
-                🌱
+                —
               </span>
 
               <p>
@@ -593,11 +774,13 @@ function Home({
                   type="button"
                   className="mini-activity"
                   key={activity.id}
-                  onClick={() => onViewActivity(activity)}
+                  onClick={() =>
+                    onViewActivity(activity)
+                  }
                 >
 
                   <span className="mini-activity-icon">
-                    🌱
+                    DC
                   </span>
 
                   <span className="mini-activity-info">
@@ -636,13 +819,13 @@ function Home({
 
 
       {/* =====================================================
-          FINAL CTA
+          CTA FINAL
       ===================================================== */}
 
       <section className="home-final">
 
         <div className="final-decoration">
-          🌿
+          CC
         </div>
 
         <div>
@@ -668,11 +851,53 @@ function Home({
           type="button"
           onClick={onNewActivity}
         >
-          <span>+</span>
+
+          <span>
+            +
+          </span>
+
           Nova atividade
+
         </button>
 
       </section>
+
+
+      {/* =====================================================
+          RODAPÉ INSTITUCIONAL
+      ===================================================== */}
+
+      <footer className="home-footer">
+
+        <div>
+
+          <strong>
+            CADERNO DE CAMPO
+          </strong>
+
+          <span>
+            Gestão agrícola inteligente
+          </span>
+
+        </div>
+
+        <div className="home-footer-responsible">
+
+          <span>
+            RESPONSÁVEL TÉCNICA
+          </span>
+
+          <strong>
+            Laís L. Andrade
+          </strong>
+
+          <small>
+            WhatsApp: 74 9957-5038
+          </small>
+
+        </div>
+
+      </footer>
 
     </main>
   );

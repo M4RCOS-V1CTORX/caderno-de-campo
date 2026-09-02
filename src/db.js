@@ -114,6 +114,37 @@ db.version(4).stores({
   pests:
     "++id, name, synced, createdAt",
 });
+/*
+=========================================================
+  CULTURAS
+=========================================================
+*/
+
+db.version(5).stores({
+  activities:
+    "++id, propertyId, plotId, title, date, location, synced, createdAt",
+
+  properties:
+    "++id, name, owner, city, state, synced, createdAt",
+
+  plots:
+    "++id, propertyId, name, culture, soil, area, synced, createdAt",
+
+  photos:
+    "++id, activityId, createdAt",
+
+  products:
+    "++id, name, type, unit, synced, createdAt",
+
+  pests:
+    "++id, name, synced, createdAt",
+
+  diseases:
+    "++id, name, type, description, synced, createdAt",
+
+  cultures:
+    "++id, name, scientificName, description, synced, createdAt",
+});
 
 export default db;
 

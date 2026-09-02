@@ -686,26 +686,30 @@ return (
       CABEÇALHO IMPRESSO
   ====================================================== */}
 
-  <div className="print-only print-report-header">
+ <div className="print-only print-report-header">
+  <div>
+    <strong>
+      CADERNO DE CAMPO
+    </strong>
 
-    <div>
-      <strong>
-        CADERNO DE CAMPO
-      </strong>
+    <h1>
+      {currentTitle.title}
+    </h1>
 
-      <h1>
-        {currentTitle.title}
-      </h1>
-    </div>
-
-    <div className="print-report-date">
-      Gerado em{" "}
-      {new Date().toLocaleDateString(
-        "pt-BR"
-      )}
-    </div>
-
+   <div className="print-contact">
+  Responsável técnica: Laís L. Andrade
+  <br />
+  WhatsApp: 74 9957-5038
+</div>
   </div>
+
+  <div className="print-report-date">
+    Gerado em{" "}
+    {new Date().toLocaleDateString(
+      "pt-BR"
+    )}
+  </div>
+</div>
 
   {/* =====================================================
       FILTROS

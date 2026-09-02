@@ -5,6 +5,10 @@ import {
   updatePlot,
 } from "../services/plotService";
 
+import {
+  getCultures,
+} from "../services/cultureService";
+
 import "../styles/newPlot.css";
 
 function NewPlot({
@@ -18,7 +22,36 @@ function NewPlot({
   const [soil, setSoil] = useState("");
   const [area, setArea] = useState("");
 
+  const [cultures, setCultures] = useState([]);
+
+  /* =========================================================
+     CARREGAR CULTURAS
+  ========================================================= */
+
+  async function loadCultures() {
+    try {
+      const data = await getCultures();
+
+      setCultures(
+        Array.isArray(data) ? data : []
+      );
+    } catch (error) {
+      console.error(
+        "ERRO AO CARREGAR CULTURAS:",
+        error
+      );
+
+      setCultures([]);
+    }
+  }
+
+  /* =========================================================
+     CARREGAR DADOS
+  ========================================================= */
+
   useEffect(() => {
+    loadCultures();
+
     if (plotToEdit) {
       setName(plotToEdit.name || "");
       setCulture(plotToEdit.culture || "");
@@ -31,6 +64,10 @@ function NewPlot({
       setArea("");
     }
   }, [plotToEdit]);
+
+  /* =========================================================
+     SALVAR
+  ========================================================= */
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -120,6 +157,10 @@ function NewPlot({
 
           <div className="form-grid">
 
+            {/* =================================================
+                PROPRIEDADE
+            ================================================= */}
+
             <div className="form-group full">
 
               <label>
@@ -141,6 +182,10 @@ function NewPlot({
 
             </div>
 
+            {/* =================================================
+                NOME DO TALHÃO
+            ================================================= */}
+
             <div className="form-group full">
 
               <label htmlFor="plot-name">
@@ -160,23 +205,49 @@ function NewPlot({
 
             </div>
 
+            {/* =================================================
+                CULTURA
+            ================================================= */}
+
             <div className="form-group">
 
               <label htmlFor="culture">
                 Cultura
               </label>
 
-              <input
+              <select
                 id="culture"
-                type="text"
-                placeholder="Ex.: Café"
                 value={culture}
                 onChange={(event) =>
                   setCulture(event.target.value)
                 }
-              />
+              >
+
+                <option value="">
+                  Selecione uma cultura
+                </option>
+
+                {cultures.map((item) => (
+
+                  <option
+                    key={item.id}
+                    value={item.name}
+                  >
+                    {item.name}
+                    {item.variety
+                      ? ` — ${item.variety}`
+                      : ""}
+                  </option>
+
+                ))}
+
+              </select>
 
             </div>
+
+            {/* =================================================
+                ÁREA
+            ================================================= */}
 
             <div className="form-group">
 
@@ -195,6 +266,10 @@ function NewPlot({
               />
 
             </div>
+
+            {/* =================================================
+                SOLO
+            ================================================= */}
 
             <div className="form-group full">
 
@@ -217,6 +292,10 @@ function NewPlot({
           </div>
 
         </div>
+
+        {/* =====================================================
+            AÇÕES
+        ===================================================== */}
 
         <div className="form-actions">
 

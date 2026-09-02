@@ -249,4 +249,62 @@ export async function getStockMovements(productId) {
     (a, b) =>
       new Date(b.date) - new Date(a.date)
   );
+}/* =========================================================
+   RESUMO DO ESTOQUE DO PRODUTO
+========================================================= */
+
+export async function getStockSummary(productId) {
+  const product = await db.products.get(Number(productId));
+
+  if (!product) {
+    return null;
+  }
+
+  const movements = Array.isArray(product.stockMovements)
+    ? product.stockMovements
+    : [];
+
+  let totalEntries = 0;
+  let totalExits = 0;
+  let diaryConsumption = 0;
+
+  movements.forEach((movement) => {
+    const quantity = Number(movement.quantity) || 0;
+
+    if (movement.type === "entrada") {
+      totalEntries += quantity;
+    }
+
+    if (movement.type === "saida") {
+      totalExits += quantity;
+    }
+
+    if (
+      movement.type === "saida" &&
+      movement.source === "diario"
+    ) {
+      diaryConsumption += quantity;
+    }
+  });
+
+  const lastMovement =
+    movements.length > 0
+      ? [...movements].sort(
+          (a, b) =>
+            new Date(b.date) - new Date(a.date)
+        )[0]
+      : null;
+
+  return {
+    productId: product.id,
+    productName: product.name || "Produto sem nome",
+    unit: product.unit || "un",
+    currentStock: Number(product.stock) || 0,
+    minimumStock: Number(product.minimumStock) || 0,
+    totalEntries,
+    totalExits,
+    diaryConsumption,
+    movementCount: movements.length,
+    lastMovement,
+  };
 }

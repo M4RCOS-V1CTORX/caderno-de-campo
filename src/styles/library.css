@@ -1951,3 +1951,85 @@
     gap: 4px;
   }
 }
+/* =========================================================
+   RASTREABILIDADE DO ESTOQUE
+========================================================= */
+
+.history-traceability {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.history-traceability span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #667085;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.history-traceability-badge {
+  display: inline-flex !important;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #f2f4f7;
+  color: #344054 !important;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+/* =========================================================
+   RESUMO DO HISTÓRICO DE ESTOQUE
+========================================================= */
+
+.history-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.history-summary-item {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.history-summary-item span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: #667085;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.history-summary-item strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.3;
+  color: #101828;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+  .history-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .history-summary {
+    grid-template-columns: 1fr;
+  }
+}
