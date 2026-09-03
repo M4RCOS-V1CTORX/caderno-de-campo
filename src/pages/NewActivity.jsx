@@ -1,6 +1,28 @@
 import { useEffect, useState } from "react";
 
 import {
+  ArrowLeft,
+  Building2,
+  CalendarDays,
+  Camera,
+  CheckCircle2,
+  ClipboardList,
+  FileText,
+  ImagePlus,
+  LoaderCircle,
+  MapPin,
+  Mountain,
+  Package,
+  Ruler,
+  Save,
+  Sprout,
+  Trash2,
+  Wrench,
+  X,
+  Bug,
+} from "lucide-react";
+
+import {
   createActivity,
   updateActivity,
 } from "../services/activityService";
@@ -10,6 +32,7 @@ import { addPhoto } from "../services/photoService";
 import { getProperties } from "../services/propertyService";
 
 import { getPlotsByProperty } from "../services/plotService";
+
 import { getCultures } from "../services/cultureService";
 
 import {
@@ -52,10 +75,12 @@ function NewActivity({
      MANEJO
   ========================================================= */
 
- const [managementType, setManagementType] = useState("");
-const [managementStatus, setManagementStatus] = useState("");
-const [managementPlannedDate, setManagementPlannedDate] = useState("");
-const [managementCompletedDate, setManagementCompletedDate] = useState("");
+  const [managementType, setManagementType] = useState("");
+  const [managementStatus, setManagementStatus] = useState("");
+  const [managementPlannedDate, setManagementPlannedDate] =
+    useState("");
+  const [managementCompletedDate, setManagementCompletedDate] =
+    useState("");
 
   /* =========================================================
      OCORRÊNCIAS
@@ -70,7 +95,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
   const [product, setProduct] = useState("");
   const [productId, setProductId] = useState("");
-
   const [quantity, setQuantity] = useState("");
   const [quantityValue, setQuantityValue] = useState("");
 
@@ -202,28 +226,34 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
     loadPlots();
   }, [propertyId]);
-        useEffect(() => {
-          async function loadCultures() {
-            try {
-              const data = await getCultures();
 
-              setCultures(
-                Array.isArray(data)
-                  ? data
-                  : []
-              );
-            } catch (error) {
-              console.error(
-                "ERRO AO CARREGAR CULTURAS:",
-                error
-              );
+  /* =========================================================
+     CARREGAR CULTURAS
+  ========================================================= */
 
-              setCultures([]);
-            }
-          }
+  useEffect(() => {
+    async function loadCultures() {
+      try {
+        const data = await getCultures();
 
-          loadCultures();
-        }, []);
+        setCultures(
+          Array.isArray(data)
+            ? data
+            : []
+        );
+      } catch (error) {
+        console.error(
+          "ERRO AO CARREGAR CULTURAS:",
+          error
+        );
+
+        setCultures([]);
+      }
+    }
+
+    loadCultures();
+  }, []);
+
   /* =========================================================
      PREENCHER FORMULÁRIO NA EDIÇÃO
   ========================================================= */
@@ -239,14 +269,14 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
       setPropertyId(
         activityToEdit.propertyId !== null &&
-        activityToEdit.propertyId !== undefined
+          activityToEdit.propertyId !== undefined
           ? String(activityToEdit.propertyId)
           : ""
       );
 
       setPlotId(
         activityToEdit.plotId !== null &&
-        activityToEdit.plotId !== undefined
+          activityToEdit.plotId !== undefined
           ? String(activityToEdit.plotId)
           : ""
       );
@@ -258,6 +288,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
       setManagementStatus(
         activityToEdit.managementStatus || ""
       );
+
       setManagementPlannedDate(
         activityToEdit.managementPlannedDate || ""
       );
@@ -283,15 +314,12 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
       setQuantityValue(
         activityToEdit.quantityValue !== undefined &&
-        activityToEdit.quantityValue !== null
-          ? String(
-              activityToEdit.quantityValue
-            )
+          activityToEdit.quantityValue !== null
+          ? String(activityToEdit.quantityValue)
           : ""
       );
 
       setSelectedCulture("");
-
       setPhotos([]);
     } else {
       setTitle("");
@@ -313,7 +341,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
       setProduct("");
       setProductId("");
-
       setQuantity("");
       setQuantityValue("");
 
@@ -510,9 +537,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
     }
 
     const selectedProduct =
-      await getProductById(
-        productId
-      );
+      await getProductById(productId);
 
     if (!selectedProduct) {
       throw new Error(
@@ -521,13 +546,13 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
     }
 
     const currentStock =
-      Number(
-        selectedProduct.stock
-      ) || 0;
+      Number(selectedProduct.stock) || 0;
 
     if (amount > currentStock) {
       throw new Error(
-        `Estoque insuficiente para "${selectedProduct.name}". Disponível: ${currentStock} ${selectedProduct.unit || ""}.`
+        `Estoque insuficiente para "${selectedProduct.name}". Disponível: ${currentStock} ${
+          selectedProduct.unit || ""
+        }.`
       );
     }
 
@@ -566,12 +591,19 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
         String(item.id) ===
         String(plotId)
     );
-    const selectedCultureData =
-  cultures.find(
-    (item) =>
-      String(item.name).trim().toLowerCase() ===
-      String(selectedPlot?.culture || "").trim().toLowerCase()
-  );
+
+  const selectedCultureData =
+    cultures.find(
+      (item) =>
+        String(item.name)
+          .trim()
+          .toLowerCase() ===
+        String(
+          selectedPlot?.culture || ""
+        )
+          .trim()
+          .toLowerCase()
+    );
 
   /* =========================================================
      INFORMAÇÕES DA ORIGEM DO ESTOQUE
@@ -632,9 +664,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
         }
 
         const newProduct =
-          await getProductById(
-            productId
-          );
+          await getProductById(productId);
 
         if (!newProduct) {
           throw new Error(
@@ -643,16 +673,16 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
         }
 
         const currentStock =
-          Number(
-            newProduct.stock
-          ) || 0;
+          Number(newProduct.stock) || 0;
 
         if (
           newAmount >
           currentStock
         ) {
           throw new Error(
-            `Estoque insuficiente para "${newProduct.name}". Disponível: ${currentStock} ${newProduct.unit || ""}.`
+            `Estoque insuficiente para "${newProduct.name}". Disponível: ${currentStock} ${
+              newProduct.unit || ""
+            }.`
           );
         }
 
@@ -739,10 +769,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
         return null;
       }
 
-      /* =====================================================
-         AUMENTOU A QUANTIDADE
-      ===================================================== */
-
       if (difference > 0) {
         const currentProduct =
           await getProductById(
@@ -765,7 +791,9 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           currentStock
         ) {
           throw new Error(
-            `Estoque insuficiente para aumentar a quantidade. Disponível: ${currentStock} ${currentProduct.unit || ""}.`
+            `Estoque insuficiente para aumentar a quantidade. Disponível: ${currentStock} ${
+              currentProduct.unit || ""
+            }.`
           );
         }
 
@@ -785,14 +813,8 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
         };
       }
 
-      /* =====================================================
-         DIMINUIU A QUANTIDADE
-      ===================================================== */
-
       const returnedQuantity =
-        Math.abs(
-          difference
-        );
+        Math.abs(difference);
 
       await addStock(
         newProductId,
@@ -861,9 +883,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
     }
 
     const currentStock =
-      Number(
-        newProduct.stock
-      ) || 0;
+      Number(newProduct.stock) || 0;
 
     if (
       newQuantity >
@@ -882,7 +902,9 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
       }
 
       throw new Error(
-        `Estoque insuficiente para "${newProduct.name}". Disponível: ${currentStock} ${newProduct.unit || ""}.`
+        `Estoque insuficiente para "${newProduct.name}". Disponível: ${currentStock} ${
+          newProduct.unit || ""
+        }.`
       );
     }
 
@@ -968,8 +990,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
       ) {
         if (
           adjustment.newProductId &&
-          adjustment.newQuantity >
-            0
+          adjustment.newQuantity > 0
         ) {
           await addStock(
             adjustment.newProductId,
@@ -981,8 +1002,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
         if (
           adjustment.oldProductId &&
-          adjustment.oldQuantity >
-            0
+          adjustment.oldQuantity > 0
         ) {
           await removeStock(
             adjustment.oldProductId,
@@ -999,8 +1019,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
       ) {
         if (
           adjustment.oldProductId &&
-          adjustment.oldQuantity >
-            0
+          adjustment.oldQuantity > 0
         ) {
           await removeStock(
             adjustment.oldProductId,
@@ -1058,8 +1077,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
       selectedProduct &&
       quantityValue !== ""
         ? `${quantityValue} ${
-            selectedProduct.unit ||
-            ""
+            selectedProduct.unit || ""
           }`.trim()
         : quantity;
 
@@ -1092,7 +1110,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
       managementPlannedDate,
 
-      managementCompletedDate,  
+      managementCompletedDate,
 
       pest:
         pest.trim(),
@@ -1114,9 +1132,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
       quantityValue:
         productId
-          ? Number(
-              quantityValue
-            )
+          ? Number(quantityValue)
           : null,
     };
 
@@ -1153,7 +1169,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
             `Uso no diário: ${title.trim()}`,
             {
               ...getStockMetadata(),
-
               activityId:
                 savedActivity?.id ||
                 null,
@@ -1162,10 +1177,8 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
           stockAdjustment = {
             type: "new",
-
             productId:
               Number(productId),
-
             quantity:
               amount,
           };
@@ -1251,28 +1264,49 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           CABEÇALHO
       ===================================================== */}
 
-      <header className="page-heading">
+      <header className="new-activity-header">
 
-        <div className="page-heading-content">
+        <button
+          type="button"
+          className="new-activity-back"
+          onClick={onCancel}
+          disabled={saving}
+        >
+          <ArrowLeft size={16} />
+          Voltar
+        </button>
 
-          <span className="home-label">
-            ATIVIDADES
-          </span>
+        <div className="new-activity-heading">
 
-          <h2>
-            {activityToEdit
-              ? "Editar atividade"
-              : "Nova atividade"}
-          </h2>
+          <div>
+            <span className="new-activity-label">
+              ATIVIDADES
+            </span>
 
-          <p>
-            {activityToEdit
-              ? "Atualize as informações deste registro de campo."
-              : "Registre uma nova atividade de campo."}
-          </p>
+            <h2>
+              {activityToEdit
+                ? "Editar atividade"
+                : "Nova atividade"}
+            </h2>
+
+            <p>
+              {activityToEdit
+                ? "Atualize as informações deste registro de campo."
+                : "Registre uma nova atividade de campo."}
+            </p>
+          </div>
+
+          <div className="new-activity-client">
+            <span>
+              RESPONSÁVEL TÉCNICA
+            </span>
+
+            <strong>
+              Laís L. Andrade
+            </strong>
+          </div>
 
         </div>
-
       </header>
 
       {/* =====================================================
@@ -1285,7 +1319,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
       >
 
         {/* ===================================================
-            INFORMAÇÕES
+            INFORMAÇÕES DA ATIVIDADE
         =================================================== */}
 
         <section className="form-section">
@@ -1293,11 +1327,10 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              📝
+              <ClipboardList size={18} />
             </div>
 
             <div>
-
               <h3>
                 Informações da atividade
               </h3>
@@ -1305,7 +1338,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
               <p>
                 Preencha os dados principais do registro.
               </p>
-
             </div>
 
           </div>
@@ -1318,18 +1350,22 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Nome da atividade
               </label>
 
-              <input
-                id="title"
-                type="text"
-                placeholder="Ex.: Visita à propriedade"
-                value={title}
-                onChange={(event) =>
-                  setTitle(
-                    event.target.value
-                  )
-                }
-                required
-              />
+              <div className="field-with-icon">
+                <ClipboardList size={16} />
+
+                <input
+                  id="title"
+                  type="text"
+                  placeholder="Ex.: Visita à propriedade"
+                  value={title}
+                  onChange={(event) =>
+                    setTitle(
+                      event.target.value
+                    )
+                  }
+                  required
+                />
+              </div>
 
             </div>
 
@@ -1339,17 +1375,21 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Data
               </label>
 
-              <input
-                id="date"
-                type="date"
-                value={date}
-                onChange={(event) =>
-                  setDate(
-                    event.target.value
-                  )
-                }
-                required
-              />
+              <div className="field-with-icon">
+                <CalendarDays size={16} />
+
+                <input
+                  id="date"
+                  type="date"
+                  value={date}
+                  onChange={(event) =>
+                    setDate(
+                      event.target.value
+                    )
+                  }
+                  required
+                />
+              </div>
 
             </div>
 
@@ -1359,19 +1399,25 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Local
               </label>
 
-              <input
-                id="location"
-                type="text"
-                placeholder="Ex.: Fazenda Boa Vista"
-                value={location}
-                onChange={(event) =>
-                  setLocation(
-                    event.target.value
-                  )
-                }
-              />
+              <div className="field-with-icon">
+                <MapPin size={16} />
+
+                <input
+                  id="location"
+                  type="text"
+                  placeholder="Ex.: Fazenda Boa Vista"
+                  value={location}
+                  onChange={(event) =>
+                    setLocation(
+                      event.target.value
+                    )
+                  }
+                />
+              </div>
 
             </div>
+
+            {/* PROPRIEDADE */}
 
             <div className="form-group">
 
@@ -1379,36 +1425,38 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Propriedade
               </label>
 
-              <select
-                id="property"
-                value={propertyId}
-                onChange={
-                  handlePropertyChange
-                }
-              >
+              <div className="select-field">
 
-                <option value="">
-                  Selecione uma propriedade
-                </option>
+                <Building2 size={16} />
 
-                {properties.map(
-                  (property) => (
-                    <option
-                      key={
-                        property.id
-                      }
-                      value={
-                        property.id
-                      }
-                    >
-                      {property.name}
-                    </option>
-                  )
-                )}
+                <select
+                  id="property"
+                  value={propertyId}
+                  onChange={
+                    handlePropertyChange
+                  }
+                >
+                  <option value="">
+                    Selecione uma propriedade
+                  </option>
 
-              </select>
+                  {properties.map(
+                    (property) => (
+                      <option
+                        key={property.id}
+                        value={property.id}
+                      >
+                        {property.name}
+                      </option>
+                    )
+                  )}
+                </select>
+
+              </div>
 
             </div>
+
+            {/* TALHÃO */}
 
             <div className="form-group">
 
@@ -1416,50 +1464,52 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Talhão
               </label>
 
-              <select
-                id="plot"
-                value={plotId}
-                onChange={(event) => {
+              <div className="select-field">
 
-                  const value =
-                    event.target.value;
+                <Mountain size={16} />
 
-                  setPlotId(value);
+                <select
+                  id="plot"
+                  value={plotId}
+                  onChange={(event) => {
+                    const value =
+                      event.target.value;
 
-                  const selected =
-                    plots.find(
-                      (plot) =>
-                        String(plot.id) ===
-                        String(value)
+                    setPlotId(value);
+
+                    const selected =
+                      plots.find(
+                        (plot) =>
+                          String(plot.id) ===
+                          String(value)
+                      );
+
+                    setSelectedCulture(
+                      selected?.culture ||
+                        ""
                     );
+                  }}
+                  disabled={!propertyId}
+                >
+                  <option value="">
+                    {propertyId
+                      ? "Selecione um talhão"
+                      : "Selecione uma propriedade primeiro"}
+                  </option>
 
-                  setSelectedCulture(
-                    selected?.culture ||
-                      ""
-                  );
+                  {plots.map(
+                    (plot) => (
+                      <option
+                        key={plot.id}
+                        value={plot.id}
+                      >
+                        {plot.name}
+                      </option>
+                    )
+                  )}
+                </select>
 
-                }}
-                disabled={!propertyId}
-              >
-
-                <option value="">
-                  {propertyId
-                    ? "Selecione um talhão"
-                    : "Selecione uma propriedade primeiro"}
-                </option>
-
-                {plots.map(
-                  (plot) => (
-                    <option
-                      key={plot.id}
-                      value={plot.id}
-                    >
-                      {plot.name}
-                    </option>
-                  )
-                )}
-
-              </select>
+              </div>
 
               {selectedCulture && (
                 <div className="selected-culture-info">
@@ -1467,7 +1517,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                   <div className="culture-info-main">
 
                     <span className="culture-info-icon">
-                      🌱
+                      <Sprout size={18} />
                     </span>
 
                     <div>
@@ -1484,37 +1534,61 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
 
                   {selectedCultureData?.variety && (
                     <div className="culture-info-item">
-                      <span>Variedade</span>
+
+                      <span>
+                        Variedade
+                      </span>
+
                       <strong>
-                        {selectedCultureData.variety}
+                        {
+                          selectedCultureData.variety
+                        }
                       </strong>
+
                     </div>
                   )}
 
                   {selectedCultureData?.cycle && (
                     <div className="culture-info-item">
-                      <span>Ciclo</span>
+
+                      <span>
+                        Ciclo
+                      </span>
+
                       <strong>
-                        {selectedCultureData.cycle}
+                        {
+                          selectedCultureData.cycle
+                        }
                       </strong>
+
                     </div>
                   )}
 
                   {selectedPlot?.area && (
                     <div className="culture-info-item">
-                      <span>Área</span>
+
+                      <span>
+                        Área
+                      </span>
+
                       <strong>
                         {selectedPlot.area}
                       </strong>
+
                     </div>
                   )}
 
                   {selectedPlot?.soil && (
                     <div className="culture-info-item">
-                      <span>Solo</span>
+
+                      <span>
+                        Solo
+                      </span>
+
                       <strong>
                         {selectedPlot.soil}
                       </strong>
+
                     </div>
                   )}
 
@@ -1524,7 +1598,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
             </div>
 
           </div>
-
         </section>
 
         {/* ===================================================
@@ -1536,11 +1609,10 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              🔧
+              <Wrench size={18} />
             </div>
 
             <div>
-
               <h3>
                 Manejo
               </h3>
@@ -1548,12 +1620,13 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
               <p>
                 Informe o tipo e o andamento do manejo.
               </p>
-
             </div>
 
           </div>
 
           <div className="form-grid">
+
+            {/* TIPO DE MANEJO */}
 
             <div className="form-group">
 
@@ -1561,71 +1634,78 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Tipo de manejo
               </label>
 
-              <select
-                id="managementType"
-                value={managementType}
-                onChange={(event) =>
-                  setManagementType(
-                    event.target.value
-                  )
-                }
-              >
+              <div className="select-field">
 
-                <option value="">
-                  Selecione o tipo de manejo
-                </option>
+                <Wrench size={16} />
 
-                <option value="Adubação">
-                  Adubação
-                </option>
+                <select
+                  id="managementType"
+                  value={managementType}
+                  onChange={(event) =>
+                    setManagementType(
+                      event.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Selecione o tipo de manejo
+                  </option>
 
-                <option value="Irrigação">
-                  Irrigação
-                </option>
+                  <option value="Adubação">
+                    Adubação
+                  </option>
 
-                <option value="Pulverização">
-                  Pulverização
-                </option>
+                  <option value="Irrigação">
+                    Irrigação
+                  </option>
 
-                <option value="Aplicação de defensivo">
-                  Aplicação de defensivo
-                </option>
+                  <option value="Pulverização">
+                    Pulverização
+                  </option>
 
-                <option value="Controle de pragas">
-                  Controle de pragas
-                </option>
+                  <option value="Aplicação de defensivo">
+                    Aplicação de defensivo
+                  </option>
 
-                <option value="Controle de doenças">
-                  Controle de doenças
-                </option>
+                  <option value="Controle de pragas">
+                    Controle de pragas
+                  </option>
 
-                <option value="Capina">
-                  Capina
-                </option>
+                  <option value="Controle de doenças">
+                    Controle de doenças
+                  </option>
 
-                <option value="Poda">
-                  Poda
-                </option>
+                  <option value="Capina">
+                    Capina
+                  </option>
 
-                <option value="Plantio">
-                  Plantio
-                </option>
+                  <option value="Poda">
+                    Poda
+                  </option>
 
-                <option value="Colheita">
-                  Colheita
-                </option>
+                  <option value="Plantio">
+                    Plantio
+                  </option>
 
-                <option value="Preparo do solo">
-                  Preparo do solo
-                </option>
+                  <option value="Colheita">
+                    Colheita
+                  </option>
 
-                <option value="Outro">
-                  Outro
-                </option>
+                  <option value="Preparo do solo">
+                    Preparo do solo
+                  </option>
 
-              </select>
+                  <option value="Outro">
+                    Outro
+                  </option>
+
+                </select>
+
+              </div>
 
             </div>
+
+            {/* STATUS */}
 
             <div className="form-group">
 
@@ -1633,76 +1713,103 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Status
               </label>
 
-              <select
-                id="managementStatus"
-                value={
-                  managementStatus
-                }
-                onChange={(event) =>
-                  setManagementStatus(
-                    event.target.value
-                  )
-                }
-              >
+              <div className="select-field">
 
-                <option value="">
-                  Selecione o status
-                </option>
+                <CheckCircle2 size={16} />
 
-                <option value="Planejado">
-                  Planejado
-                </option>
+                <select
+                  id="managementStatus"
+                  value={managementStatus}
+                  onChange={(event) =>
+                    setManagementStatus(
+                      event.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Selecione o status
+                  </option>
 
-                <option value="Em andamento">
-                  Em andamento
-                </option>
+                  <option value="Planejado">
+                    Planejado
+                  </option>
 
-                <option value="Concluído">
-                  Concluído
-                </option>
+                  <option value="Em andamento">
+                    Em andamento
+                  </option>
 
-              </select>
+                  <option value="Concluído">
+                    Concluído
+                  </option>
+
+                </select>
+
+              </div>
 
             </div>
-            
+
+            {/* DATA PREVISTA */}
+
             <div className="form-group">
+
               <label htmlFor="managementPlannedDate">
                 Data prevista
               </label>
 
-              <input
-                id="managementPlannedDate"
-                type="date"
-                value={managementPlannedDate}
-                onChange={(event) =>
-                  setManagementPlannedDate(
-                    event.target.value
-                  )
-                }
-              />
-            </div>
+              <div className="field-with-icon">
 
-            {managementStatus === "Concluído" && (
-              <div className="form-group">
-                <label htmlFor="managementCompletedDate">
-                  Data de conclusão
-                </label>
+                <CalendarDays size={16} />
 
                 <input
-                  id="managementCompletedDate"
+                  id="managementPlannedDate"
                   type="date"
-                  value={managementCompletedDate}
+                  value={
+                    managementPlannedDate
+                  }
                   onChange={(event) =>
-                    setManagementCompletedDate(
+                    setManagementPlannedDate(
                       event.target.value
                     )
                   }
                 />
+
+              </div>
+
+            </div>
+
+            {/* DATA DE CONCLUSÃO */}
+
+            {managementStatus ===
+              "Concluído" && (
+              <div className="form-group">
+
+                <label htmlFor="managementCompletedDate">
+                  Data de conclusão
+                </label>
+
+                <div className="field-with-icon">
+
+                  <CheckCircle2 size={16} />
+
+                  <input
+                    id="managementCompletedDate"
+                    type="date"
+                    value={
+                      managementCompletedDate
+                    }
+                    onChange={(event) =>
+                      setManagementCompletedDate(
+                        event.target.value
+                      )
+                    }
+                  />
+
+                </div>
+
               </div>
             )}
 
           </div>
-
         </section>
 
         {/* ===================================================
@@ -1714,11 +1821,10 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              🔎
+              <Bug size={18} />
             </div>
 
             <div>
-
               <h3>
                 Ocorrências
               </h3>
@@ -1726,12 +1832,13 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
               <p>
                 Registre pragas ou doenças observadas.
               </p>
-
             </div>
 
           </div>
 
           <div className="form-grid">
+
+            {/* PRAGA */}
 
             <div className="form-group">
 
@@ -1739,34 +1846,41 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Praga
               </label>
 
-              <select
-                id="pest"
-                value={pest}
-                onChange={(event) =>
-                  setPest(
-                    event.target.value
-                  )
-                }
-              >
+              <div className="select-field">
 
-                <option value="">
-                  Selecione uma praga
-                </option>
+                <Bug size={16} />
 
-                {pests.map(
-                  (item) => (
-                    <option
-                      key={item.id}
-                      value={item.name}
-                    >
-                      {item.name}
-                    </option>
-                  )
-                )}
+                <select
+                  id="pest"
+                  value={pest}
+                  onChange={(event) =>
+                    setPest(
+                      event.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Selecione uma praga
+                  </option>
 
-              </select>
+                  {pests.map(
+                    (item) => (
+                      <option
+                        key={item.id}
+                        value={item.name}
+                      >
+                        {item.name}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+              </div>
 
             </div>
+
+            {/* DOENÇA */}
 
             <div className="form-group">
 
@@ -1774,37 +1888,41 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Doença
               </label>
 
-              <select
-                id="disease"
-                value={disease}
-                onChange={(event) =>
-                  setDisease(
-                    event.target.value
-                  )
-                }
-              >
+              <div className="select-field">
 
-                <option value="">
-                  Selecione uma doença
-                </option>
+                <Bug size={16} />
 
-                {diseases.map(
-                  (item) => (
-                    <option
-                      key={item.id}
-                      value={item.name}
-                    >
-                      {item.name}
-                    </option>
-                  )
-                )}
+                <select
+                  id="disease"
+                  value={disease}
+                  onChange={(event) =>
+                    setDisease(
+                      event.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Selecione uma doença
+                  </option>
 
-              </select>
+                  {diseases.map(
+                    (item) => (
+                      <option
+                        key={item.id}
+                        value={item.name}
+                      >
+                        {item.name}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+              </div>
 
             </div>
 
           </div>
-
         </section>
 
         {/* ===================================================
@@ -1816,11 +1934,10 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              🧪
+              <Package size={18} />
             </div>
 
             <div>
-
               <h3>
                 Produto utilizado
               </h3>
@@ -1828,12 +1945,13 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
               <p>
                 Registre o produto e a quantidade retirada do estoque.
               </p>
-
             </div>
 
           </div>
 
           <div className="form-grid">
+
+            {/* PRODUTO */}
 
             <div className="form-group">
 
@@ -1841,32 +1959,39 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Produto
               </label>
 
-              <select
-                id="product"
-                value={productId}
-                onChange={
-                  handleProductChange
-                }
-              >
+              <div className="select-field">
 
-                <option value="">
-                  Nenhum produto
-                </option>
+                <Package size={16} />
 
-                {products.map(
-                  (item) => (
-                    <option
-                      key={item.id}
-                      value={item.id}
-                    >
-                      {item.name}
-                    </option>
-                  )
-                )}
+                <select
+                  id="product"
+                  value={productId}
+                  onChange={
+                    handleProductChange
+                  }
+                >
+                  <option value="">
+                    Nenhum produto
+                  </option>
 
-              </select>
+                  {products.map(
+                    (item) => (
+                      <option
+                        key={item.id}
+                        value={item.id}
+                      >
+                        {item.name}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+              </div>
 
             </div>
+
+            {/* QUANTIDADE */}
 
             <div className="form-group">
 
@@ -1874,36 +1999,29 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Quantidade utilizada
               </label>
 
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                }}
-              >
+              <div className="quantity-field">
 
-                <input
-                  id="quantity"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="Ex.: 20"
-                  value={quantityValue}
-                  onChange={
-                    handleQuantityChange
-                  }
-                  disabled={!productId}
-                />
+                <div className="field-with-icon">
+
+                  <Ruler size={16} />
+
+                  <input
+                    id="quantity"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ex.: 20"
+                    value={quantityValue}
+                    onChange={
+                      handleQuantityChange
+                    }
+                    disabled={!productId}
+                  />
+
+                </div>
 
                 {selectedProduct && (
-                  <span
-                    style={{
-                      whiteSpace:
-                        "nowrap",
-                      fontWeight: "600",
-                      color: "#555",
-                    }}
-                  >
+                  <span className="quantity-unit">
                     {selectedProduct.unit}
                   </span>
                 )}
@@ -1911,14 +2029,14 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
               </div>
 
               {selectedProduct && (
-                <small
-                  style={{
-                    display: "block",
-                    marginTop: "6px",
-                    color: "#666",
-                  }}
-                >
-                  Estoque disponível:{" "}
+                <div className="stock-info">
+
+                  <Package size={14} />
+
+                  <span>
+                    Estoque disponível:
+                  </span>
+
                   <strong>
                     {
                       Number(
@@ -1929,13 +2047,13 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                       selectedProduct.unit
                     }
                   </strong>
-                </small>
+
+                </div>
               )}
 
             </div>
 
           </div>
-
         </section>
 
         {/* ===================================================
@@ -1947,11 +2065,10 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              📋
+              <FileText size={18} />
             </div>
 
             <div>
-
               <h3>
                 Observações
               </h3>
@@ -1959,7 +2076,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
               <p>
                 Descreva o que foi realizado ou observado.
               </p>
-
             </div>
 
           </div>
@@ -1972,22 +2088,27 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                 Descrição
               </label>
 
-              <textarea
-                id="description"
-                rows="6"
-                placeholder="Descreva o que foi realizado, observações, ocorrências ou informações importantes..."
-                value={description}
-                onChange={(event) =>
-                  setDescription(
-                    event.target.value
-                  )
-                }
-              />
+              <div className="field-with-icon textarea-field">
+
+                <FileText size={16} />
+
+                <textarea
+                  id="description"
+                  rows="6"
+                  placeholder="Descreva o que foi realizado, observações, ocorrências ou informações importantes..."
+                  value={description}
+                  onChange={(event) =>
+                    setDescription(
+                      event.target.value
+                    )
+                  }
+                />
+
+              </div>
 
             </div>
 
           </div>
-
         </section>
 
         {/* ===================================================
@@ -1999,11 +2120,10 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
           <div className="form-section-header">
 
             <div className="form-section-icon">
-              📷
+              <Camera size={18} />
             </div>
 
             <div>
-
               <h3>
                 Fotos da atividade
               </h3>
@@ -2011,7 +2131,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
               <p>
                 Registre visualmente o que foi observado no campo.
               </p>
-
             </div>
 
           </div>
@@ -2020,15 +2139,13 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
             htmlFor="activity-photos"
             className="photo-upload-button"
           >
-
             <span className="photo-upload-icon">
-              ＋
+              <ImagePlus size={19} />
             </span>
 
             <span>
               Adicionar fotos
             </span>
-
           </label>
 
           <input
@@ -2064,7 +2181,6 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                     preview,
                     index
                   ) => (
-
                     <div
                       className="photo-preview"
                       key={`${preview.file.name}-${index}`}
@@ -2090,27 +2206,25 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
                         aria-label="Remover foto"
                         title="Remover foto"
                       >
-                        ×
+                        <Trash2 size={15} />
                       </button>
 
                     </div>
-
                   )
                 )}
 
               </div>
-
             </div>
           )}
 
           {photos.length > 0 && (
             <p className="photos-selected-count">
 
-              {photos.length}
+              {photos.length}{" "}
 
               {photos.length === 1
-                ? " foto pronta para ser salva"
-                : " fotos prontas para serem salvas"}
+                ? "foto pronta para ser salva"
+                : "fotos prontas para serem salvas"}
 
             </p>
           )}
@@ -2129,6 +2243,7 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
             onClick={onCancel}
             disabled={saving}
           >
+            <X size={16} />
             Cancelar
           </button>
 
@@ -2137,17 +2252,29 @@ const [managementCompletedDate, setManagementCompletedDate] = useState("");
             className="primary-button"
             disabled={saving}
           >
-            {saving
-              ? "Salvando..."
-              : activityToEdit
-                ? "Salvar alterações"
-                : "Salvar atividade"}
+            {saving ? (
+              <>
+                <LoaderCircle
+                  size={16}
+                  className="button-spinner"
+                />
+
+                Salvando...
+              </>
+            ) : (
+              <>
+                <Save size={16} />
+
+                {activityToEdit
+                  ? "Salvar alterações"
+                  : "Salvar atividade"}
+              </>
+            )}
           </button>
 
         </div>
 
       </form>
-
     </main>
   );
 }

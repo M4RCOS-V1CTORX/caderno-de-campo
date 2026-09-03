@@ -2048,15 +2048,29 @@ margin-bottom: 15px;
 }
 
 .report-type-icon {
-width: 42px;
-height: 42px;
-display: flex;
-align-items: center;
-justify-content: center;
-border-radius: 12px;
-background: #edf5ef;
-border: 1px solid #dbe8df;
-font-size: 19px;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #edf4ef;
+  color: #315f45;
+}
+
+.report-type-icon svg {
+  display: block;
+  width: 21px;
+  height: 21px;
+  min-width: 21px;
+  min-height: 21px;
+  color: #315f45;
+  stroke: currentColor;
+  stroke-width: 2;
+  flex-shrink: 0;
 }
 
 .report-type-selected {
@@ -2133,4 +2147,38 @@ IMPRESSÃO DOS TIPOS
 display: none !important;
 }
 }
+.report-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  margin-bottom: 22px;
 
+  border: 1px solid #e1e6e3;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #315f45;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.report-back-button:hover {
+  background: #f5f8f6;
+  border-color: #cfd8d2;
+  transform: translateY(-1px);
+}
+
+.report-back-button svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  display: block;
+}

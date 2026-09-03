@@ -401,6 +401,7 @@ function App() {
           onNewProperty={goToNewProperty}
           onEditProperty={goToEditProperty}
           onViewPlots={goToPlots}
+          onBack={goToHome}
         />
 
       )}
@@ -595,6 +596,7 @@ function App() {
 
         <Reports
           onBack={goToHome}
+          onBackToHome={goToHome}
         />
 
       )}

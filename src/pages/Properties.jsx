@@ -7,6 +7,21 @@ import {
 
 import { getPlotsByProperty } from "../services/plotService";
 
+import {
+  Building2,
+  MapPin,
+  Sprout,
+  Search,
+  X,
+  Plus,
+  Pencil,
+  Trash2,
+  ArrowRight,
+  ArrowLeft,
+  LoaderCircle,
+  Database,
+} from "lucide-react";
+
 import "../styles/properties.css";
 
 function Properties({
@@ -14,6 +29,7 @@ function Properties({
   onEditProperty,
   onViewProperty,
   onViewPlots,
+  onBack,
 }) {
   const [properties, setProperties] = useState([]);
   const [plotCounts, setPlotCounts] = useState({});
@@ -33,11 +49,6 @@ function Properties({
       const propertyList = Array.isArray(data) ? data : [];
 
       setProperties(propertyList);
-
-      /*
-       * Carrega a quantidade de talhões
-       * de cada propriedade.
-       */
 
       const counts = {};
 
@@ -89,20 +100,10 @@ function Properties({
   ========================================================= */
 
   function handleViewPlots(property) {
-    /*
-     * Primeiro tenta usar a função onViewPlots.
-     * É a função principal usada pelo App.jsx.
-     */
-
     if (onViewPlots) {
       onViewPlots(property);
       return;
     }
-
-    /*
-     * Mantém compatibilidade caso alguma versão
-     * anterior do App.jsx esteja usando onViewProperty.
-     */
 
     if (onViewProperty) {
       onViewProperty(property);
@@ -157,10 +158,6 @@ function Properties({
     try {
       await deleteProperty(property.id);
 
-      /*
-       * Atualiza a tela imediatamente.
-       */
-
       setProperties((currentProperties) =>
         currentProperties.filter(
           (item) => item.id !== property.id
@@ -213,26 +210,41 @@ function Properties({
 
   return (
     <main className="properties">
+      <button
+  className="properties-back-button"
+  onClick={onBack}
+>
+  <ArrowLeft size={16} />
+  Voltar para a Home
+</button>
 
       {/* =====================================================
           CABEÇALHO
       ===================================================== */}
 
-      <div className="properties-header">
+      <header className="properties-header">
 
         <div className="properties-heading">
 
-          <span className="home-label">
+          <span className="properties-label">
             CADASTROS
           </span>
 
-          <h2>
-            Propriedades
-          </h2>
+          <div className="properties-title-row">
+
+            <div className="properties-title-icon">
+              <Building2 size={20} strokeWidth={1.7} />
+            </div>
+
+            <h2>
+              Propriedades
+            </h2>
+
+          </div>
 
           <p>
-            Gerencie as propriedades cadastradas no
-            caderno de campo.
+            Gerencie as propriedades cadastradas
+            no seu caderno de campo.
           </p>
 
         </div>
@@ -242,11 +254,11 @@ function Properties({
           className="primary-button properties-new-button"
           onClick={onNewProperty}
         >
-          <span>＋</span>
+          <Plus size={17} strokeWidth={2} />
           Nova propriedade
         </button>
 
-      </div>
+      </header>
 
       {/* =====================================================
           RESUMO
@@ -256,11 +268,14 @@ function Properties({
 
         <div className="summary-card">
 
-          <span className="summary-icon">
-            🏡
-          </span>
+          <div className="summary-icon">
+            <Building2
+              size={20}
+              strokeWidth={1.7}
+            />
+          </div>
 
-          <div>
+          <div className="summary-content">
 
             <strong>
               {properties.length}
@@ -278,11 +293,14 @@ function Properties({
 
         <div className="summary-card">
 
-          <span className="summary-icon">
-            🌱
-          </span>
+          <div className="summary-icon">
+            <Sprout
+              size={20}
+              strokeWidth={1.7}
+            />
+          </div>
 
-          <div>
+          <div className="summary-content">
 
             <strong>
               {totalPlots}
@@ -310,16 +328,33 @@ function Properties({
 
           <div>
 
+            <span className="section-kicker">
+              PROPRIEDADES
+            </span>
+
             <h3>
               Minhas propriedades
             </h3>
 
             <p>
-              Consulte e gerencie seus locais de
-              trabalho.
+              Consulte e gerencie seus locais
+              de trabalho.
             </p>
 
           </div>
+
+          {properties.length > 0 && (
+            <div className="properties-count">
+              <Database
+                size={14}
+                strokeWidth={1.7}
+              />
+
+              <span>
+                {properties.length}
+              </span>
+            </div>
+          )}
 
         </div>
 
@@ -329,9 +364,10 @@ function Properties({
 
         <div className="property-search">
 
-          <span>
-            ⌕
-          </span>
+          <Search
+            size={17}
+            strokeWidth={1.7}
+          />
 
           <input
             type="text"
@@ -349,7 +385,7 @@ function Properties({
               onClick={clearSearch}
               aria-label="Limpar pesquisa"
             >
-              ×
+              <X size={14} />
             </button>
           )}
 
@@ -363,7 +399,11 @@ function Properties({
 
           <div className="properties-loading">
 
-            <div className="loading-spinner"></div>
+            <LoaderCircle
+              className="loading-spinner"
+              size={30}
+              strokeWidth={1.7}
+            />
 
             <p>
               Carregando propriedades...
@@ -382,17 +422,18 @@ function Properties({
                 key={property.id}
               >
 
-                {/* =================================================
-                    ÍCONE
-                ================================================= */}
+                {/* ÍCONE */}
 
                 <div className="property-icon">
-                  🏡
+
+                  <Building2
+                    size={21}
+                    strokeWidth={1.6}
+                  />
+
                 </div>
 
-                {/* =================================================
-                    INFORMAÇÕES
-                ================================================= */}
+                {/* INFORMAÇÕES */}
 
                 <div className="property-info">
 
@@ -401,38 +442,50 @@ function Properties({
                       "Propriedade sem nome"}
                   </h4>
 
-                  <p>
-                    {property.location ||
-                      property.address ||
-                      property.city ||
-                      "Localização não informada"}
+                  <p className="property-location">
+
+                    <MapPin
+                      size={12}
+                      strokeWidth={1.8}
+                    />
+
+                    <span>
+                      {property.location ||
+                        property.address ||
+                        property.city ||
+                        "Localização não informada"}
+                    </span>
+
                   </p>
 
                 </div>
 
-                {/* =================================================
-                    META
-                ================================================= */}
+                {/* META */}
 
                 <div className="property-meta">
 
                   <span className="plot-badge">
 
-                    🌱{" "}
+                    <Sprout
+                      size={13}
+                      strokeWidth={1.8}
+                    />
 
-                    {plotCounts[property.id] || 0}{" "}
+                    <span>
+                      {plotCounts[property.id] || 0}
+                    </span>
 
-                    {plotCounts[property.id] === 1
-                      ? "talhão"
-                      : "talhões"}
+                    <span>
+                      {plotCounts[property.id] === 1
+                        ? "talhão"
+                        : "talhões"}
+                    </span>
 
                   </span>
 
                 </div>
 
-                {/* =================================================
-                    AÇÕES
-                ================================================= */}
+                {/* AÇÕES */}
 
                 <div
                   className="property-actions"
@@ -441,35 +494,38 @@ function Properties({
                   }
                 >
 
-                  {/* TALHÕES */}
-
                   <button
                     type="button"
-                    className="secondary-button"
+                    className="plots-button"
                     onClick={() =>
                       handleViewPlots(property)
                     }
                   >
+                    <Sprout
+                      size={13}
+                      strokeWidth={1.8}
+                    />
+
                     Talhões
                   </button>
-
-                  {/* EDITAR */}
 
                   <button
                     type="button"
                     className="edit-button"
                     onClick={() => {
-
                       if (onEditProperty) {
                         onEditProperty(property);
                       }
-
                     }}
+                    aria-label={`Editar ${property.name}`}
                   >
+                    <Pencil
+                      size={13}
+                      strokeWidth={1.8}
+                    />
+
                     Editar
                   </button>
-
-                  {/* EXCLUIR */}
 
                   <button
                     type="button"
@@ -477,18 +533,27 @@ function Properties({
                     onClick={() =>
                       handleDeleteProperty(property)
                     }
+                    aria-label={`Excluir ${property.name}`}
                   >
+                    <Trash2
+                      size={13}
+                      strokeWidth={1.8}
+                    />
+
                     Excluir
                   </button>
 
                 </div>
 
-                {/* =================================================
-                    SETA
-                ================================================= */}
+                {/* SETA */}
 
                 <span className="property-arrow">
-                  →
+
+                  <ArrowRight
+                    size={17}
+                    strokeWidth={1.7}
+                  />
+
                 </span>
 
               </article>
@@ -506,8 +571,17 @@ function Properties({
           <div className="properties-empty">
 
             <div className="empty-icon">
-              ⌕
+
+              <Search
+                size={22}
+                strokeWidth={1.6}
+              />
+
             </div>
+
+            <span className="empty-kicker">
+              PESQUISA
+            </span>
 
             <h3>
               Nenhuma propriedade encontrada
@@ -537,17 +611,27 @@ function Properties({
           <div className="properties-empty">
 
             <div className="empty-icon">
-              🏡
+
+              <Building2
+                size={23}
+                strokeWidth={1.6}
+              />
+
             </div>
+
+            <span className="empty-kicker">
+              CADASTRO
+            </span>
 
             <h3>
               Nenhuma propriedade cadastrada
             </h3>
 
             <p>
-              Cadastre sua primeira propriedade para
-              começar a organizar os locais e talhões
-              utilizados nas atividades de campo.
+              Cadastre sua primeira propriedade
+              para começar a organizar os locais
+              e talhões utilizados nas atividades
+              de campo.
             </p>
 
             <button
@@ -555,7 +639,12 @@ function Properties({
               className="primary-button"
               onClick={onNewProperty}
             >
-              ＋ Nova propriedade
+              <Plus
+                size={16}
+                strokeWidth={2}
+              />
+
+              Nova propriedade
             </button>
 
           </div>

@@ -5,6 +5,22 @@ import {
   deleteCulture,
 } from "../services/cultureService";
 
+import {
+  Sprout,
+  Plus,
+  ArrowLeft,
+  Pencil,
+  Trash2,
+  Search,
+  X,
+  CalendarDays,
+  Leaf,
+  FileText,
+  LoaderCircle,
+  Database,
+  ChevronRight,
+} from "lucide-react";
+
 import "../styles/cultures.css";
 
 function Cultures({
@@ -14,10 +30,11 @@ function Cultures({
 }) {
   const [cultures, setCultures] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  /* =========================================================
-     CARREGAR CULTURAS
-  ========================================================= */
+  // =========================================================
+  // CARREGAR CULTURAS
+  // =========================================================
 
   async function loadCultures() {
     try {
@@ -40,17 +57,17 @@ function Cultures({
     }
   }
 
-  /* =========================================================
-     CARREGAMENTO INICIAL
-  ========================================================= */
+  // =========================================================
+  // CARREGAMENTO INICIAL
+  // =========================================================
 
   useEffect(() => {
     loadCultures();
   }, []);
 
-  /* =========================================================
-     EXCLUIR CULTURA
-  ========================================================= */
+  // =========================================================
+  // EXCLUIR CULTURA
+  // =========================================================
 
   async function handleDelete(id) {
     const confirmed = window.confirm(
@@ -77,58 +94,194 @@ function Cultures({
     }
   }
 
-  /* =========================================================
-     TELA
-  ========================================================= */
+  // =========================================================
+  // FILTRO
+  // =========================================================
+
+  const filteredCultures = cultures.filter((culture) => {
+    const searchTerm = search
+      .trim()
+      .toLowerCase();
+
+    if (!searchTerm) {
+      return true;
+    }
+
+    return (
+      culture.name
+        ?.toLowerCase()
+        .includes(searchTerm) ||
+      culture.variety
+        ?.toLowerCase()
+        .includes(searchTerm) ||
+      culture.cycle
+        ?.toLowerCase()
+        .includes(searchTerm) ||
+      culture.observations
+        ?.toLowerCase()
+        .includes(searchTerm)
+    );
+  });
 
   return (
     <main className="cultures-page">
 
       {/* =====================================================
-          CABEÇALHO
+          VOLTAR
       ===================================================== */}
 
-      <div className="cultures-heading">
+      <button
+        type="button"
+        className="cultures-back-button"
+        onClick={onBack}
+      >
+        <ArrowLeft size={16} />
+        Voltar para a Home
+      </button>
 
-        <div className="cultures-heading-content">
+      {/* =====================================================
+          HERO / CABEÇALHO
+      ===================================================== */}
 
-          <span className="home-label">
-            CADASTROS
-          </span>
+      <section className="cultures-hero">
 
-          <h2>
-            Culturas
-          </h2>
+        <div className="cultures-hero-content">
 
-          <p>
-            Cadastre e gerencie as culturas
-            utilizadas nas propriedades.
-          </p>
+          <div className="cultures-hero-icon">
+            <Sprout size={23} />
+          </div>
+
+          <div>
+            <span className="cultures-kicker">
+              CADASTROS AGRÍCOLAS
+            </span>
+
+            <h1>
+              Culturas
+            </h1>
+
+            <p>
+              Organize as culturas utilizadas
+              nas propriedades e mantenha
+              suas informações sempre acessíveis.
+            </p>
+          </div>
 
         </div>
 
         <button
           type="button"
-          className="primary-button cultures-new-button"
+          className="cultures-new-button"
           onClick={onNewCulture}
         >
-          <span>＋</span>
+          <Plus size={17} />
           Nova cultura
+          <ChevronRight size={15} />
         </button>
 
-      </div>
+      </section>
 
       {/* =====================================================
-          BOTÃO VOLTAR
+          RESUMO
       ===================================================== */}
 
-      <button
-        type="button"
-        className="back-button"
-        onClick={onBack}
-      >
-        ← Voltar
-      </button>
+      {!loading && (
+        <section className="cultures-overview">
+
+          <div className="overview-card overview-main">
+
+            <div className="overview-icon">
+              <Database size={19} />
+            </div>
+
+            <div className="overview-info">
+              <span>
+                TOTAL CADASTRADO
+              </span>
+
+              <strong>
+                {cultures.length}
+              </strong>
+
+              <small>
+                {cultures.length === 1
+                  ? "cultura registrada"
+                  : "culturas registradas"}
+              </small>
+            </div>
+
+          </div>
+
+          <div className="overview-card">
+
+            <div className="overview-icon">
+              <Leaf size={19} />
+            </div>
+
+            <div className="overview-info">
+              <span>
+                CATÁLOGO
+              </span>
+
+              <strong>
+                Agrícola
+              </strong>
+
+              <small>
+                Culturas disponíveis para os talhões
+              </small>
+            </div>
+
+          </div>
+
+        </section>
+      )}
+
+      {/* =====================================================
+          ÁREA DE BUSCA
+      ===================================================== */}
+
+      {!loading && cultures.length > 0 && (
+        <section className="cultures-toolbar">
+
+          <div className="cultures-toolbar-title">
+            <span>
+              CATÁLOGO
+            </span>
+
+            <h2>
+              Suas culturas
+            </h2>
+          </div>
+
+          <div className="culture-search">
+
+            <Search size={17} />
+
+            <input
+              type="text"
+              placeholder="Buscar cultura, variedade ou ciclo..."
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
+            />
+
+            {search && (
+              <button
+                type="button"
+                className="culture-search-clear"
+                onClick={() => setSearch("")}
+                aria-label="Limpar busca"
+              >
+                <X size={15} />
+              </button>
+            )}
+
+          </div>
+
+        </section>
+      )}
 
       {/* =====================================================
           CONTEÚDO
@@ -136,21 +289,29 @@ function Cultures({
 
       <section className="cultures-content">
 
+        {/* ===================================================
+            CARREGANDO
+        =================================================== */}
+
         {loading ? (
 
-          /* =================================================
-             CARREGANDO
-          ================================================= */
+          <div className="cultures-empty">
 
-          <div className="empty-state">
-
-            <div className="empty-icon">
-              🌱
+            <div className="cultures-empty-icon loading">
+              <LoaderCircle
+                size={25}
+                className="cultures-spinner"
+              />
             </div>
 
             <h3>
-              Carregando culturas...
+              Carregando culturas
             </h3>
+
+            <p>
+              Aguarde enquanto carregamos
+              o catálogo agrícola.
+            </p>
 
           </div>
 
@@ -160,28 +321,69 @@ function Cultures({
              NENHUMA CULTURA
           ================================================= */
 
-          <div className="empty-state">
+          <div className="cultures-empty">
 
-            <div className="empty-icon">
-              🌱
+            <div className="cultures-empty-icon">
+              <Sprout size={28} />
             </div>
+
+            <span className="empty-kicker">
+              CATÁLOGO VAZIO
+            </span>
 
             <h3>
               Nenhuma cultura cadastrada
             </h3>
 
             <p>
-              Cadastre sua primeira cultura
-              para começar a organizar
-              as informações agrícolas.
+              Cadastre sua primeira cultura para
+              começar a organizar as informações
+              utilizadas nos seus talhões.
             </p>
 
             <button
               type="button"
-              className="primary-button"
+              className="empty-primary-button"
               onClick={onNewCulture}
             >
-              ＋ Cadastrar primeira cultura
+              <Plus size={16} />
+              Cadastrar primeira cultura
+            </button>
+
+          </div>
+
+        ) : filteredCultures.length === 0 ? (
+
+          /* =================================================
+             BUSCA SEM RESULTADO
+          ================================================= */
+
+          <div className="cultures-empty search-empty">
+
+            <div className="cultures-empty-icon">
+              <Search size={25} />
+            </div>
+
+            <span className="empty-kicker">
+              PESQUISA
+            </span>
+
+            <h3>
+              Nenhuma cultura encontrada
+            </h3>
+
+            <p>
+              Não encontramos nenhuma cultura
+              correspondente a "{search}".
+            </p>
+
+            <button
+              type="button"
+              className="empty-secondary-button"
+              onClick={() => setSearch("")}
+            >
+              <X size={15} />
+              Limpar pesquisa
             </button>
 
           </div>
@@ -189,12 +391,38 @@ function Cultures({
         ) : (
 
           /* =================================================
-             LISTA DE CULTURAS
+             LISTA
           ================================================= */
 
           <div className="cultures-list">
 
-            {cultures.map((culture) => (
+            <div className="cultures-list-header">
+
+              <div>
+                <span>
+                  REGISTROS
+                </span>
+
+                <h2>
+                  {filteredCultures.length}{" "}
+                  {filteredCultures.length === 1
+                    ? "cultura"
+                    : "culturas"}
+                </h2>
+              </div>
+
+              {search && (
+                <div className="search-result-label">
+                  Busca por:
+                  <strong>
+                    "{search}"
+                  </strong>
+                </div>
+              )}
+
+            </div>
+
+            {filteredCultures.map((culture) => (
 
               <article
                 className="culture-card"
@@ -202,38 +430,38 @@ function Cultures({
               >
 
                 {/* =================================================
-                    INFORMAÇÕES
+                    IDENTIDADE
                 ================================================= */}
 
-                <div className="culture-card-content">
+                <div className="culture-main">
 
                   <div className="culture-icon">
-                    🌱
+                    <Sprout size={22} />
                   </div>
 
                   <div className="culture-info">
 
-                    <h3>
-                      {culture.name ||
-                        "Cultura sem nome"}
-                    </h3>
+                    <div className="culture-name-row">
 
-                    <div className="culture-details">
+                      <h3>
+                        {culture.name ||
+                          "Cultura sem nome"}
+                      </h3>
+
+                    </div>
+
+                    <div className="culture-tags">
 
                       {culture.variety && (
-                        <span>
-                          <strong>
-                            Variedade:
-                          </strong>{" "}
+                        <span className="culture-tag">
+                          <Leaf size={12} />
                           {culture.variety}
                         </span>
                       )}
 
                       {culture.cycle && (
-                        <span>
-                          <strong>
-                            Ciclo:
-                          </strong>{" "}
+                        <span className="culture-tag">
+                          <CalendarDays size={12} />
                           {culture.cycle}
                         </span>
                       )}
@@ -241,9 +469,15 @@ function Cultures({
                     </div>
 
                     {culture.observations && (
-                      <p className="culture-observations">
-                        {culture.observations}
-                      </p>
+                      <div className="culture-note">
+
+                        <FileText size={13} />
+
+                        <span>
+                          {culture.observations}
+                        </span>
+
+                      </div>
                     )}
 
                   </div>
@@ -258,21 +492,23 @@ function Cultures({
 
                   <button
                     type="button"
-                    className="secondary-button"
+                    className="culture-edit-button"
                     onClick={() =>
                       onEditCulture(culture)
                     }
                   >
+                    <Pencil size={15} />
                     Editar
                   </button>
 
                   <button
                     type="button"
-                    className="delete-button"
+                    className="culture-delete-button"
                     onClick={() =>
                       handleDelete(culture.id)
                     }
                   >
+                    <Trash2 size={15} />
                     Excluir
                   </button>
 

@@ -1,10 +1,24 @@
-
 import { useEffect, useState } from "react";
 
 import {
   getPlotsByProperty,
   deletePlot,
 } from "../services/plotService";
+
+import {
+  Building2,
+  Sprout,
+  MapPin,
+  Ruler,
+  Mountain,
+  Plus,
+  ArrowLeft,
+  Pencil,
+  Trash2,
+  ArrowRight,
+  LoaderCircle,
+  Search,
+} from "lucide-react";
 
 import "../styles/plots.css";
 
@@ -15,6 +29,7 @@ function Plots({
   onBack,
 }) {
   const [plots, setPlots] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   /* =========================================================
      CARREGAR TALHÕES
@@ -23,10 +38,13 @@ function Plots({
   async function loadPlots() {
     if (!property?.id) {
       setPlots([]);
+      setLoading(false);
       return;
     }
 
     try {
+      setLoading(true);
+
       const data = await getPlotsByProperty(property.id);
 
       setPlots(Array.isArray(data) ? data : []);
@@ -37,6 +55,8 @@ function Plots({
       );
 
       setPlots([]);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -96,9 +116,20 @@ function Plots({
             PROPRIEDADE
           </span>
 
-          <h2>
-            {property?.name || "Talhões"}
-          </h2>
+          <div className="plots-title-row">
+
+            <div className="plots-title-icon">
+              <Building2
+                size={21}
+                strokeWidth={1.8}
+              />
+            </div>
+
+            <h2>
+              {property?.name || "Talhões"}
+            </h2>
+
+          </div>
 
           <p>
             Gerencie os talhões desta propriedade.
@@ -112,14 +143,18 @@ function Plots({
           onClick={onNewPlot}
           disabled={!property}
         >
-          <span>＋</span>
+          <Plus
+            size={16}
+            strokeWidth={2}
+          />
+
           Novo talhão
         </button>
 
       </div>
 
       {/* =====================================================
-          BOTÃO VOLTAR
+          CAMINHO / VOLTAR
       ===================================================== */}
 
       <button
@@ -127,8 +162,61 @@ function Plots({
         className="back-button"
         onClick={onBack}
       >
-        ← Voltar para propriedades
+        <ArrowLeft
+          size={15}
+          strokeWidth={1.9}
+        />
+
+        Voltar para propriedades
       </button>
+
+      {/* =====================================================
+          RESUMO
+      ===================================================== */}
+
+      {property && (
+        <div className="plots-summary">
+
+          <div className="plots-summary-card">
+
+            <div className="plots-summary-icon">
+              <Sprout
+                size={17}
+                strokeWidth={1.8}
+              />
+            </div>
+
+            <div>
+              <span>Talhões cadastrados</span>
+
+              <strong>
+                {plots.length}
+              </strong>
+            </div>
+
+          </div>
+
+          <div className="plots-summary-card">
+
+            <div className="plots-summary-icon">
+              <Building2
+                size={17}
+                strokeWidth={1.8}
+              />
+            </div>
+
+            <div>
+              <span>Propriedade</span>
+
+              <strong className="summary-property-name">
+                {property.name}
+              </strong>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
       {/* =====================================================
           CONTEÚDO
@@ -145,8 +233,15 @@ function Plots({
           <div className="empty-state">
 
             <div className="empty-icon">
-              🏡
+              <Building2
+                size={25}
+                strokeWidth={1.7}
+              />
             </div>
+
+            <span className="empty-kicker">
+              TALHÕES
+            </span>
 
             <h3>
               Nenhuma propriedade selecionada
@@ -162,8 +257,38 @@ function Plots({
               className="secondary-button"
               onClick={onBack}
             >
+              <ArrowLeft
+                size={15}
+                strokeWidth={1.9}
+              />
+
               Voltar para propriedades
             </button>
+
+          </div>
+
+        ) : loading ? (
+
+          /* =================================================
+             CARREGANDO
+          ================================================= */
+
+          <div className="empty-state loading-state">
+
+            <LoaderCircle
+              className="loading-spinner"
+              size={30}
+              strokeWidth={1.8}
+            />
+
+            <h3>
+              Carregando talhões...
+            </h3>
+
+            <p>
+              Aguarde enquanto buscamos os
+              registros desta propriedade.
+            </p>
 
           </div>
 
@@ -176,8 +301,15 @@ function Plots({
           <div className="empty-state">
 
             <div className="empty-icon">
-              🌱
+              <Sprout
+                size={26}
+                strokeWidth={1.7}
+              />
             </div>
+
+            <span className="empty-kicker">
+              TALHÕES
+            </span>
 
             <h3>
               Nenhum talhão cadastrado
@@ -193,7 +325,12 @@ function Plots({
               className="primary-button"
               onClick={onNewPlot}
             >
-              ＋ Cadastrar primeiro talhão
+              <Plus
+                size={16}
+                strokeWidth={2}
+              />
+
+              Cadastrar primeiro talhão
             </button>
 
           </div>
@@ -205,6 +342,27 @@ function Plots({
           ================================================= */
 
           <div className="plots-list">
+
+            <div className="plots-list-heading">
+
+              <div>
+                <span className="section-kicker">
+                  ORGANIZAÇÃO DA PROPRIEDADE
+                </span>
+
+                <h3>
+                  Talhões cadastrados
+                </h3>
+              </div>
+
+              <span className="plots-count">
+                {plots.length}{" "}
+                {plots.length === 1
+                  ? "talhão"
+                  : "talhões"}
+              </span>
+
+            </div>
 
             {plots.map((plot) => (
 
@@ -220,7 +378,10 @@ function Plots({
                 <div className="plot-card-content">
 
                   <div className="plot-icon">
-                    🌱
+                    <Sprout
+                      size={21}
+                      strokeWidth={1.7}
+                    />
                   </div>
 
                   <div className="plot-info">
@@ -233,23 +394,53 @@ function Plots({
                     <div className="plot-details">
 
                       {plot.culture && (
-                        <span>
-                          <strong>Cultura:</strong>{" "}
-                          {plot.culture}
+                        <span className="plot-detail">
+                          <Sprout
+                            size={13}
+                            strokeWidth={1.7}
+                          />
+
+                          <span>
+                            <strong>
+                              Cultura
+                            </strong>
+
+                            {plot.culture}
+                          </span>
                         </span>
                       )}
 
                       {plot.area && (
-                        <span>
-                          <strong>Área:</strong>{" "}
-                          {plot.area}
+                        <span className="plot-detail">
+                          <Ruler
+                            size={13}
+                            strokeWidth={1.7}
+                          />
+
+                          <span>
+                            <strong>
+                              Área
+                            </strong>
+
+                            {plot.area}
+                          </span>
                         </span>
                       )}
 
                       {plot.soil && (
-                        <span>
-                          <strong>Solo:</strong>{" "}
-                          {plot.soil}
+                        <span className="plot-detail">
+                          <Mountain
+                            size={13}
+                            strokeWidth={1.7}
+                          />
+
+                          <span>
+                            <strong>
+                              Solo
+                            </strong>
+
+                            {plot.soil}
+                          </span>
                         </span>
                       )}
 
@@ -267,23 +458,40 @@ function Plots({
 
                   <button
                     type="button"
-                    className="secondary-button"
+                    className="plot-action-button edit"
                     onClick={() =>
                       onEditPlot(plot)
                     }
                   >
+                    <Pencil
+                      size={14}
+                      strokeWidth={1.8}
+                    />
+
                     Editar
                   </button>
 
                   <button
                     type="button"
-                    className="delete-button"
+                    className="plot-action-button delete"
                     onClick={() =>
                       handleDelete(plot.id)
                     }
                   >
+                    <Trash2
+                      size={14}
+                      strokeWidth={1.8}
+                    />
+
                     Excluir
                   </button>
+
+                  <span className="plot-arrow">
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={1.7}
+                    />
+                  </span>
 
                 </div>
 

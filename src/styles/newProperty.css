@@ -1,6 +1,6 @@
 /* =========================================================
    NOVA PROPRIEDADE — CADERNO DE CAMPO
-   PREMIUM / APPLE INSPIRED
+   VISUAL SYSTEM
 ========================================================= */
 
 .new-property {
@@ -9,19 +9,20 @@
 
   margin: 0 auto;
 
-  padding: 42px 38px 70px;
+  padding: 40px 38px 70px;
 
   color: var(--text);
 
   animation: pageEnter 0.35s ease-out;
 }
 
+
 /* =========================================================
    CABEÇALHO
 ========================================================= */
 
 .new-property .page-heading {
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
 .new-property .page-heading .home-label {
@@ -29,15 +30,15 @@
 
   align-items: center;
 
-  margin-bottom: 12px;
+  margin-bottom: 13px;
 
   padding: 6px 10px;
 
-  border: 1px solid rgba(16, 124, 65, 0.16);
+  border: 1px solid rgba(16, 124, 65, 0.14);
 
   border-radius: 999px;
 
-  background: rgba(16, 124, 65, 0.07);
+  background: rgba(16, 124, 65, 0.065);
 
   color: var(--green);
 
@@ -46,6 +47,47 @@
   font-weight: 700;
 
   letter-spacing: 0.14em;
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+.new-property-title-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+}
+
+.new-property-title-icon {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid rgba(16, 124, 65, 0.13);
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f1f8f3,
+      #e7f1ea
+    );
+
+  color: var(--green);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 
 .new-property .page-heading h2 {
@@ -63,12 +105,17 @@
 }
 
 .new-property .page-heading p {
-  margin-top: 8px;
+  max-width: 650px;
+
+  margin-top: 9px;
 
   color: #737874;
 
-  font-size: 14px;
+  font-size: 13px;
+
+  line-height: 1.5;
 }
+
 
 /* =========================================================
    FORMULÁRIO
@@ -81,20 +128,24 @@
 
   border-radius: 16px;
 
-  background: rgba(255, 255, 255, 0.9);
+  background:
+    rgba(255, 255, 255, 0.92);
 
-  box-shadow:
-    0 2px 5px rgba(0, 0, 0, 0.025),
-    0 15px 35px rgba(0, 0, 0, 0.055);
+  box-shadow: var(--shadow-card);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
+
 /* =========================================================
-   SEÇÃO
+   SEÇÃO PRINCIPAL
 ========================================================= */
 
 .property-form-section {
   padding: 30px;
 }
+
 
 /* =========================================================
    CABEÇALHO DA SEÇÃO
@@ -107,7 +158,7 @@
 
   gap: 13px;
 
-  margin-bottom: 28px;
+  margin-bottom: 27px;
 }
 
 .section-icon {
@@ -117,26 +168,39 @@
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   flex-shrink: 0;
 
-  border: 1px solid rgba(16, 124, 65, 0.12);
+  border: 1px solid rgba(16, 124, 65, 0.11);
 
   border-radius: 12px;
 
   background:
     linear-gradient(
       145deg,
-      #f1f8f3,
-      #e5f1e9
+      #f2f8f4,
+      #e7f1ea
     );
 
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  color: var(--green);
 
-  font-size: 18px;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.form-section-kicker {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: var(--green);
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.13em;
 }
 
 .form-section-heading h3 {
@@ -158,6 +222,7 @@
 
   font-size: 11px;
 }
+
 
 /* =========================================================
    GRID
@@ -184,11 +249,16 @@
   grid-column: 1 / -1;
 }
 
+
 /* =========================================================
    LABEL
 ========================================================= */
 
 .property-form-group label {
+  display: flex;
+
+  align-items: center;
+
   margin-bottom: 7px;
 
   color: #424844;
@@ -198,15 +268,45 @@
   font-weight: 600;
 }
 
+.required-mark {
+  margin-left: 3px;
+
+  color: var(--green);
+
+  font-size: 11px;
+}
+
+
 /* =========================================================
-   CAMPOS
+   CAMPOS COM ÍCONE
 ========================================================= */
 
-.property-form-group input,
-.property-form-group textarea {
-  width: 100%;
+.input-with-icon {
+  position: relative;
 
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+
+  align-items: center;
+}
+
+.input-with-icon svg {
+  position: absolute;
+
+  left: 13px;
+
+  color: #89918c;
+
+  pointer-events: none;
+}
+
+.property-form-group input {
+  width: 100%;
+  height: 44px;
+
+  padding:
+    0 13px 0 39px;
+
+  border: 1px solid rgba(0, 0, 0, 0.09);
 
   border-radius: 10px;
 
@@ -224,58 +324,90 @@
     background 0.2s ease;
 }
 
-.property-form-group input {
-  height: 44px;
-
-  padding: 0 13px;
-}
-
-.property-form-group textarea {
-  min-height: 125px;
-
-  padding: 12px 13px;
-
-  resize: vertical;
-
-  line-height: 1.55;
-}
-
-/* =========================================================
-   PLACEHOLDER
-========================================================= */
-
 .property-form-group input::placeholder,
 .property-form-group textarea::placeholder {
   color: #a0a5a2;
 }
 
-/* =========================================================
-   HOVER
-========================================================= */
-
-.property-form-group input:hover,
-.property-form-group textarea:hover {
-  border-color: rgba(0, 0, 0, 0.17);
+.property-form-group input:hover {
+  border-color: rgba(0, 0, 0, 0.16);
 }
 
-/* =========================================================
-   FOCO
-========================================================= */
-
-.property-form-group input:focus,
-.property-form-group textarea:focus {
+.property-form-group input:focus {
   outline: none;
 
-  border-color: rgba(16, 124, 65, 0.45);
+  border-color: rgba(16, 124, 65, 0.42);
 
   box-shadow:
     0 0 0 4px rgba(16, 124, 65, 0.055);
-
-  background: #ffffff;
 }
 
+
 /* =========================================================
-   DICA DO CAMPO
+   TEXTAREA
+========================================================= */
+
+.textarea-wrapper {
+  position: relative;
+}
+
+.textarea-icon {
+  position: absolute;
+
+  top: 12px;
+  left: 13px;
+
+  display: flex;
+
+  color: #89918c;
+
+  pointer-events: none;
+}
+
+.property-form-group textarea {
+  width: 100%;
+  min-height: 125px;
+
+  padding:
+    12px 13px 12px 39px;
+
+  border: 1px solid rgba(0, 0, 0, 0.09);
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #202421;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  line-height: 1.55;
+
+  resize: vertical;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.property-form-group textarea:hover {
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+.property-form-group textarea:focus {
+  outline: none;
+
+  border-color: rgba(16, 124, 65, 0.42);
+
+  box-shadow:
+    0 0 0 4px rgba(16, 124, 65, 0.055);
+}
+
+
+/* =========================================================
+   DICA
 ========================================================= */
 
 .field-hint {
@@ -287,6 +419,7 @@
 
   line-height: 1.4;
 }
+
 
 /* =========================================================
    CONTADOR
@@ -301,6 +434,7 @@
 
   text-align: right;
 }
+
 
 /* =========================================================
    BOX INFORMATIVO
@@ -317,7 +451,7 @@
 
   padding: 15px 16px;
 
-  border: 1px solid rgba(16, 124, 65, 0.1);
+  border: 1px solid rgba(16, 124, 65, 0.095);
 
   border-radius: 12px;
 
@@ -336,7 +470,6 @@
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   flex-shrink: 0;
@@ -345,7 +478,25 @@
 
   background: #e9f3ec;
 
-  font-size: 15px;
+  color: var(--green);
+}
+
+.property-info-content {
+  min-width: 0;
+}
+
+.property-info-label {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: var(--green);
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
 }
 
 .property-info-box strong {
@@ -370,6 +521,7 @@
   line-height: 1.5;
 }
 
+
 /* =========================================================
    AÇÕES
 ========================================================= */
@@ -391,12 +543,23 @@
     rgba(248, 249, 248, 0.85);
 }
 
+.property-form-actions .cancel-button,
+.property-form-actions .primary-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+}
+
 .property-form-actions .cancel-button {
   min-height: 41px;
 
-  padding: 0 17px;
+  padding: 0 16px;
 
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.085);
 
   border-radius: 9px;
 
@@ -404,18 +567,11 @@
 
   color: #555b57;
 
-  font-family: inherit;
-
   font-size: 11px;
 
   font-weight: 600;
 
   cursor: pointer;
-
-  transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    transform 0.18s ease;
 }
 
 .property-form-actions .cancel-button:hover {
@@ -423,7 +579,7 @@
 
   background: #f7f8f7;
 
-  border-color: rgba(0, 0, 0, 0.16);
+  border-color: rgba(0, 0, 0, 0.15);
 }
 
 .property-form-actions .primary-button {
@@ -432,8 +588,18 @@
   min-height: 41px;
 }
 
+
 /* =========================================================
-   BOTÕES DESABILITADOS
+   SPINNER
+========================================================= */
+
+.button-spinner {
+  animation: buttonSpin 0.8s linear infinite;
+}
+
+
+/* =========================================================
+   DESABILITADO
 ========================================================= */
 
 .property-form-actions button:disabled {
@@ -443,6 +609,7 @@
 
   transform: none;
 }
+
 
 /* =========================================================
    TABLET
@@ -466,8 +633,8 @@
   .property-form-actions {
     padding: 16px 25px;
   }
-
 }
+
 
 /* =========================================================
    MOBILE
@@ -481,6 +648,19 @@
 
   .new-property .page-heading {
     margin-bottom: 23px;
+  }
+
+  .new-property-title-row {
+    align-items: center;
+
+    gap: 9px;
+  }
+
+  .new-property-title-icon {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 10px;
   }
 
   .new-property .page-heading h2 {
@@ -503,6 +683,7 @@
     padding: 21px 17px;
   }
 
+
   /* CABEÇALHO */
 
   .form-section-heading {
@@ -516,8 +697,6 @@
     height: 39px;
 
     border-radius: 10px;
-
-    font-size: 16px;
   }
 
   .form-section-heading h3 {
@@ -527,6 +706,7 @@
   .form-section-heading p {
     font-size: 10px;
   }
+
 
   /* GRID */
 
@@ -539,6 +719,7 @@
   .property-form-group.full {
     grid-column: auto;
   }
+
 
   /* CAMPOS */
 
@@ -562,10 +743,12 @@
     font-size: 8px;
   }
 
+
   /* BOX */
 
   .property-info-box {
-    margin: 0 17px 20px;
+    margin:
+      0 17px 20px;
 
     padding: 13px;
 
@@ -579,8 +762,10 @@
     height: 32px;
 
     border-radius: 9px;
+  }
 
-    font-size: 14px;
+  .property-info-label {
+    font-size: 7px;
   }
 
   .property-info-box strong {
@@ -590,6 +775,7 @@
   .property-info-box p {
     font-size: 9px;
   }
+
 
   /* AÇÕES */
 
@@ -606,8 +792,8 @@
   .property-form-actions button {
     width: 100%;
   }
-
 }
+
 
 /* =========================================================
    CELULARES PEQUENOS
@@ -625,6 +811,11 @@
     font-size: 24px;
   }
 
+  .new-property-title-icon {
+    width: 33px;
+    height: 33px;
+  }
+
   .property-form-section {
     padding: 19px 14px;
   }
@@ -638,11 +829,11 @@
     padding-left: 14px;
     padding-right: 14px;
   }
-
 }
 
+
 /* =========================================================
-   ANIMAÇÃO
+   ANIMAÇÕES
 ========================================================= */
 
 @keyframes pageEnter {
@@ -658,5 +849,15 @@
 
     transform: translateY(0);
   }
+}
 
+@keyframes buttonSpin {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }

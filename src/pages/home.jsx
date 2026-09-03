@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
 
+import {
+  Building2,
+  ClipboardList,
+  Library,
+  Sprout,
+  BarChart3,
+  ArrowUpRight,
+  Database,
+  MapPinned,
+  CalendarDays,
+  Check,
+  Plus,
+} from "lucide-react";
+
 import { getActivities } from "../services/activityService";
 
 import "../styles/home.css";
@@ -119,7 +133,10 @@ function Home({
               onClick={onDiary}
             >
               <span className="button-icon">
-                DC
+                <ClipboardList
+                  size={20}
+                  strokeWidth={1.6}
+                />
               </span>
 
               <span>
@@ -133,7 +150,10 @@ function Home({
               </span>
 
               <span className="button-arrow">
-                →
+                <ArrowUpRight
+                  size={17}
+                  strokeWidth={1.7}
+                />
               </span>
             </button>
 
@@ -142,7 +162,12 @@ function Home({
               className="hero-secondary-button"
               onClick={onNewActivity}
             >
-              + Nova atividade
+              <Plus
+                size={14}
+                strokeWidth={2}
+              />
+
+              Nova atividade
             </button>
 
           </div>
@@ -150,7 +175,7 @@ function Home({
         </div>
 
         {/* ===================================================
-            ILUSTRAÇÃO DO HERO
+            VISUAL DO HERO
         =================================================== */}
 
         <div className="hero-visual">
@@ -168,6 +193,7 @@ function Home({
             <div className="mountain mountain-front"></div>
 
             <div className="field-lines">
+              <span></span>
               <span></span>
               <span></span>
               <span></span>
@@ -202,7 +228,10 @@ function Home({
             <div className="hero-floating-card">
 
               <div className="floating-icon">
-                ✓
+                <Check
+                  size={15}
+                  strokeWidth={1.8}
+                />
               </div>
 
               <div>
@@ -222,7 +251,6 @@ function Home({
         </div>
 
       </section>
-
 
       {/* =====================================================
           FRASE DE DESTAQUE
@@ -253,7 +281,6 @@ function Home({
 
       </section>
 
-
       {/* =====================================================
           ACESSO RÁPIDO
       ===================================================== */}
@@ -281,7 +308,6 @@ function Home({
 
         </div>
 
-
         <div className="premium-modules">
 
           {/* =================================================
@@ -301,13 +327,19 @@ function Home({
               </span>
 
               <span className="module-open">
-                ↗
+                <ArrowUpRight
+                  size={14}
+                  strokeWidth={1.6}
+                />
               </span>
 
             </div>
 
             <div className="large-module-icon">
-              PR
+              <Building2
+                size={23}
+                strokeWidth={1.5}
+              />
             </div>
 
             <div className="module-text">
@@ -330,13 +362,15 @@ function Home({
               </span>
 
               <strong>
-                →
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </strong>
 
             </div>
 
           </button>
-
 
           {/* =================================================
               DIÁRIO DE CAMPO
@@ -355,13 +389,19 @@ function Home({
               </span>
 
               <span className="module-open">
-                ↗
+                <ArrowUpRight
+                  size={14}
+                  strokeWidth={1.6}
+                />
               </span>
 
             </div>
 
             <div className="large-module-icon">
-              DC
+              <ClipboardList
+                size={23}
+                strokeWidth={1.5}
+              />
             </div>
 
             <div className="module-text">
@@ -384,13 +424,15 @@ function Home({
               </span>
 
               <strong>
-                →
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </strong>
 
             </div>
 
           </button>
-
 
           {/* =================================================
               BIBLIOTECA
@@ -409,13 +451,19 @@ function Home({
               </span>
 
               <span className="module-open">
-                ↗
+                <ArrowUpRight
+                  size={14}
+                  strokeWidth={1.6}
+                />
               </span>
 
             </div>
 
             <div className="large-module-icon">
-              BL
+              <Library
+                size={23}
+                strokeWidth={1.5}
+              />
             </div>
 
             <div className="module-text">
@@ -438,13 +486,15 @@ function Home({
               </span>
 
               <strong>
-                →
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </strong>
 
             </div>
 
           </button>
-
 
           {/* =================================================
               MANEJO
@@ -463,13 +513,19 @@ function Home({
               </span>
 
               <span className="module-open">
-                ↗
+                <ArrowUpRight
+                  size={14}
+                  strokeWidth={1.6}
+                />
               </span>
 
             </div>
 
             <div className="large-module-icon">
-              MN
+              <Sprout
+                size={23}
+                strokeWidth={1.5}
+              />
             </div>
 
             <div className="module-text">
@@ -492,13 +548,15 @@ function Home({
               </span>
 
               <strong>
-                →
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </strong>
 
             </div>
 
           </button>
-
 
           {/* =================================================
               CULTURAS
@@ -517,13 +575,19 @@ function Home({
               </span>
 
               <span className="module-open">
-                ↗
+                <ArrowUpRight
+                  size={14}
+                  strokeWidth={1.6}
+                />
               </span>
 
             </div>
 
             <div className="large-module-icon">
-              CT
+              <Sprout
+                size={23}
+                strokeWidth={1.5}
+              />
             </div>
 
             <div className="module-text">
@@ -546,13 +610,15 @@ function Home({
               </span>
 
               <strong>
-                →
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </strong>
 
             </div>
 
           </button>
-
 
           {/* =================================================
               RELATÓRIOS
@@ -571,13 +637,19 @@ function Home({
               </span>
 
               <span className="module-open">
-                ↗
+                <ArrowUpRight
+                  size={14}
+                  strokeWidth={1.6}
+                />
               </span>
 
             </div>
 
             <div className="large-module-icon">
-              RP
+              <BarChart3
+                size={23}
+                strokeWidth={1.5}
+              />
             </div>
 
             <div className="module-text">
@@ -600,7 +672,10 @@ function Home({
               </span>
 
               <strong>
-                →
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </strong>
 
             </div>
@@ -610,7 +685,6 @@ function Home({
         </div>
 
       </section>
-
 
       {/* =====================================================
           PAINEL DE VISÃO GERAL
@@ -644,7 +718,6 @@ function Home({
 
           </div>
 
-
           <div className="overview-stats">
 
             {/* REGISTROS */}
@@ -652,7 +725,10 @@ function Home({
             <div className="overview-stat">
 
               <span className="overview-stat-icon">
-                REG
+                <Database
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </span>
 
               <div>
@@ -669,13 +745,15 @@ function Home({
 
             </div>
 
-
             {/* LOCAIS */}
 
             <div className="overview-stat">
 
               <span className="overview-stat-icon">
-                LOC
+                <MapPinned
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </span>
 
               <div>
@@ -692,13 +770,15 @@ function Home({
 
             </div>
 
-
             {/* REGISTROS DE HOJE */}
 
             <div className="overview-stat">
 
               <span className="overview-stat-icon">
-                DIA
+                <CalendarDays
+                  size={16}
+                  strokeWidth={1.6}
+                />
               </span>
 
               <div>
@@ -718,7 +798,6 @@ function Home({
           </div>
 
         </div>
-
 
         {/* ===================================================
             ÚLTIMOS REGISTROS
@@ -748,7 +827,6 @@ function Home({
             </button>
 
           </div>
-
 
           {recentActivities.length === 0 ? (
 
@@ -780,7 +858,10 @@ function Home({
                 >
 
                   <span className="mini-activity-icon">
-                    DC
+                    <ClipboardList
+                      size={14}
+                      strokeWidth={1.6}
+                    />
                   </span>
 
                   <span className="mini-activity-info">
@@ -802,7 +883,10 @@ function Home({
                   </span>
 
                   <span className="mini-activity-arrow">
-                    →
+                    <ArrowUpRight
+                      size={14}
+                      strokeWidth={1.6}
+                    />
                   </span>
 
                 </button>
@@ -817,7 +901,6 @@ function Home({
 
       </section>
 
-
       {/* =====================================================
           CTA FINAL
       ===================================================== */}
@@ -825,7 +908,10 @@ function Home({
       <section className="home-final">
 
         <div className="final-decoration">
-          CC
+          <Sprout
+            size={170}
+            strokeWidth={1}
+          />
         </div>
 
         <div>
@@ -853,7 +939,10 @@ function Home({
         >
 
           <span>
-            +
+            <Plus
+              size={15}
+              strokeWidth={2}
+            />
           </span>
 
           Nova atividade
@@ -861,7 +950,6 @@ function Home({
         </button>
 
       </section>
-
 
       {/* =====================================================
           RODAPÉ INSTITUCIONAL
@@ -903,7 +991,6 @@ function Home({
   );
 }
 
-
 /* =========================================================
    FORMATAR DATA
 ========================================================= */
@@ -923,6 +1010,5 @@ function formatDate(date) {
 
   return `${day}/${month}/${year}`;
 }
-
 
 export default Home;

@@ -1,6 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  ArrowDownToLine,
+  ArrowLeft,
+  ArrowUpFromLine,
+  BarChart3,
+  Bug,
+  ChevronRight,
+  Clock3,
+  Database,
+  FileText,
+  FlaskConical,
+  History,
+  Leaf,
+  Minus,
+  Package,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  X,
+} from "lucide-react";
+
+import {
   getProducts,
   deleteProduct,
   addStock,
@@ -22,14 +46,12 @@ function Library({
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Modal de movimentação
   const [movementProduct, setMovementProduct] = useState(null);
   const [movementType, setMovementType] = useState("entrada");
   const [movementQuantity, setMovementQuantity] = useState("");
   const [movementReason, setMovementReason] = useState("");
   const [processingMovement, setProcessingMovement] = useState(false);
 
-  // Modal de histórico
   const [historyProduct, setHistoryProduct] = useState(null);
   const [historyMovements, setHistoryMovements] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -47,10 +69,7 @@ function Library({
 
       setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error(
-        "ERRO AO CARREGAR PRODUTOS:",
-        error
-      );
+      console.error("ERRO AO CARREGAR PRODUTOS:", error);
     } finally {
       setLoading(false);
     }
@@ -75,14 +94,9 @@ function Library({
       await deleteProduct(id);
       await loadProducts();
     } catch (error) {
-      console.error(
-        "ERRO AO EXCLUIR PRODUTO:",
-        error
-      );
+      console.error("ERRO AO EXCLUIR PRODUTO:", error);
 
-      alert(
-        "Não foi possível excluir o produto."
-      );
+      alert("Não foi possível excluir o produto.");
     }
   };
 
@@ -101,10 +115,7 @@ function Library({
       };
     }
 
-    if (
-      minimum > 0 &&
-      stock <= minimum
-    ) {
+    if (minimum > 0 && stock <= minimum) {
       return {
         label: "Estoque baixo",
         className: "low",
@@ -153,14 +164,11 @@ function Library({
     let empty = 0;
 
     products.forEach((product) => {
-      const status =
-        getStockStatus(product);
+      const status = getStockStatus(product);
 
       if (status.className === "normal") {
         normal++;
-      } else if (
-        status.className === "low"
-      ) {
+      } else if (status.className === "low") {
         low++;
       } else {
         empty++;
@@ -182,8 +190,7 @@ function Library({
   const attentionProducts = useMemo(() => {
     return products
       .filter((product) => {
-        const status =
-          getStockStatus(product);
+        const status = getStockStatus(product);
 
         return (
           status.className === "low" ||
@@ -191,11 +198,8 @@ function Library({
         );
       })
       .sort((a, b) => {
-        const stockA =
-          Number(a.stock) || 0;
-
-        const stockB =
-          Number(b.stock) || 0;
+        const stockA = Number(a.stock) || 0;
+        const stockB = Number(b.stock) || 0;
 
         return stockA - stockB;
       });
@@ -209,26 +213,21 @@ function Library({
     const movements = [];
 
     products.forEach((product) => {
-      const productMovements =
-        Array.isArray(
-          product.stockMovements
-        )
-          ? product.stockMovements
-          : [];
+      const productMovements = Array.isArray(
+        product.stockMovements
+      )
+        ? product.stockMovements
+        : [];
 
-      productMovements.forEach(
-        (movement) => {
-          movements.push({
-            ...movement,
-            productId: product.id,
-            productName:
-              product.name ||
-              "Produto sem nome",
-            productUnit:
-              product.unit || "un",
-          });
-        }
-      );
+      productMovements.forEach((movement) => {
+        movements.push({
+          ...movement,
+          productId: product.id,
+          productName:
+            product.name || "Produto sem nome",
+          productUnit: product.unit || "un",
+        });
+      });
     });
 
     return movements
@@ -241,23 +240,16 @@ function Library({
   }, [products]);
 
   /* =========================================================
-     ABRIR MOVIMENTAÇÃO
+     MOVIMENTAÇÃO
   ========================================================= */
 
-  const openMovement = (
-    product,
-    type
-  ) => {
+  const openMovement = (product, type) => {
     setMovementProduct(product);
     setMovementType(type);
     setMovementQuantity("");
     setMovementReason("");
     setProcessingMovement(false);
   };
-
-  /* =========================================================
-     FECHAR MOVIMENTAÇÃO
-  ========================================================= */
 
   const closeMovement = () => {
     if (processingMovement) return;
@@ -267,25 +259,15 @@ function Library({
     setMovementReason("");
   };
 
-  /* =========================================================
-     REGISTRAR MOVIMENTAÇÃO
-  ========================================================= */
-
-  const handleMovementSubmit = async (
-    event
-  ) => {
+  const handleMovementSubmit = async (event) => {
     event.preventDefault();
 
     if (!movementProduct) return;
 
-    const quantity =
-      Number(movementQuantity);
+    const quantity = Number(movementQuantity);
 
     if (!quantity || quantity <= 0) {
-      alert(
-        "Informe uma quantidade válida."
-      );
-
+      alert("Informe uma quantidade válida.");
       return;
     }
 
@@ -298,9 +280,7 @@ function Library({
           ? "Entrada de estoque"
           : "Saída de estoque");
 
-      if (
-        movementType === "entrada"
-      ) {
+      if (movementType === "entrada") {
         await addStock(
           movementProduct.id,
           quantity,
@@ -335,12 +315,10 @@ function Library({
   };
 
   /* =========================================================
-     ABRIR HISTÓRICO
+     HISTÓRICO
   ========================================================= */
 
-  const openHistory = async (
-    product
-  ) => {
+  const openHistory = async (product) => {
     try {
       setHistoryProduct(product);
       setHistoryMovements([]);
@@ -348,14 +326,10 @@ function Library({
       setLoadingHistory(true);
 
       const movements =
-        await getStockMovements(
-          product.id
-        );
+        await getStockMovements(product.id);
 
       const summary =
-        await getStockSummary(
-          product.id
-        );
+        await getStockSummary(product.id);
 
       setHistoryMovements(
         Array.isArray(movements)
@@ -364,8 +338,6 @@ function Library({
       );
 
       setHistorySummary(summary);
-    
-    
     } catch (error) {
       console.error(
         "ERRO AO CARREGAR HISTÓRICO:",
@@ -382,36 +354,26 @@ function Library({
     }
   };
 
-  /* =========================================================
-     FECHAR HISTÓRICO
-  ========================================================= */
+  const closeHistory = () => {
+    if (loadingHistory) return;
 
- const closeHistory = () => {
-  if (loadingHistory) return;
-  setHistoryProduct(null);
-  setHistoryMovements([]);
-  setHistorySummary(null);
-};
+    setHistoryProduct(null);
+    setHistoryMovements([]);
+    setHistorySummary(null);
+  };
 
   /* =========================================================
      DATA
   ========================================================= */
 
-  const formatMovementDate = (
-    date
-  ) => {
+  const formatMovementDate = (date) => {
     if (!date) {
       return "Data não informada";
     }
 
-    const parsedDate =
-      new Date(date);
+    const parsedDate = new Date(date);
 
-    if (
-      Number.isNaN(
-        parsedDate.getTime()
-      )
-    ) {
+    if (Number.isNaN(parsedDate.getTime())) {
       return "Data não informada";
     }
 
@@ -428,15 +390,11 @@ function Library({
   };
 
   /* =========================================================
-     PERCENTUAL DO ESTOQUE
+     PERCENTUAL
   ========================================================= */
 
-  const getStockPercentage = (
-    product
-  ) => {
-    const stock =
-      Number(product.stock) || 0;
-
+  const getStockPercentage = (product) => {
+    const stock = Number(product.stock) || 0;
     const minimum =
       Number(product.minimumStock) || 0;
 
@@ -459,47 +417,67 @@ function Library({
 
   return (
     <main className="library-page">
-
-      {/* =====================================================
-          CABEÇALHO
-      ===================================================== */}
-
-      <header className="library-heading">
-
-        <div className="library-heading-content">
-
-          <button
+      <button
             type="button"
             className="library-back-button"
             onClick={onBack}
           >
-            ← Voltar
+            <ArrowLeft size={16} />
+            Voltar para a Home
           </button>
 
-          <span className="library-label">
-            BIBLIOTECA
-          </span>
+      {/* =====================================================
+          HERO
+      ===================================================== */}
 
-          <h2>
-            Biblioteca de insumos
-          </h2>
+      <section className="library-hero">
+
+        <div className="library-hero-content">
+
+          <div className="library-eyebrow">
+            <FlaskConical size={14} />
+            BIBLIOTECA DE INSUMOS
+          </div>
+
+          <h1>
+            Produtos.
+            <br />
+            Estoque organizado.
+          </h1>
 
           <p>
-            Consulte produtos, controle o estoque
-            e registre movimentações.
+            Gerencie seus insumos, acompanhe quantidades
+            disponíveis e registre cada movimentação.
           </p>
+
+          <div className="library-hero-meta">
+            <span>
+              <Database size={14} />
+              Dados salvos localmente
+            </span>
+
+            <span>
+              <Package size={14} />
+              {stockSummary.total} produtos cadastrados
+            </span>
+          </div>
 
         </div>
 
-        <button
-          type="button"
-          className="library-primary-button"
-          onClick={onNewProduct}
-        >
-          + Novo produto
-        </button>
+        <div className="library-hero-side">
 
-      </header>
+          <div className="library-hero-icon">
+            <FlaskConical size={32} />
+          </div>
+
+          <div>
+            <span>RESPONSÁVEL TÉCNICA</span>
+            <strong>Laís L. Andrade</strong>
+          </div>
+
+        </div>
+
+      </section>
 
       {/* =====================================================
           CATEGORIAS
@@ -512,18 +490,15 @@ function Library({
           className="library-category active"
         >
           <div className="library-category-icon">
-            🧪
+            <FlaskConical size={19} />
           </div>
 
           <div>
-            <strong>
-              Produtos
-            </strong>
-
-            <span>
-              Insumos e estoque
-            </span>
+            <strong>Produtos</strong>
+            <span>Insumos e estoque</span>
           </div>
+
+          <ChevronRight size={16} />
         </button>
 
         <button
@@ -532,18 +507,15 @@ function Library({
           onClick={onPests}
         >
           <div className="library-category-icon">
-            🐛
+            <Bug size={19} />
           </div>
 
           <div>
-            <strong>
-              Pragas
-            </strong>
-
-            <span>
-              Pragas cadastradas
-            </span>
+            <strong>Pragas</strong>
+            <span>Pragas cadastradas</span>
           </div>
+
+          <ChevronRight size={16} />
         </button>
 
         <button
@@ -552,18 +524,15 @@ function Library({
           onClick={onDiseases}
         >
           <div className="library-category-icon">
-            🦠
+            <Leaf size={19} />
           </div>
 
           <div>
-            <strong>
-              Doenças
-            </strong>
-
-            <span>
-              Doenças cadastradas
-            </span>
+            <strong>Doenças</strong>
+            <span>Doenças cadastradas</span>
           </div>
+
+          <ChevronRight size={16} />
         </button>
 
       </section>
@@ -576,93 +545,90 @@ function Library({
 
         <div className="stock-summary-card">
 
-          <span className="stock-summary-label">
-            PRODUTOS
-          </span>
+          <div className="stock-summary-top">
+            <span>PRODUTOS</span>
 
-          <strong>
-            {stockSummary.total}
-          </strong>
+            <div className="stock-summary-icon">
+              <Package size={16} />
+            </div>
+          </div>
 
-          <span className="stock-summary-description">
-            cadastrados
-          </span>
+          <strong>{stockSummary.total}</strong>
 
-        </div>
-
-        <div className="stock-summary-card stock-summary-normal">
-
-          <span className="stock-summary-label">
-            NORMAL
-          </span>
-
-          <strong>
-            {stockSummary.normal}
-          </strong>
-
-          <span className="stock-summary-description">
-            estoque adequado
-          </span>
+          <p>cadastrados</p>
 
         </div>
 
-        <div className="stock-summary-card stock-summary-low">
+        <div className="stock-summary-card normal">
 
-          <span className="stock-summary-label">
-            ESTOQUE BAIXO
-          </span>
+          <div className="stock-summary-top">
+            <span>NORMAL</span>
 
-          <strong>
-            {stockSummary.low}
-          </strong>
+            <div className="stock-summary-icon">
+              <TrendingUp size={16} />
+            </div>
+          </div>
 
-          <span className="stock-summary-description">
-            atenção necessária
-          </span>
+          <strong>{stockSummary.normal}</strong>
+
+          <p>estoque adequado</p>
 
         </div>
 
-        <div className="stock-summary-card stock-summary-empty">
+        <div className="stock-summary-card low">
 
-          <span className="stock-summary-label">
-            ESGOTADOS
-          </span>
+          <div className="stock-summary-top">
+            <span>ESTOQUE BAIXO</span>
 
-          <strong>
-            {stockSummary.empty}
-          </strong>
+            <div className="stock-summary-icon">
+              <TrendingDown size={16} />
+            </div>
+          </div>
 
-          <span className="stock-summary-description">
-            sem estoque
-          </span>
+          <strong>{stockSummary.low}</strong>
+
+          <p>atenção necessária</p>
+
+        </div>
+
+        <div className="stock-summary-card empty">
+
+          <div className="stock-summary-top">
+            <span>ESGOTADOS</span>
+
+            <div className="stock-summary-icon">
+              <Package size={16} />
+            </div>
+          </div>
+
+          <strong>{stockSummary.empty}</strong>
+
+          <p>sem estoque</p>
 
         </div>
 
       </section>
 
       {/* =====================================================
-          PAINEL DE ATENÇÃO
+          ATENÇÃO
       ===================================================== */}
 
       {!loading &&
         attentionProducts.length > 0 && (
-
           <section className="stock-dashboard-panel">
 
             <div className="stock-dashboard-heading">
 
               <div>
-                <span className="stock-dashboard-label">
-                  ATENÇÃO AO ESTOQUE
-                </span>
+                <span>ATENÇÃO AO ESTOQUE</span>
 
                 <h3>
                   Produtos que precisam de reposição
                 </h3>
 
                 <p>
-                  Confira os produtos abaixo do
-                  estoque mínimo ou já esgotados.
+                  Confira os produtos abaixo do estoque
+                  mínimo ou já esgotados.
                 </p>
               </div>
 
@@ -677,16 +643,11 @@ function Library({
               {attentionProducts
                 .slice(0, 5)
                 .map((product) => {
-
                   const status =
-                    getStockStatus(
-                      product
-                    );
+                    getStockStatus(product);
 
                   const stock =
-                    Number(
-                      product.stock
-                    ) || 0;
+                    Number(product.stock) || 0;
 
                   const minimum =
                     Number(
@@ -699,11 +660,15 @@ function Library({
                       key={product.id}
                     >
 
-                      <div className="stock-attention-icon">
+                      <div
+                        className={`stock-attention-icon ${status.className}`}
+                      >
                         {status.className ===
-                        "empty"
-                          ? "🔴"
-                          : "🟡"}
+                        "empty" ? (
+                          <TrendingDown size={17} />
+                        ) : (
+                          <TrendingDown size={17} />
+                        )}
                       </div>
 
                       <div className="stock-attention-info">
@@ -715,8 +680,7 @@ function Library({
 
                         <span>
                           {stock}{" "}
-                          {product.unit ||
-                            "un"}{" "}
+                          {product.unit || "un"}{" "}
                           disponíveis
                         </span>
 
@@ -724,14 +688,11 @@ function Library({
 
                       <div className="stock-attention-minimum">
 
-                        <span>
-                          Mínimo
-                        </span>
+                        <span>Mínimo</span>
 
                         <strong>
                           {minimum}{" "}
-                          {product.unit ||
-                            "un"}
+                          {product.unit || "un"}
                         </strong>
 
                       </div>
@@ -752,7 +713,8 @@ function Library({
                           )
                         }
                       >
-                        + Repor
+                        <Plus size={14} />
+                        Repor
                       </button>
 
                     </div>
@@ -763,8 +725,8 @@ function Library({
 
             {attentionProducts.length > 5 && (
               <div className="stock-dashboard-more">
-                + {attentionProducts.length - 5}{" "}
-                outros produtos precisam de atenção.
+                + {attentionProducts.length - 5} outros
+                produtos precisam de atenção.
               </div>
             )}
 
@@ -772,28 +734,25 @@ function Library({
         )}
 
       {/* =====================================================
-          PAINEL DE MOVIMENTAÇÕES
+          MOVIMENTAÇÕES
       ===================================================== */}
 
       {!loading &&
         recentMovements.length > 0 && (
-
-          <section className="stock-dashboard-panel stock-movements-panel">
+          <section className="stock-dashboard-panel">
 
             <div className="stock-dashboard-heading">
 
               <div>
-                <span className="stock-dashboard-label">
-                  MOVIMENTAÇÕES
-                </span>
+                <span>MOVIMENTAÇÕES</span>
 
                 <h3>
                   Últimas movimentações
                 </h3>
 
                 <p>
-                  Acompanhe as entradas e saídas
-                  mais recentes do estoque.
+                  Acompanhe as entradas e saídas mais
+                  recentes do estoque.
                 </p>
               </div>
 
@@ -807,10 +766,8 @@ function Library({
 
               {recentMovements.map(
                 (movement, index) => {
-
                   const isEntry =
-                    movement.type ===
-                    "entrada";
+                    movement.type === "entrada";
 
                   return (
                     <div
@@ -828,9 +785,11 @@ function Library({
                             : "saida"
                         }`}
                       >
-                        {isEntry
-                          ? "↓"
-                          : "↑"}
+                        {isEntry ? (
+                          <ArrowDownToLine size={16} />
+                        ) : (
+                          <ArrowUpFromLine size={16} />
+                        )}
                       </div>
 
                       <div className="recent-movement-main">
@@ -848,15 +807,11 @@ function Library({
                                 : "saida"
                             }`}
                           >
-                            {isEntry
-                              ? "+"
-                              : "-"}
+                            {isEntry ? "+" : "-"}
                             {Number(
                               movement.quantity
                             )}{" "}
-                            {
-                              movement.productUnit
-                            }
+                            {movement.productUnit}
                           </span>
 
                         </div>
@@ -892,45 +847,63 @@ function Library({
 
         <div className="library-section-heading">
 
-          <h3>
-            Produtos
-          </h3>
+          <div>
+            <span>CONTROLE DE INSUMOS</span>
 
-          <p>
-            Controle a quantidade disponível de cada produto.
-          </p>
+            <h2>Produtos</h2>
+
+            <p>
+              Controle a quantidade disponível de cada
+              produto.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="library-primary-button"
+            onClick={onNewProduct}
+          >
+            <Plus size={17} />
+            Novo produto
+          </button>
 
         </div>
 
         <div className="library-search">
 
-          <span>
-            🔎
-          </span>
+          <Search size={17} />
 
           <input
             type="text"
             value={search}
             onChange={(event) =>
-              setSearch(
-                event.target.value
-              )
+              setSearch(event.target.value)
             }
-            placeholder="Pesquisar produto..."
+            placeholder="Pesquisar produto, tipo ou unidade..."
           />
+
+          {search && (
+            <button
+              type="button"
+              className="library-search-clear"
+              onClick={() => setSearch("")}
+              aria-label="Limpar pesquisa"
+            >
+              <X size={15} />
+            </button>
+          )}
 
         </div>
 
         {/* ===================================================
-            CARREGANDO
+            LOADING
         =================================================== */}
 
         {loading && (
-
           <div className="library-empty">
 
             <div className="library-empty-icon">
-              ⏳
+              <Package size={25} />
             </div>
 
             <h3>
@@ -938,11 +911,11 @@ function Library({
             </h3>
 
             <p>
-              Aguarde enquanto carregamos os produtos cadastrados.
+              Aguarde enquanto carregamos os produtos
+              cadastrados.
             </p>
 
           </div>
-
         )}
 
         {/* ===================================================
@@ -951,11 +924,10 @@ function Library({
 
         {!loading &&
           filteredProducts.length === 0 && (
-
             <div className="library-empty">
 
               <div className="library-empty-icon">
-                🧪
+                <FlaskConical size={25} />
               </div>
 
               <h3>
@@ -976,7 +948,8 @@ function Library({
                   className="library-primary-button"
                   onClick={onNewProduct}
                 >
-                  + Cadastrar produto
+                  <Plus size={16} />
+                  Cadastrar produto
                 </button>
               )}
 
@@ -989,47 +962,35 @@ function Library({
 
         {!loading &&
           filteredProducts.length > 0 && (
-
             <div className="products-list">
 
-              {filteredProducts.map(
-                (product) => {
+              {filteredProducts.map((product) => {
+                const status =
+                  getStockStatus(product);
 
-                  const status =
-                    getStockStatus(
-                      product
-                    );
+                const stock =
+                  Number(product.stock) || 0;
 
-                  const stock =
-                    Number(
-                      product.stock
-                    ) || 0;
+                const minimum =
+                  Number(
+                    product.minimumStock
+                  ) || 0;
 
-                  const minimum =
-                    Number(
-                      product.minimumStock
-                    ) || 0;
+                const percentage =
+                  getStockPercentage(product);
 
-                  const percentage =
-                    getStockPercentage(
-                      product
-                    );
+                return (
+                  <article
+                    className="product-card"
+                    key={product.id}
+                  >
 
-                  return (
-
-                    <article
-                      className="product-card"
-                      key={product.id}
-                    >
-
-                      {/* =================================
-                          PRODUTO
-                      ================================= */}
+                    <div className="product-card-main">
 
                       <div className="product-card-content">
 
                         <div className="product-icon">
-                          🧪
+                          <FlaskConical size={20} />
                         </div>
 
                         <div className="product-info">
@@ -1043,18 +1004,14 @@ function Library({
 
                             {product.type && (
                               <span>
-                                <strong>
-                                  Tipo:
-                                </strong>{" "}
+                                <strong>Tipo</strong>
                                 {product.type}
                               </span>
                             )}
 
                             {product.unit && (
                               <span>
-                                <strong>
-                                  Unidade:
-                                </strong>{" "}
+                                <strong>Unidade</strong>
                                 {product.unit}
                               </span>
                             )}
@@ -1064,10 +1021,6 @@ function Library({
                         </div>
 
                       </div>
-
-                      {/* =================================
-                          ESTOQUE
-                      ================================= */}
 
                       <div
                         className={`product-stock ${status.className}`}
@@ -1079,18 +1032,13 @@ function Library({
 
                         <div className="product-stock-value">
 
-                          <strong>
-                            {stock}
-                          </strong>
+                          <strong>{stock}</strong>
 
                           <span>
-                            {product.unit ||
-                              "un"}
+                            {product.unit || "un"}
                           </span>
 
                         </div>
-
-                        {/* BARRA DE ESTOQUE */}
 
                         <div className="product-stock-bar">
 
@@ -1106,10 +1054,8 @@ function Library({
                         <div className="product-stock-meta">
 
                           <span>
-                            Mínimo:{" "}
-                            {minimum}{" "}
-                            {product.unit ||
-                              "un"}
+                            Mínimo: {minimum}{" "}
+                            {product.unit || "un"}
                           </span>
 
                           <span
@@ -1123,80 +1069,76 @@ function Library({
 
                       </div>
 
-                      {/* =================================
-                          AÇÕES
-                      ================================= */}
+                    </div>
 
-                      <div className="product-actions">
+                    <div className="product-actions">
 
-                        <button
-                          type="button"
-                          className="stock-entry-button"
-                          onClick={() =>
-                            openMovement(
-                              product,
-                              "entrada"
-                            )
-                          }
-                        >
-                          + Entrada
-                        </button>
+                      <button
+                        type="button"
+                        className="stock-entry-button"
+                        onClick={() =>
+                          openMovement(
+                            product,
+                            "entrada"
+                          )
+                        }
+                      >
+                        <ArrowDownToLine size={15} />
+                        Entrada
+                      </button>
 
-                        <button
-                          type="button"
-                          className="stock-exit-button"
-                          onClick={() =>
-                            openMovement(
-                              product,
-                              "saida"
-                            )
-                          }
-                        >
-                          − Saída
-                        </button>
+                      <button
+                        type="button"
+                        className="stock-exit-button"
+                        onClick={() =>
+                          openMovement(
+                            product,
+                            "saida"
+                          )
+                        }
+                      >
+                        <ArrowUpFromLine size={15} />
+                        Saída
+                      </button>
 
-                        <button
-                          type="button"
-                          className="stock-history-button"
-                          onClick={() =>
-                            openHistory(
-                              product
-                            )
-                          }
-                        >
-                          Histórico
-                        </button>
+                      <button
+                        type="button"
+                        className="stock-history-button"
+                        onClick={() =>
+                          openHistory(product)
+                        }
+                      >
+                        <History size={15} />
+                        Histórico
+                      </button>
 
-                        <button
-                          type="button"
-                          className="library-secondary-button"
-                          onClick={() =>
-                            onEditProduct(
-                              product
-                            )
-                          }
-                        >
-                          Editar
-                        </button>
+                      <button
+                        type="button"
+                        className="library-secondary-button"
+                        onClick={() =>
+                          onEditProduct(product)
+                        }
+                      >
+                        <Pencil size={15} />
+                        Editar
+                      </button>
 
-                        <button
-                          type="button"
-                          className="library-delete-button"
-                          onClick={() =>
-                            handleDelete(
-                              product.id
-                            )
-                          }
-                        >
-                          Excluir
-                        </button>
+                      <button
+                        type="button"
+                        className="library-delete-button"
+                        onClick={() =>
+                          handleDelete(product.id)
+                        }
+                      >
+                        <Trash2 size={15} />
+                        Excluir
+                      </button>
 
-                      </div>
+                    </div>
 
-                    </article>
-                  );
-                }
-              )}
+                  </article>
+                );
+              })}
 
             </div>
           )}
@@ -1208,11 +1150,9 @@ function Library({
       ===================================================== */}
 
       {movementProduct && (
-
         <div
           className="stock-modal-overlay"
           onMouseDown={(event) => {
-
             if (
               event.target ===
                 event.currentTarget &&
@@ -1220,7 +1160,6 @@ function Library({
             ) {
               closeMovement();
             }
-
           }}
         >
 
@@ -1229,29 +1168,23 @@ function Library({
             <div className="stock-modal-header">
 
               <div>
-
-                <span className="stock-modal-label">
-                  MOVIMENTAÇÃO DE ESTOQUE
-                </span>
+                <span>MOVIMENTAÇÃO DE ESTOQUE</span>
 
                 <h3>
-                  {movementType ===
-                  "entrada"
+                  {movementType === "entrada"
                     ? "Entrada de produto"
                     : "Saída de produto"}
                 </h3>
-
               </div>
 
               <button
                 type="button"
                 className="stock-modal-close"
                 onClick={closeMovement}
-                disabled={
-                  processingMovement
-                }
+                disabled={processingMovement}
+                aria-label="Fechar"
               >
-                ×
+                <X size={19} />
               </button>
 
             </div>
@@ -1259,11 +1192,10 @@ function Library({
             <div className="stock-modal-product">
 
               <div className="stock-modal-product-icon">
-                🧪
+                <FlaskConical size={20} />
               </div>
 
               <div>
-
                 <strong>
                   {movementProduct.name}
                 </strong>
@@ -1273,60 +1205,46 @@ function Library({
                   {Number(
                     movementProduct.stock
                   ) || 0}{" "}
-                  {movementProduct.unit ||
-                    "un"}
+                  {movementProduct.unit || "un"}
                 </span>
-
               </div>
 
             </div>
 
-            <form
-              onSubmit={
-                handleMovementSubmit
-              }
-            >
+            <form onSubmit={handleMovementSubmit}>
 
               <div className="stock-type-selector">
 
                 <button
                   type="button"
                   className={
-                    movementType ===
-                    "entrada"
+                    movementType === "entrada"
                       ? "active entrada"
                       : ""
                   }
                   onClick={() =>
-                    setMovementType(
-                      "entrada"
-                    )
+                    setMovementType("entrada")
                   }
-                  disabled={
-                    processingMovement
-                  }
+                  disabled={processingMovement}
                 >
-                  + Entrada
+                  <ArrowDownToLine size={16} />
+                  Entrada
                 </button>
 
                 <button
                   type="button"
                   className={
-                    movementType ===
-                    "saida"
+                    movementType === "saida"
                       ? "active saida"
                       : ""
                   }
                   onClick={() =>
-                    setMovementType(
-                      "saida"
-                    )
+                    setMovementType("saida")
                   }
-                  disabled={
-                    processingMovement
-                  }
+                  disabled={processingMovement}
                 >
-                  − Saída
+                  <ArrowUpFromLine size={16} />
+                  Saída
                 </button>
 
               </div>
@@ -1344,24 +1262,19 @@ function Library({
                     type="number"
                     min="0.01"
                     step="0.01"
-                    value={
-                      movementQuantity
-                    }
+                    value={movementQuantity}
                     onChange={(event) =>
                       setMovementQuantity(
                         event.target.value
                       )
                     }
                     placeholder="0"
-                    disabled={
-                      processingMovement
-                    }
+                    disabled={processingMovement}
                     autoFocus
                   />
 
                   <span>
-                    {movementProduct.unit ||
-                      "un"}
+                    {movementProduct.unit || "un"}
                   </span>
 
                 </div>
@@ -1384,14 +1297,11 @@ function Library({
                     )
                   }
                   placeholder={
-                    movementType ===
-                    "entrada"
+                    movementType === "entrada"
                       ? "Ex.: Compra de insumos"
                       : "Ex.: Aplicação na lavoura"
                   }
-                  disabled={
-                    processingMovement
-                  }
+                  disabled={processingMovement}
                 />
 
               </div>
@@ -1402,9 +1312,7 @@ function Library({
                   type="button"
                   className="stock-cancel-button"
                   onClick={closeMovement}
-                  disabled={
-                    processingMovement
-                  }
+                  disabled={processingMovement}
                 >
                   Cancelar
                 </button>
@@ -1412,19 +1320,15 @@ function Library({
                 <button
                   type="submit"
                   className={
-                    movementType ===
-                    "entrada"
+                    movementType === "entrada"
                       ? "stock-confirm-button entrada"
                       : "stock-confirm-button saida"
                   }
-                  disabled={
-                    processingMovement
-                  }
+                  disabled={processingMovement}
                 >
                   {processingMovement
                     ? "Salvando..."
-                    : movementType ===
-                      "entrada"
+                    : movementType === "entrada"
                     ? "Registrar entrada"
                     : "Registrar saída"}
                 </button>
@@ -1443,11 +1347,9 @@ function Library({
       ===================================================== */}
 
       {historyProduct && (
-
         <div
           className="stock-modal-overlay"
           onMouseDown={(event) => {
-
             if (
               event.target ===
                 event.currentTarget &&
@@ -1455,7 +1357,6 @@ function Library({
             ) {
               closeHistory();
             }
-
           }}
         >
 
@@ -1464,42 +1365,32 @@ function Library({
             <div className="stock-modal-header">
 
               <div>
-
-                <span className="stock-modal-label">
-                  HISTÓRICO DE ESTOQUE
-                </span>
+                <span>HISTÓRICO DE ESTOQUE</span>
 
                 <h3>
                   Movimentações
                 </h3>
-
               </div>
 
               <button
                 type="button"
                 className="stock-modal-close"
                 onClick={closeHistory}
-                disabled={
-                  loadingHistory
-                }
+                disabled={loadingHistory}
+                aria-label="Fechar"
               >
-                ×
+                <X size={19} />
               </button>
 
             </div>
 
-            {/* =============================================
-                PRODUTO
-            ============================================= */}
-
             <div className="history-product-header">
 
               <div className="stock-modal-product-icon">
-                🧪
+                <FlaskConical size={20} />
               </div>
 
               <div>
-
                 <strong>
                   {historyProduct.name}
                 </strong>
@@ -1509,17 +1400,18 @@ function Library({
                   {Number(
                     historyProduct.stock
                   ) || 0}{" "}
-                  {historyProduct.unit ||
-                    "un"}
+                  {historyProduct.unit || "un"}
                 </span>
-
               </div>
 
-            </div>{historySummary && (
-              
+            </div>
+
+            {historySummary && (
               <div className="history-summary">
+
                 <div className="history-summary-item">
                   <span>Estoque atual</span>
+
                   <strong>
                     {historySummary.currentStock}{" "}
                     {historySummary.unit}
@@ -1528,7 +1420,8 @@ function Library({
 
                 <div className="history-summary-item">
                   <span>Total de entradas</span>
-                  <strong>
+
+                  <strong className="entry-value">
                     +{historySummary.totalEntries}{" "}
                     {historySummary.unit}
                   </strong>
@@ -1536,7 +1429,8 @@ function Library({
 
                 <div className="history-summary-item">
                   <span>Total de saídas</span>
-                  <strong>
+
+                  <strong className="exit-value">
                     -{historySummary.totalExits}{" "}
                     {historySummary.unit}
                   </strong>
@@ -1544,6 +1438,7 @@ function Library({
 
                 <div className="history-summary-item">
                   <span>Consumido no Diário</span>
+
                   <strong>
                     {historySummary.diaryConsumption}{" "}
                     {historySummary.unit}
@@ -1552,43 +1447,28 @@ function Library({
 
                 <div className="history-summary-item">
                   <span>Movimentações</span>
+
                   <strong>
                     {historySummary.movementCount}
                   </strong>
                 </div>
+
               </div>
             )}
-
-            {/* =============================================
-                CARREGANDO
-            ============================================= */}
 
             {loadingHistory && (
-
               <div className="history-loading">
-
-                <span>
-                  ⏳
-                </span>
-
+                <Clock3 size={19} />
                 Carregando histórico...
-
               </div>
-
             )}
 
-            {/* =============================================
-                SEM MOVIMENTAÇÕES
-            ============================================= */}
-
             {!loadingHistory &&
-              historyMovements.length ===
-                0 && (
-
+              historyMovements.length === 0 && (
                 <div className="history-empty">
 
                   <div>
-                    📋
+                    <History size={23} />
                   </div>
 
                   <strong>
@@ -1603,28 +1483,16 @@ function Library({
                 </div>
               )}
 
-            {/* =============================================
-                LISTA
-            ============================================= */}
-
             {!loadingHistory &&
-              historyMovements.length >
-                0 && (
-
+              historyMovements.length > 0 && (
                 <div className="history-list">
 
                   {historyMovements.map(
-                    (
-                      movement,
-                      index
-                    ) => {
-
+                    (movement, index) => {
                       const isEntry =
-                        movement.type ===
-                        "entrada";
+                        movement.type === "entrada";
 
                       return (
-
                         <div
                           className="history-item"
                           key={
@@ -1640,9 +1508,11 @@ function Library({
                                 : "history-icon saida"
                             }
                           >
-                            {isEntry
-                              ? "↓"
-                              : "↑"}
+                            {isEntry ? (
+                              <ArrowDownToLine size={16} />
+                            ) : (
+                              <ArrowUpFromLine size={16} />
+                            )}
                           </div>
 
                           <div className="history-main">
@@ -1662,9 +1532,7 @@ function Library({
                                     : "history-quantity saida"
                                 }
                               >
-                                {isEntry
-                                  ? "+"
-                                  : "-"}
+                                {isEntry ? "+" : "-"}
                                 {Number(
                                   movement.quantity
                                 )}{" "}
@@ -1675,41 +1543,48 @@ function Library({
                             </div>
 
                             <p>
-  {movement.reason ||
-    "Sem motivo informado"}
-</p>
+                              {movement.reason ||
+                                "Sem motivo informado"}
+                            </p>
 
-{movement.source === "diario" && (
-  <div className="history-traceability">
-    <span className="history-traceability-badge">
-      📋 Diário de Campo
-    </span>
+                            {movement.source ===
+                              "diario" && (
+                              <div className="history-traceability">
 
-    {movement.propertyName && (
-      <span>
-        🏠 {movement.propertyName}
-      </span>
-    )}
+                                <span className="history-traceability-badge">
+                                  <FileText size={12} />
+                                  Diário de Campo
+                                </span>
 
-    {movement.plotName && (
-      <span>
-        🌱 {movement.plotName}
-      </span>
-    )}
+                                {movement.propertyName && (
+                                  <span>
+                                    <Database size={12} />
+                                    {movement.propertyName}
+                                  </span>
+                                )}
 
-    {movement.activityTitle && (
-      <span>
-        📝 {movement.activityTitle}
-      </span>
-    )}
-  </div>
-)}
+                                {movement.plotName && (
+                                  <span>
+                                    <Leaf size={12} />
+                                    {movement.plotName}
+                                  </span>
+                                )}
 
-<small>
-  {formatMovementDate(
-    movement.date
-  )}
-</small>
+                                {movement.activityTitle && (
+                                  <span>
+                                    <FileText size={12} />
+                                    {movement.activityTitle}
+                                  </span>
+                                )}
+
+                              </div>
+                            )}
+
+                            <small>
+                              {formatMovementDate(
+                                movement.date
+                              )}
+                            </small>
 
                           </div>
 
@@ -1727,9 +1602,7 @@ function Library({
                 type="button"
                 className="stock-cancel-button"
                 onClick={closeHistory}
-                disabled={
-                  loadingHistory
-                }
+                disabled={loadingHistory}
               >
                 Fechar
               </button>
