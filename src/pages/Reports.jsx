@@ -845,14 +845,7 @@ function Reports({onBack}) {
 
         <header className="report-header no-print">
           <div>
-            <button
-              type="button"
-              className="report-back-button"
-              onClick={onBack}
-            >
-              <ArrowLeft size={17} />
-              Voltar para Home
-            </button>
+            
             <div className="report-eyebrow">
               <FileBarChart size={12} />
               CENTRAL DE RELATÓRIOS
