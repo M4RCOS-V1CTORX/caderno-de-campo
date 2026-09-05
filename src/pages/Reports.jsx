@@ -17,13 +17,16 @@ import {
   Layers3,
   MapPinned,
   ArrowLeft,
+  Building2,
+  Leaf,
+  ShoppingCart,
+  Map,
 } from "lucide-react";
 
 import db from "../db";
 import "../styles/reports.css";
 
-
-function Reports({onBack}) {
+function Reports({ onBack }) {
   /* =========================================================
      ESTADOS
   ========================================================= */
@@ -31,6 +34,11 @@ function Reports({onBack}) {
   const [activities, setActivities] = useState([]);
   const [properties, setProperties] = useState([]);
   const [plots, setPlots] = useState([]);
+  const [cultures, setCultures] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [pests, setPests] = useState([]);
+  const [diseases, setDiseases] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -43,8 +51,27 @@ function Reports({onBack}) {
   const [endDate, setEndDate] = useState("");
 
   /* =========================================================
-     CARREGAMENTO
+     CARREGAMENTO SEGURO DE TABELAS
   ========================================================= */
+
+  const getTableData = async (tableName) => {
+    try {
+      if (!db[tableName]) {
+        return [];
+      }
+
+      const data = await db[tableName].toArray();
+
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.warn(
+        `Tabela ${tableName} não disponível nos relatórios:`,
+        error
+      );
+
+      return [];
+    }
+  };
 
   const loadData = async (showRefresh = false) => {
     try {
@@ -58,29 +85,30 @@ function Reports({onBack}) {
         activitiesData,
         propertiesData,
         plotsData,
+        culturesData,
+        productsData,
+        pestsData,
+        diseasesData,
+        ordersData,
       ] = await Promise.all([
-        db.activities.toArray(),
-        db.properties.toArray(),
-        db.plots.toArray(),
+        getTableData("activities"),
+        getTableData("properties"),
+        getTableData("plots"),
+        getTableData("cultures"),
+        getTableData("products"),
+        getTableData("pests"),
+        getTableData("diseases"),
+        getTableData("orders"),
       ]);
 
-      setActivities(
-        Array.isArray(activitiesData)
-          ? activitiesData
-          : []
-      );
-
-      setProperties(
-        Array.isArray(propertiesData)
-          ? propertiesData
-          : []
-      );
-
-      setPlots(
-        Array.isArray(plotsData)
-          ? plotsData
-          : []
-      );
+      setActivities(activitiesData);
+      setProperties(propertiesData);
+      setPlots(plotsData);
+      setCultures(culturesData);
+      setProducts(productsData);
+      setPests(pestsData);
+      setDiseases(diseasesData);
+      setOrders(ordersData);
     } catch (error) {
       console.error(
         "Erro ao carregar dados dos relatórios:",
@@ -97,7 +125,7 @@ function Reports({onBack}) {
   }, []);
 
   /* =========================================================
-     MAPAS DE PROPRIEDADES E TALHÕES
+     MAPAS
   ========================================================= */
 
   const propertyNameMap = useMemo(() => {
@@ -105,7 +133,9 @@ function Reports({onBack}) {
 
     properties.forEach((property) => {
       map[String(property.id)] =
-        property.name || "Sem nome";
+        property.name ||
+        property.nome ||
+        "Sem nome";
     });
 
     return map;
@@ -116,14 +146,20 @@ function Reports({onBack}) {
 
     plots.forEach((plot) => {
       map[String(plot.id)] =
-        plot.name || "Sem nome";
+        plot.name ||
+        plot.nome ||
+        "Sem nome";
     });
 
     return map;
   }, [plots]);
 
   const getPropertyName = (propertyId) => {
-    if (!propertyId) {
+    if (
+      propertyId === null ||
+      propertyId === undefined ||
+      propertyId === ""
+    ) {
       return "—";
     }
 
@@ -134,7 +170,11 @@ function Reports({onBack}) {
   };
 
   const getPlotName = (plotId) => {
-    if (!plotId) {
+    if (
+      plotId === null ||
+      plotId === undefined ||
+      plotId === ""
+    ) {
       return "—";
     }
 
@@ -155,8 +195,11 @@ function Reports({onBack}) {
 
     return plots.filter(
       (plot) =>
-        String(plot.propertyId) ===
-        String(propertyFilter)
+        String(
+          plot.propertyId ??
+            plot.property ??
+            ""
+        ) === String(propertyFilter)
     );
   }, [plots, propertyFilter]);
 
@@ -175,9 +218,20 @@ function Reports({onBack}) {
 
   const filteredActivities = useMemo(() => {
     return activities.filter((activity) => {
+      const activityPropertyId =
+        activity.propertyId ??
+        activity.property ??
+        "";
+
+      const activityPlotId =
+        activity.plotId ??
+        activity.fieldId ??
+        activity.talhaoId ??
+        "";
+
       if (
         propertyFilter &&
-        String(activity.propertyId) !==
+        String(activityPropertyId) !==
           String(propertyFilter)
       ) {
         return false;
@@ -185,7 +239,7 @@ function Reports({onBack}) {
 
       if (
         plotFilter &&
-        String(activity.plotId) !==
+        String(activityPlotId) !==
           String(plotFilter)
       ) {
         return false;
@@ -216,6 +270,134 @@ function Reports({onBack}) {
     activities,
     propertyFilter,
     plotFilter,
+    startDate,
+    endDate,
+  ]);
+
+  /* =========================================================
+     PROPRIEDADES FILTRADAS
+  ========================================================= */
+
+  const filteredProperties = useMemo(() => {
+    return properties.filter((property) => {
+      if (
+        propertyFilter &&
+        String(property.id) !==
+          String(propertyFilter)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [properties, propertyFilter]);
+
+  /* =========================================================
+     TALHÕES FILTRADOS
+  ========================================================= */
+
+  const filteredPlots = useMemo(() => {
+    return plots.filter((plot) => {
+      const propertyId =
+        plot.propertyId ??
+        plot.property ??
+        "";
+
+      if (
+        propertyFilter &&
+        String(propertyId) !==
+          String(propertyFilter)
+      ) {
+        return false;
+      }
+
+      if (
+        plotFilter &&
+        String(plot.id) !==
+          String(plotFilter)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [
+    plots,
+    propertyFilter,
+    plotFilter,
+  ]);
+
+  /* =========================================================
+     CULTURAS
+  ========================================================= */
+
+  const filteredCultures = useMemo(() => {
+    return cultures.filter((culture) => {
+      const culturePropertyId =
+        culture.propertyId ??
+        culture.property ??
+        "";
+
+      const culturePlotId =
+        culture.plotId ??
+        culture.fieldId ??
+        culture.talhaoId ??
+        "";
+
+      if (
+        propertyFilter &&
+        culturePropertyId &&
+        String(culturePropertyId) !==
+          String(propertyFilter)
+      ) {
+        return false;
+      }
+
+      if (
+        plotFilter &&
+        culturePlotId &&
+        String(culturePlotId) !==
+          String(plotFilter)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [
+    cultures,
+    propertyFilter,
+    plotFilter,
+  ]);
+
+  /* =========================================================
+     PEDIDOS FILTRADOS
+  ========================================================= */
+
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order) => {
+      const date = getOrderDate(order);
+
+      if (
+        startDate &&
+        date &&
+        date < startDate
+      ) {
+        return false;
+      }
+
+      if (
+        endDate &&
+        date &&
+        date > endDate
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [
+    orders,
     startDate,
     endDate,
   ]);
@@ -453,6 +635,73 @@ function Reports({onBack}) {
   }, [filteredActivities]);
 
   /* =========================================================
+     ESTOQUE
+  ========================================================= */
+
+  const stockSummary = useMemo(() => {
+    return products
+      .map((product) => {
+        const stock = parseNumber(
+          product.stock ??
+            product.quantity ??
+            product.estoque ??
+            0
+        );
+
+        const minimumStock = parseNumber(
+          product.minimumStock ??
+            product.minStock ??
+            product.estoqueMinimo ??
+            0
+        );
+
+        return {
+          id: product.id,
+          name:
+            product.name ||
+            product.nome ||
+            product.title ||
+            "Produto sem nome",
+          stock,
+          minimumStock,
+          unit:
+            product.unit ||
+            product.unidade ||
+            "",
+          lowStock:
+            minimumStock > 0 &&
+            stock <= minimumStock,
+        };
+      })
+      .sort((a, b) => {
+        if (
+          a.lowStock &&
+          !b.lowStock
+        ) {
+          return -1;
+        }
+
+        if (
+          !a.lowStock &&
+          b.lowStock
+        ) {
+          return 1;
+        }
+
+        return a.name.localeCompare(
+          b.name
+        );
+      });
+  }, [products]);
+
+  const lowStockProducts = useMemo(() => {
+    return stockSummary.filter(
+      (product) =>
+        product.lowStock
+    );
+  }, [stockSummary]);
+
+  /* =========================================================
      RESUMO MENSAL
   ========================================================= */
 
@@ -494,14 +743,20 @@ function Reports({onBack}) {
 
     filteredActivities.forEach(
       (activity) => {
+        const activityPlotId =
+          activity.plotId ??
+          activity.fieldId ??
+          activity.talhaoId;
+
         const plot = plots.find(
           (item) =>
             String(item.id) ===
-            String(activity.plotId)
+            String(activityPlotId)
         );
 
         const name =
           plot?.name ||
+          plot?.nome ||
           activity.plotName ||
           "Talhão não informado";
 
@@ -510,6 +765,7 @@ function Reports({onBack}) {
             name,
             culture:
               plot?.culture ||
+              plot?.cultureName ||
               activity.culture ||
               "Cultura não informada",
             count: 0,
@@ -537,8 +793,11 @@ function Reports({onBack}) {
             getActivityPest(activity) ||
             getActivityDisease(activity)
         )
-        .map((activity) =>
-          activity.plotId
+        .map(
+          (activity) =>
+            activity.plotId ??
+            activity.fieldId ??
+            activity.talhaoId
         )
         .filter(Boolean)
     ).size;
@@ -554,15 +813,80 @@ function Reports({onBack}) {
         .filter((activity) =>
           getActivityProduct(activity)
         )
-        .map((activity) =>
-          activity.plotId
+        .map(
+          (activity) =>
+            activity.plotId ??
+            activity.fieldId ??
+            activity.talhaoId
         )
         .filter(Boolean)
     ).size;
   }, [filteredActivities]);
 
   /* =========================================================
-     MÁXIMOS DOS GRÁFICOS
+     RESUMO DOS PEDIDOS
+  ========================================================= */
+
+  const ordersSummary = useMemo(() => {
+    const total = filteredOrders.length;
+
+    const pending =
+      filteredOrders.filter(
+        (order) =>
+          normalizeStatus(
+            order.status
+          ) === "pendente"
+      ).length;
+
+    const inProgress =
+      filteredOrders.filter(
+        (order) =>
+          normalizeStatus(
+            order.status
+          ) === "em andamento"
+      ).length;
+
+    const completed =
+      filteredOrders.filter(
+        (order) =>
+          normalizeStatus(
+            order.status
+          ) === "concluido"
+      ).length;
+
+    const cancelled =
+      filteredOrders.filter(
+        (order) =>
+          normalizeStatus(
+            order.status
+          ) === "cancelado"
+      ).length;
+
+    const totalValue =
+      filteredOrders.reduce(
+        (sum, order) =>
+          sum +
+          parseNumber(
+            order.total ??
+              order.valor ??
+              order.amount ??
+              0
+          ),
+        0
+      );
+
+    return {
+      total,
+      pending,
+      inProgress,
+      completed,
+      cancelled,
+      totalValue,
+    };
+  }, [filteredOrders]);
+
+  /* =========================================================
+     MÁXIMOS
   ========================================================= */
 
   const maxMonthly = useMemo(() => {
@@ -662,6 +986,34 @@ function Reports({onBack}) {
       icon: <BarChart3 size={19} />,
     },
     {
+      id: "propriedades",
+      label: "Propriedades",
+      description:
+        "Relação das propriedades cadastradas",
+      icon: <Building2 size={19} />,
+    },
+    {
+      id: "talhoes",
+      label: "Talhões",
+      description:
+        "Talhões, áreas e culturas vinculadas",
+      icon: <Map size={19} />,
+    },
+    {
+      id: "culturas",
+      label: "Culturas",
+      description:
+        "Culturas cadastradas e distribuição",
+      icon: <Leaf size={19} />,
+    },
+    {
+      id: "diario",
+      label: "Diário de Campo",
+      description:
+        "Registros completos do período",
+      icon: <ClipboardList size={19} />,
+    },
+    {
       id: "manejo",
       label: "Manejo",
       description:
@@ -677,17 +1029,17 @@ function Reports({onBack}) {
     },
     {
       id: "produtos",
-      label: "Produtos",
+      label: "Produtos / Estoque",
       description:
-        "Aplicações e utilização de produtos",
+        "Aplicações, estoque e alertas",
       icon: <Package size={19} />,
     },
     {
-      id: "diario",
-      label: "Diário de Campo",
+      id: "pedidos",
+      label: "Pedidos",
       description:
-        "Registros completos do período",
-      icon: <ClipboardList size={19} />,
+        "Pedidos, valores e situação",
+      icon: <ShoppingCart size={19} />,
     },
   ];
 
@@ -696,30 +1048,63 @@ function Reports({onBack}) {
       title: "Visão Geral do Campo",
       description:
         "Panorama consolidado dos registros e atividades agrícolas.",
+      label: "VISÃO GERAL",
+    },
+
+    propriedades: {
+      title: "Relatório de Propriedades",
+      description:
+        "Relação das propriedades cadastradas no Caderno de Campo.",
+      label: "PROPRIEDADES",
+    },
+
+    talhoes: {
+      title: "Relatório de Talhões",
+      description:
+        "Relação dos talhões, áreas e informações agrícolas cadastradas.",
+      label: "TALHÕES",
+    },
+
+    culturas: {
+      title: "Relatório de Culturas",
+      description:
+        "Relação das culturas cadastradas e suas informações.",
+      label: "CULTURAS",
     },
 
     manejo: {
       title: "Relatório de Manejo",
       description:
         "Acompanhamento das atividades e respectivos status.",
+      label: "MANEJO",
     },
 
     fitossanitario: {
       title: "Relatório Fitossanitário",
       description:
         "Resumo das ocorrências de pragas e doenças registradas.",
+      label: "FITOSSANITÁRIO",
     },
 
     produtos: {
-      title: "Relatório de Produtos",
+      title: "Relatório de Produtos e Estoque",
       description:
-        "Consolidação dos produtos utilizados nas atividades.",
+        "Consolidação dos produtos utilizados e situação do estoque.",
+      label: "PRODUTOS / ESTOQUE",
     },
 
     diario: {
       title: "Diário de Campo",
       description:
         "Relação completa dos registros realizados no período.",
+      label: "DIÁRIO DE CAMPO",
+    },
+
+    pedidos: {
+      title: "Relatório de Pedidos",
+      description:
+        "Resumo dos pedidos cadastrados, valores e situação.",
+      label: "PEDIDOS",
     },
   };
 
@@ -732,13 +1117,13 @@ function Reports({onBack}) {
 
     if (selectedProperty) {
       filters.push(
-        `Propriedade: ${selectedProperty.name}`
+        `Propriedade: ${selectedProperty.name || selectedProperty.nome}`
       );
     }
 
     if (selectedPlot) {
       filters.push(
-        `Talhão: ${selectedPlot.name}`
+        `Talhão: ${selectedPlot.name || selectedPlot.nome}`
       );
     }
 
@@ -787,6 +1172,40 @@ function Reports({onBack}) {
   }, [startDate, endDate]);
 
   /* =========================================================
+     CONTAGEM DO FILTRO
+  ========================================================= */
+
+  const reportRecordCount = useMemo(() => {
+    switch (selectedReport) {
+      case "propriedades":
+        return filteredProperties.length;
+
+      case "talhoes":
+        return filteredPlots.length;
+
+      case "culturas":
+        return filteredCultures.length;
+
+      case "pedidos":
+        return filteredOrders.length;
+
+      case "produtos":
+        return stockSummary.length;
+
+      default:
+        return filteredActivities.length;
+    }
+  }, [
+    selectedReport,
+    filteredProperties,
+    filteredPlots,
+    filteredCultures,
+    filteredOrders,
+    stockSummary,
+    filteredActivities,
+  ]);
+
+  /* =========================================================
      AÇÕES
   ========================================================= */
 
@@ -831,21 +1250,22 @@ function Reports({onBack}) {
   return (
     <div className="reports-page">
       <div className="reports-container">
-<button
-              type="button"
-              className="report-back-button"
-              onClick={onBack}
-            >
-              <ArrowLeft size={17} />
-              Voltar para Home
-            </button>
+
+        <button
+          type="button"
+          className="report-back-button"
+          onClick={onBack}
+        >
+          <ArrowLeft size={17} />
+          Voltar para Home
+        </button>
+
         {/* =====================================================
             CABEÇALHO
         ===================================================== */}
 
         <header className="report-header no-print">
           <div>
-            
             <div className="report-eyebrow">
               <FileBarChart size={12} />
               CENTRAL DE RELATÓRIOS
@@ -882,17 +1302,11 @@ function Reports({onBack}) {
             </strong>
 
             <h1>
-              {
-                reportTitles[
-                  selectedReport
-                ].title
-              }
+              {reportTitles[selectedReport].title}
             </h1>
 
             <div className="print-contact">
-              Responsável técnica:
-              {" "}
-              Laís L. Andrade
+              Responsável técnica: Laís L. Andrade
             </div>
 
             <div className="print-contact">
@@ -932,15 +1346,12 @@ function Reports({onBack}) {
                 key={report.id}
                 type="button"
                 className={`report-type-card ${
-                  selectedReport ===
-                  report.id
+                  selectedReport === report.id
                     ? "active"
                     : ""
                 }`}
                 onClick={() =>
-                  setSelectedReport(
-                    report.id
-                  )
+                  setSelectedReport(report.id)
                 }
               >
                 <div className="report-type-top">
@@ -1019,7 +1430,9 @@ function Reports({onBack}) {
                       key={property.id}
                       value={property.id}
                     >
-                      {property.name}
+                      {property.name ||
+                        property.nome ||
+                        "Sem nome"}
                     </option>
                   )
                 )}
@@ -1039,8 +1452,7 @@ function Reports({onBack}) {
                   )
                 }
                 disabled={
-                  availablePlots.length ===
-                  0
+                  availablePlots.length === 0
                 }
               >
                 <option value="">
@@ -1053,7 +1465,9 @@ function Reports({onBack}) {
                       key={plot.id}
                       value={plot.id}
                     >
-                      {plot.name}
+                      {plot.name ||
+                        plot.nome ||
+                        "Sem nome"}
                     </option>
                   )
                 )}
@@ -1096,9 +1510,8 @@ function Reports({onBack}) {
 
           <div className="filter-footer">
             <span>
-              {filteredActivities.length}{" "}
-              {filteredActivities.length ===
-              1
+              {reportRecordCount}{" "}
+              {reportRecordCount === 1
                 ? "registro encontrado"
                 : "registros encontrados"}
             </span>
@@ -1131,13 +1544,10 @@ function Reports({onBack}) {
                   : "Atualizar"}
               </button>
 
-              {activeFilters.length >
-                0 && (
+              {activeFilters.length > 0 && (
                 <button
                   type="button"
-                  onClick={
-                    clearFilters
-                  }
+                  onClick={clearFilters}
                 >
                   Limpar filtros
                 </button>
@@ -1159,35 +1569,15 @@ function Reports({onBack}) {
           <div className="report-title">
             <div>
               <span className="report-label">
-                {selectedReport ===
-                "geral"
-                  ? "VISÃO GERAL"
-                  : selectedReport ===
-                    "manejo"
-                  ? "MANEJO"
-                  : selectedReport ===
-                    "fitossanitario"
-                  ? "FITOSSANITÁRIO"
-                  : selectedReport ===
-                    "produtos"
-                  ? "PRODUTOS"
-                  : "DIÁRIO DE CAMPO"}
+                {reportTitles[selectedReport].label}
               </span>
 
               <h2>
-                {
-                  reportTitles[
-                    selectedReport
-                  ].title
-                }
+                {reportTitles[selectedReport].title}
               </h2>
 
               <p>
-                {
-                  reportTitles[
-                    selectedReport
-                  ].description
-                }
+                {reportTitles[selectedReport].description}
               </p>
             </div>
 
@@ -1206,11 +1596,8 @@ function Reports({onBack}) {
               VISÃO GERAL
           =================================================== */}
 
-          {selectedReport ===
-            "geral" && (
+          {selectedReport === "geral" && (
             <>
-              {/* RESUMO EXECUTIVO */}
-
               <section className="report-section">
                 <div className="section-heading">
                   <div>
@@ -1225,8 +1612,7 @@ function Reports({onBack}) {
 
                   <span>
                     {filteredActivities.length}{" "}
-                    {filteredActivities.length ===
-                    1
+                    {filteredActivities.length === 1
                       ? "registro"
                       : "registros"}
                   </span>
@@ -1247,15 +1633,12 @@ function Reports({onBack}) {
                       </div>
 
                       <div className="analytics-icon">
-                        <FileBarChart
-                          size={16}
-                        />
+                        <FileBarChart size={16} />
                       </div>
                     </div>
 
                     <p>
-                      {statistics.total ===
-                      0
+                      {statistics.total === 0
                         ? "Nenhum registro foi encontrado no período selecionado."
                         : `Foram encontrados ${statistics.total} registros no período analisado, sendo ${statistics.completed} concluído(s), ${statistics.inProgress} em andamento e ${statistics.planned} planejado(s).`}
                     </p>
@@ -1265,90 +1648,82 @@ function Reports({onBack}) {
                     <div className="analytics-card-header">
                       <div>
                         <span>
-                          DESTAQUES
+                          ESTRUTURA
                         </span>
 
                         <h4>
-                          Principais informações
+                          Cadastro do campo
                         </h4>
                       </div>
 
                       <div className="analytics-icon">
-                        <Layers3
-                          size={16}
-                        />
+                        <Layers3 size={16} />
                       </div>
                     </div>
 
                     <div className="summary-list">
 
-                      {executiveSummary.topPlot && (
-                        <div className="summary-row">
-                          <div className="summary-row-info">
-                            <strong>
-                              {executiveSummary
-                                .topPlot
-                                .name}
-                            </strong>
-
-                            <span>
-                              Talhão com mais
-                              registros
-                            </span>
-                          </div>
-
+                      <div className="summary-row">
+                        <div className="summary-row-info">
                           <strong>
-                            {
-                              executiveSummary
-                                .topPlot
-                                .count
-                            }
+                            {properties.length}
                           </strong>
+
+                          <span>
+                            Propriedades cadastradas
+                          </span>
                         </div>
-                      )}
 
-                      {executiveSummary.topManagement && (
-                        <div className="summary-row">
-                          <div className="summary-row-info">
-                            <strong>
-                              {executiveSummary
-                                .topManagement
-                                .name}
-                            </strong>
+                        <Building2 size={17} />
+                      </div>
 
-                            <span>
-                              Manejo mais
-                              registrado
-                            </span>
-                          </div>
-
+                      <div className="summary-row">
+                        <div className="summary-row-info">
                           <strong>
-                            {
-                              executiveSummary
-                                .topManagement
-                                .count
-                            }
+                            {plots.length}
                           </strong>
-                        </div>
-                      )}
 
-                      {!executiveSummary.topPlot &&
-                        !executiveSummary.topManagement && (
-                          <div className="report-empty">
-                            Ainda não há
-                            informações
-                            suficientes para
-                            gerar destaques.
-                          </div>
-                        )}
+                          <span>
+                            Talhões cadastrados
+                          </span>
+                        </div>
+
+                        <MapPinned size={17} />
+                      </div>
+
+                      <div className="summary-row">
+                        <div className="summary-row-info">
+                          <strong>
+                            {cultures.length}
+                          </strong>
+
+                          <span>
+                            Culturas cadastradas
+                          </span>
+                        </div>
+
+                        <Leaf size={17} />
+                      </div>
+
+                      <div className="summary-row">
+                        <div className="summary-row-info">
+                          <strong>
+                            {orders.length}
+                          </strong>
+
+                          <span>
+                            Pedidos cadastrados
+                          </span>
+                        </div>
+
+                        <ShoppingCart size={17} />
+                      </div>
 
                     </div>
                   </div>
 
                 </div>
               </section>
-
-              {/* INDICADORES */}
 
               <section className="report-section">
                 <div className="section-heading">
@@ -1367,76 +1742,50 @@ function Reports({onBack}) {
 
                   <StatCard
                     icon={
-                      <ClipboardList
-                        size={16}
-                      />
+                      <ClipboardList size={16} />
                     }
                     label="Registros"
-                    value={
-                      statistics.total
-                    }
+                    value={statistics.total}
                   />
 
                   <StatCard
-                    icon={
-                      <Check size={16} />
-                    }
+                    icon={<Check size={16} />}
                     label="Concluídos"
-                    value={
-                      statistics.completed
-                    }
+                    value={statistics.completed}
                   />
 
                   <StatCard
                     icon={
-                      <Activity
-                        size={16}
-                      />
+                      <Activity size={16} />
                     }
                     label="Em andamento"
-                    value={
-                      statistics.inProgress
-                    }
+                    value={statistics.inProgress}
                   />
 
                   <StatCard
                     icon={
-                      <CalendarDays
-                        size={16}
-                      />
+                      <CalendarDays size={16} />
                     }
                     label="Planejados"
-                    value={
-                      statistics.planned
-                    }
+                    value={statistics.planned}
                   />
 
                   <StatCard
-                    icon={
-                      <Bug size={16} />
-                    }
+                    icon={<Bug size={16} />}
                     label="Com pragas"
-                    value={
-                      statistics.withPest
-                    }
+                    value={statistics.withPest}
                   />
 
                   <StatCard
                     icon={
-                      <Package
-                        size={16}
-                      />
+                      <Package size={16} />
                     }
                     label="Com produtos"
-                    value={
-                      statistics.withProduct
-                    }
+                    value={statistics.withProduct}
                   />
 
                 </div>
               </section>
-
-              {/* ANÁLISE */}
 
               <section className="report-section">
                 <div className="section-heading">
@@ -1466,18 +1815,14 @@ function Reports({onBack}) {
                       </div>
 
                       <div className="analytics-icon">
-                        <BarChart3
-                          size={16}
-                        />
+                        <BarChart3 size={16} />
                       </div>
                     </div>
 
-                    {monthlySummary.length ===
-                    0 ? (
+                    {monthlySummary.length === 0 ? (
                       <div className="analytics-empty">
-                        Nenhum registro
-                        disponível para
-                        análise.
+                        Nenhum registro disponível
+                        para análise.
                       </div>
                     ) : (
                       <div className="monthly-chart">
@@ -1491,14 +1836,10 @@ function Reports({onBack}) {
                             return (
                               <div
                                 className="monthly-row"
-                                key={
-                                  item.month
-                                }
+                                key={item.month}
                               >
                                 <span className="monthly-label">
-                                  {
-                                    item.label
-                                  }
+                                  {item.label}
                                 </span>
 
                                 <div className="monthly-bar-area">
@@ -1511,9 +1852,7 @@ function Reports({onBack}) {
                                 </div>
 
                                 <strong>
-                                  {
-                                    item.count
-                                  }
+                                  {item.count}
                                 </strong>
                               </div>
                             );
@@ -1536,9 +1875,7 @@ function Reports({onBack}) {
                       </div>
 
                       <div className="analytics-icon">
-                        <PieChart
-                          size={16}
-                        />
+                        <PieChart size={16} />
                       </div>
                     </div>
 
@@ -1552,10 +1889,7 @@ function Reports({onBack}) {
                       >
                         <div>
                           <strong>
-                            {
-                              statistics.completionRate
-                            }
-                            %
+                            {statistics.completionRate}%
                           </strong>
 
                           <span>
@@ -1572,9 +1906,7 @@ function Reports({onBack}) {
                           </span>
 
                           <strong>
-                            {
-                              statistics.completed
-                            }
+                            {statistics.completed}
                           </strong>
                         </div>
 
@@ -1584,9 +1916,7 @@ function Reports({onBack}) {
                           </span>
 
                           <strong>
-                            {
-                              statistics.inProgress
-                            }
+                            {statistics.inProgress}
                           </strong>
                         </div>
 
@@ -1596,9 +1926,7 @@ function Reports({onBack}) {
                           </span>
 
                           <strong>
-                            {
-                              statistics.planned
-                            }
+                            {statistics.planned}
                           </strong>
                         </div>
 
@@ -1608,8 +1936,6 @@ function Reports({onBack}) {
 
                 </div>
               </section>
-
-              {/* TALHÕES */}
 
               <section className="report-section">
                 <div className="section-heading">
@@ -1624,12 +1950,10 @@ function Reports({onBack}) {
                   </div>
                 </div>
 
-                {plotSummary.length ===
-                0 ? (
+                {plotSummary.length === 0 ? (
                   <div className="report-empty">
-                    Nenhum talhão possui
-                    registros no período
-                    selecionado.
+                    Nenhum talhão possui registros
+                    no período selecionado.
                   </div>
                 ) : (
                   <div className="plot-report-list">
@@ -1641,15 +1965,11 @@ function Reports({onBack}) {
                         >
                           <div className="plot-report-info">
                             <strong>
-                              {
-                                plot.name
-                              }
+                              {plot.name}
                             </strong>
 
                             <span>
-                              {
-                                plot.culture
-                              }
+                              {plot.culture}
                             </span>
                           </div>
 
@@ -1671,8 +1991,6 @@ function Reports({onBack}) {
                 )}
               </section>
 
-              {/* MANEJOS */}
-
               <section className="report-section">
                 <div className="section-heading">
                   <div>
@@ -1686,8 +2004,7 @@ function Reports({onBack}) {
                   </div>
                 </div>
 
-                {managementSummary.length ===
-                0 ? (
+                {managementSummary.length === 0 ? (
                   <div className="report-empty">
                     Nenhum tipo de manejo
                     foi encontrado.
@@ -1702,14 +2019,11 @@ function Reports({onBack}) {
                         >
                           <div className="summary-row-info">
                             <strong>
-                              {
-                                item.name
-                              }
+                              {item.name}
                             </strong>
 
                             <span>
-                              Registros
-                              realizados
+                              Registros realizados
                             </span>
                           </div>
 
@@ -1731,8 +2045,6 @@ function Reports({onBack}) {
                 )}
               </section>
 
-              {/* OCORRÊNCIAS */}
-
               <section className="report-section">
                 <div className="section-heading">
                   <div>
@@ -1749,33 +2061,25 @@ function Reports({onBack}) {
                 <div className="occurrence-grid">
 
                   <OccurrenceCard
-                    icon={
-                      <Bug size={15} />
-                    }
+                    icon={<Bug size={15} />}
                     title="Pragas"
                     subtitle={`${statistics.withPest} registros com ocorrência`}
                     data={pestSummary}
                     empty="Nenhuma praga registrada."
-                    max={maxPest}
                   />
 
                   <OccurrenceCard
                     icon={
-                      <Droplets
-                        size={15}
-                      />
+                      <Droplets size={15} />
                     }
                     title="Doenças"
                     subtitle={`${statistics.withDisease} registros com ocorrência`}
                     data={diseaseSummary}
                     empty="Nenhuma doença registrada."
-                    max={maxDisease}
                   />
 
                 </div>
               </section>
-
-              {/* PRODUTOS */}
 
               <section className="report-section">
                 <div className="section-heading">
@@ -1790,12 +2094,11 @@ function Reports({onBack}) {
                   </div>
                 </div>
 
-                {productSummary.length ===
-                0 ? (
+                {productSummary.length === 0 ? (
                   <div className="report-empty">
                     Nenhum produto foi
-                    registrado nas
-                    atividades do período.
+                    registrado nas atividades
+                    do período.
                   </div>
                 ) : (
                   <div className="product-report-grid">
@@ -1805,29 +2108,20 @@ function Reports({onBack}) {
                         (product) => (
                           <div
                             className="product-report-card"
-                            key={
-                              product.name
-                            }
+                            key={product.name}
                           >
                             <div className="product-report-icon">
-                              <Package
-                                size={15}
-                              />
+                              <Package size={15} />
                             </div>
 
                             <div>
                               <strong>
-                                {
-                                  product.name
-                                }
+                                {product.name}
                               </strong>
 
                               <span>
-                                {
-                                  product.applications
-                                }{" "}
-                                {product.applications ===
-                                1
+                                {product.applications}{" "}
+                                {product.applications === 1
                                   ? "aplicação"
                                   : "aplicações"}
                               </span>
@@ -1836,10 +2130,7 @@ function Reports({onBack}) {
                                 {formatQuantity(
                                   product.quantity
                                 )}{" "}
-                                {
-                                  product.unit ||
-                                  ""
-                                }
+                                {product.unit || ""}
                               </small>
                             </div>
                           </div>
@@ -1852,11 +2143,539 @@ function Reports({onBack}) {
           )}
 
           {/* ===================================================
+              PROPRIEDADES
+          =================================================== */}
+
+          {selectedReport === "propriedades" && (
+            <>
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      INDICADORES
+                    </span>
+
+                    <h3>
+                      Estrutura das propriedades
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="report-stat-grid">
+
+                  <StatCard
+                    icon={
+                      <Building2 size={16} />
+                    }
+                    label="Propriedades"
+                    value={filteredProperties.length}
+                  />
+
+                  <StatCard
+                    icon={
+                      <MapPinned size={16} />
+                    }
+                    label="Talhões"
+                    value={
+                      filteredPlots.length
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <ClipboardList size={16} />
+                    }
+                    label="Registros"
+                    value={
+                      filteredActivities.length
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <Leaf size={16} />
+                    }
+                    label="Culturas"
+                    value={filteredCultures.length}
+                  />
+
+                </div>
+              </section>
+
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      CADASTRO
+                    </span>
+
+                    <h3>
+                      Propriedades cadastradas
+                    </h3>
+                  </div>
+                </div>
+
+                {filteredProperties.length === 0 ? (
+                  <div className="report-empty">
+                    Nenhuma propriedade encontrada.
+                  </div>
+                ) : (
+                  <div className="activities-table-wrapper">
+                    <table className="activities-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Propriedade
+                          </th>
+                          <th>
+                            Responsável
+                          </th>
+                          <th>
+                            Cidade
+                          </th>
+                          <th>
+                            Estado
+                          </th>
+                          <th>
+                            Talhões
+                          </th>
+                          <th>
+                            Registros
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {filteredProperties.map(
+                          (property) => {
+                            const propertyPlots =
+                              plots.filter(
+                                (plot) =>
+                                  String(
+                                    plot.propertyId ??
+                                      plot.property ??
+                                      ""
+                                  ) ===
+                                  String(property.id)
+                              );
+
+                            const propertyActivities =
+                              activities.filter(
+                                (activity) =>
+                                  String(
+                                    activity.propertyId ??
+                                      activity.property ??
+                                      ""
+                                  ) ===
+                                  String(property.id)
+                              );
+
+                            return (
+                              <tr
+                                key={property.id}
+                              >
+                                <td>
+                                  <strong>
+                                    {property.name ||
+                                      property.nome ||
+                                      "Sem nome"}
+                                  </strong>
+                                </td>
+
+                                <td>
+                                  {property.owner ||
+                                    property.responsible ||
+                                    property.responsavel ||
+                                    "—"}
+                                </td>
+
+                                <td>
+                                  {property.city ||
+                                    property.cidade ||
+                                    "—"}
+                                </td>
+
+                                <td>
+                                  {property.state ||
+                                    property.estado ||
+                                    "—"}
+                                </td>
+
+                                <td>
+                                  {propertyPlots.length}
+                                </td>
+
+                                <td>
+                                  {propertyActivities.length}
+                                </td>
+                              </tr>
+                            );
+                          }
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            </>
+          )}
+
+          {/* ===================================================
+              TALHÕES
+          =================================================== */}
+
+          {selectedReport === "talhoes" && (
+            <>
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      INDICADORES
+                    </span>
+
+                    <h3>
+                      Estrutura dos talhões
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="report-stat-grid">
+
+                  <StatCard
+                    icon={
+                      <MapPinned size={16} />
+                    }
+                    label="Talhões"
+                    value={filteredPlots.length}
+                  />
+
+                  <StatCard
+                    icon={
+                      <Building2 size={16} />
+                    }
+                    label="Propriedades"
+                    value={
+                      new Set(
+                        filteredPlots
+                          .map(
+                            (plot) =>
+                              plot.propertyId ??
+                              plot.property
+                          )
+                          .filter(Boolean)
+                      ).size
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <ClipboardList size={16} />
+                    }
+                    label="Registros"
+                    value={
+                      filteredActivities.length
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <Leaf size={16} />
+                    }
+                    label="Culturas"
+                    value={
+                      new Set(
+                        filteredPlots
+                          .map(
+                            (plot) =>
+                              plot.culture ||
+                              plot.cultureName ||
+                              plot.cultura
+                          )
+                          .filter(Boolean)
+                      ).size
+                    }
+                  />
+
+                </div>
+              </section>
+
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      CADASTRO
+                    </span>
+
+                    <h3>
+                      Talhões cadastrados
+                    </h3>
+                  </div>
+                </div>
+
+                {filteredPlots.length === 0 ? (
+                  <div className="report-empty">
+                    Nenhum talhão encontrado.
+                  </div>
+                ) : (
+                  <div className="activities-table-wrapper">
+                    <table className="activities-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Talhão
+                          </th>
+                          <th>
+                            Propriedade
+                          </th>
+                          <th>
+                            Cultura
+                          </th>
+                          <th>
+                            Solo
+                          </th>
+                          <th>
+                            Área
+                          </th>
+                          <th>
+                            Registros
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {filteredPlots.map(
+                          (plot) => {
+                            const activityCount =
+                              activities.filter(
+                                (activity) =>
+                                  String(
+                                    activity.plotId ??
+                                      activity.fieldId ??
+                                      activity.talhaoId ??
+                                      ""
+                                  ) ===
+                                  String(plot.id)
+                              ).length;
+
+                            return (
+                              <tr
+                                key={plot.id}
+                              >
+                                <td>
+                                  <strong>
+                                    {plot.name ||
+                                      plot.nome ||
+                                      "Sem nome"}
+                                  </strong>
+                                </td>
+
+                                <td>
+                                  {getPropertyName(
+                                    plot.propertyId ??
+                                      plot.property
+                                  )}
+                                </td>
+
+                                <td>
+                                  {plot.culture ||
+                                    plot.cultureName ||
+                                    plot.cultura ||
+                                    "—"}
+                                </td>
+
+                                <td>
+                                  {plot.soil ||
+                                    plot.solo ||
+                                    "—"}
+                                </td>
+
+                                <td>
+                                  {formatArea(
+                                    plot.area ??
+                                      plot.areaHa ??
+                                      plot.hectares
+                                  )}
+                                </td>
+
+                                <td>
+                                  {activityCount}
+                                </td>
+                              </tr>
+                            );
+                          }
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            </>
+          )}
+
+          {/* ===================================================
+              CULTURAS
+          =================================================== */}
+
+          {selectedReport === "culturas" && (
+            <>
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      INDICADORES
+                    </span>
+
+                    <h3>
+                      Cadastro de culturas
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="report-stat-grid">
+
+                  <StatCard
+                    icon={
+                      <Leaf size={16} />
+                    }
+                    label="Culturas"
+                    value={
+                      filteredCultures.length
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <MapPinned size={16} />
+                    }
+                    label="Talhões"
+                    value={
+                      filteredPlots.length
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <ClipboardList size={16} />
+                    }
+                    label="Registros"
+                    value={
+                      filteredActivities.length
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <Building2 size={16} />
+                    }
+                    label="Propriedades"
+                    value={
+                      properties.length
+                    }
+                  />
+
+                </div>
+              </section>
+
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      CADASTRO
+                    </span>
+
+                    <h3>
+                      Culturas cadastradas
+                    </h3>
+                  </div>
+                </div>
+
+                {filteredCultures.length === 0 ? (
+                  <div className="report-empty">
+                    Nenhuma cultura encontrada.
+                  </div>
+                ) : (
+                  <div className="activities-table-wrapper">
+                    <table className="activities-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Cultura
+                          </th>
+                          <th>
+                            Variedade
+                          </th>
+                          <th>
+                            Ciclo
+                          </th>
+                          <th>
+                            Talhão
+                          </th>
+                          <th>
+                            Propriedade
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {filteredCultures.map(
+                          (culture) => (
+                            <tr
+                              key={
+                                culture.id
+                              }
+                            >
+                              <td>
+                                <strong>
+                                  {culture.name ||
+                                    culture.nome ||
+                                    culture.title ||
+                                    "Sem nome"}
+                                </strong>
+                              </td>
+
+                              <td>
+                                {culture.variety ||
+                                  culture.variedade ||
+                                  culture.type ||
+                                  "—"}
+                              </td>
+
+                              <td>
+                                {culture.cycle ||
+                                  culture.ciclo ||
+                                  "—"}
+                              </td>
+
+                              <td>
+                                {getPlotName(
+                                  culture.plotId ??
+                                    culture.fieldId ??
+                                    culture.talhaoId
+                                )}
+                              </td>
+
+                              <td>
+                                {getPropertyName(
+                                  culture.propertyId ??
+                                    culture.property
+                                )}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            </>
+          )}
+
+          {/* ===================================================
               MANEJO
           =================================================== */}
 
-          {selectedReport ===
-            "manejo" && (
+          {selectedReport === "manejo" && (
             <>
               <section className="report-section">
                 <div className="section-heading">
@@ -1875,67 +2694,45 @@ function Reports({onBack}) {
 
                   <StatCard
                     icon={
-                      <ClipboardList
-                        size={16}
-                      />
+                      <ClipboardList size={16} />
                     }
                     label="Total de atividades"
-                    value={
-                      statistics.total
-                    }
+                    value={statistics.total}
                   />
 
                   <StatCard
-                    icon={
-                      <Check size={16} />
-                    }
+                    icon={<Check size={16} />}
                     label="Concluídas"
-                    value={
-                      statistics.completed
-                    }
+                    value={statistics.completed}
                   />
 
                   <StatCard
                     icon={
-                      <Activity
-                        size={16}
-                      />
+                      <Activity size={16} />
                     }
                     label="Em andamento"
-                    value={
-                      statistics.inProgress
-                    }
+                    value={statistics.inProgress}
                   />
 
                   <StatCard
                     icon={
-                      <CalendarDays
-                        size={16}
-                      />
+                      <CalendarDays size={16} />
                     }
                     label="Planejadas"
-                    value={
-                      statistics.planned
-                    }
+                    value={statistics.planned}
                   />
 
                   <StatCard
                     icon={
-                      <MapPinned
-                        size={16}
-                      />
+                      <MapPinned size={16} />
                     }
                     label="Talhões envolvidos"
-                    value={
-                      plotSummary.length
-                    }
+                    value={plotSummary.length}
                   />
 
                   <StatCard
                     icon={
-                      <Sprout
-                        size={16}
-                      />
+                      <Sprout size={16} />
                     }
                     label="Tipos de manejo"
                     value={
@@ -1959,8 +2756,7 @@ function Reports({onBack}) {
                   </div>
                 </div>
 
-                {managementSummary.length ===
-                0 ? (
+                {managementSummary.length === 0 ? (
                   <div className="report-empty">
                     Nenhuma atividade de
                     manejo encontrada.
@@ -1975,9 +2771,7 @@ function Reports({onBack}) {
                         >
                           <div className="summary-row-info">
                             <strong>
-                              {
-                                item.name
-                              }
+                              {item.name}
                             </strong>
 
                             <span>
@@ -2060,49 +2854,33 @@ function Reports({onBack}) {
                 <div className="report-stat-grid">
 
                   <StatCard
-                    icon={
-                      <Bug size={16} />
-                    }
+                    icon={<Bug size={16} />}
                     label="Com pragas"
-                    value={
-                      statistics.withPest
-                    }
+                    value={statistics.withPest}
                   />
 
                   <StatCard
                     icon={
-                      <Droplets
-                        size={16}
-                      />
+                      <Droplets size={16} />
                     }
                     label="Com doenças"
-                    value={
-                      statistics.withDisease
-                    }
+                    value={statistics.withDisease}
                   />
 
                   <StatCard
                     icon={
-                      <ClipboardList
-                        size={16}
-                      />
+                      <ClipboardList size={16} />
                     }
                     label="Total de registros"
-                    value={
-                      statistics.total
-                    }
+                    value={statistics.total}
                   />
 
                   <StatCard
                     icon={
-                      <MapPinned
-                        size={16}
-                      />
+                      <MapPinned size={16} />
                     }
                     label="Talhões envolvidos"
-                    value={
-                      phytosanitaryPlots
-                    }
+                    value={phytosanitaryPlots}
                   />
 
                 </div>
@@ -2124,27 +2902,21 @@ function Reports({onBack}) {
                 <div className="occurrence-grid">
 
                   <OccurrenceCard
-                    icon={
-                      <Bug size={15} />
-                    }
+                    icon={<Bug size={15} />}
                     title="Pragas"
                     subtitle={`${statistics.withPest} registros`}
                     data={pestSummary}
                     empty="Nenhuma praga registrada."
-                    max={maxPest}
                   />
 
                   <OccurrenceCard
                     icon={
-                      <Droplets
-                        size={15}
-                      />
+                      <Droplets size={15} />
                     }
                     title="Doenças"
                     subtitle={`${statistics.withDisease} registros`}
                     data={diseaseSummary}
                     empty="Nenhuma doença registrada."
-                    max={maxDisease}
                   />
 
                 </div>
@@ -2186,11 +2958,10 @@ function Reports({onBack}) {
           )}
 
           {/* ===================================================
-              PRODUTOS
+              PRODUTOS / ESTOQUE
           =================================================== */}
 
-          {selectedReport ===
-            "produtos" && (
+          {selectedReport === "produtos" && (
             <>
               <section className="report-section">
                 <div className="section-heading">
@@ -2200,7 +2971,7 @@ function Reports({onBack}) {
                     </span>
 
                     <h3>
-                      Utilização de produtos
+                      Produtos e estoque
                     </h3>
                   </div>
                 </div>
@@ -2209,21 +2980,15 @@ function Reports({onBack}) {
 
                   <StatCard
                     icon={
-                      <Package
-                        size={16}
-                      />
+                      <Package size={16} />
                     }
                     label="Produtos"
-                    value={
-                      productSummary.length
-                    }
+                    value={stockSummary.length}
                   />
 
                   <StatCard
                     icon={
-                      <Activity
-                        size={16}
-                      />
+                      <Activity size={16} />
                     }
                     label="Aplicações"
                     value={
@@ -2233,29 +2998,125 @@ function Reports({onBack}) {
 
                   <StatCard
                     icon={
-                      <ClipboardList
-                        size={16}
-                      />
+                      <ClipboardList size={16} />
                     }
                     label="Registros"
-                    value={
-                      statistics.total
-                    }
+                    value={statistics.total}
                   />
 
                   <StatCard
                     icon={
-                      <Layers3
-                        size={16}
-                      />
+                      <MapPinned size={16} />
                     }
                     label="Talhões envolvidos"
+                    value={productPlots}
+                  />
+
+                  <StatCard
+                    icon={
+                      <RefreshCw size={16} />
+                    }
+                    label="Estoque baixo"
                     value={
-                      productPlots
+                      lowStockProducts.length
                     }
                   />
 
                 </div>
+              </section>
+
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      ESTOQUE
+                    </span>
+
+                    <h3>
+                      Situação atual dos produtos
+                    </h3>
+                  </div>
+                </div>
+
+                {stockSummary.length === 0 ? (
+                  <div className="report-empty">
+                    Nenhum produto cadastrado
+                    no estoque.
+                  </div>
+                ) : (
+                  <div className="activities-table-wrapper">
+                    <table className="activities-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Produto
+                          </th>
+                          <th>
+                            Estoque atual
+                          </th>
+                          <th>
+                            Estoque mínimo
+                          </th>
+                          <th>
+                            Unidade
+                          </th>
+                          <th>
+                            Situação
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {stockSummary.map(
+                          (product) => (
+                            <tr
+                              key={
+                                product.id
+                              }
+                            >
+                              <td>
+                                <strong>
+                                  {product.name}
+                                </strong>
+                              </td>
+
+                              <td>
+                                {formatQuantity(
+                                  product.stock
+                                )}
+                              </td>
+
+                              <td>
+                                {formatQuantity(
+                                  product.minimumStock
+                                )}
+                              </td>
+
+                              <td>
+                                {product.unit ||
+                                  "—"}
+                              </td>
+
+                              <td>
+                                <span
+                                  className={`status-badge ${
+                                    product.lowStock
+                                      ? "planejado"
+                                      : "concluído"
+                                  }`}
+                                >
+                                  {product.lowStock
+                                    ? "Estoque baixo"
+                                    : "Estoque normal"}
+                                </span>
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </section>
 
               <section className="report-section">
@@ -2271,8 +3132,7 @@ function Reports({onBack}) {
                   </div>
                 </div>
 
-                {productSummary.length ===
-                0 ? (
+                {productSummary.length === 0 ? (
                   <div className="report-empty">
                     Nenhum produto foi
                     encontrado no período
@@ -2284,25 +3144,18 @@ function Reports({onBack}) {
                       (product) => (
                         <div
                           className="summary-row"
-                          key={
-                            product.name
-                          }
+                          key={product.name}
                         >
                           <div className="summary-row-info">
                             <strong>
-                              {
-                                product.name
-                              }
+                              {product.name}
                             </strong>
 
                             <span>
                               {formatQuantity(
                                 product.quantity
                               )}{" "}
-                              {
-                                product.unit ||
-                                ""
-                              }
+                              {product.unit || ""}
                             </span>
                           </div>
 
@@ -2315,9 +3168,7 @@ function Reports({onBack}) {
                           </div>
 
                           <strong>
-                            {
-                              product.applications
-                            }
+                            {product.applications}
                           </strong>
                         </div>
                       )
@@ -2362,8 +3213,7 @@ function Reports({onBack}) {
               DIÁRIO
           =================================================== */}
 
-          {selectedReport ===
-            "diario" && (
+          {selectedReport === "diario" && (
             <>
               <section className="report-section">
                 <div className="section-heading">
@@ -2382,54 +3232,36 @@ function Reports({onBack}) {
 
                   <StatCard
                     icon={
-                      <ClipboardList
-                        size={16}
-                      />
+                      <ClipboardList size={16} />
                     }
                     label="Registros"
-                    value={
-                      statistics.total
-                    }
+                    value={statistics.total}
                   />
 
                   <StatCard
-                    icon={
-                      <Check size={16} />
-                    }
+                    icon={<Check size={16} />}
                     label="Concluídos"
-                    value={
-                      statistics.completed
-                    }
+                    value={statistics.completed}
                   />
 
                   <StatCard
                     icon={
-                      <Activity
-                        size={16}
-                      />
+                      <Activity size={16} />
                     }
                     label="Em andamento"
-                    value={
-                      statistics.inProgress
-                    }
+                    value={statistics.inProgress}
                   />
 
                   <StatCard
                     icon={
-                      <CalendarDays
-                        size={16}
-                      />
+                      <CalendarDays size={16} />
                     }
                     label="Planejados"
-                    value={
-                      statistics.planned
-                    }
+                    value={statistics.planned}
                   />
 
                   <StatCard
-                    icon={
-                      <Bug size={16} />
-                    }
+                    icon={<Bug size={16} />}
                     label="Com ocorrências"
                     value={
                       statistics.withPest +
@@ -2439,9 +3271,7 @@ function Reports({onBack}) {
 
                   <StatCard
                     icon={
-                      <Package
-                        size={16}
-                      />
+                      <Package size={16} />
                     }
                     label="Com produtos"
                     value={
@@ -2498,30 +3328,243 @@ function Reports({onBack}) {
                 <div className="occurrence-grid">
 
                   <OccurrenceCard
-                    icon={
-                      <Bug size={15} />
-                    }
+                    icon={<Bug size={15} />}
                     title="Pragas"
                     subtitle={`${statistics.withPest} registros`}
                     data={pestSummary}
                     empty="Nenhuma praga registrada."
-                    max={maxPest}
                   />
 
                   <OccurrenceCard
                     icon={
-                      <Droplets
-                        size={15}
-                      />
+                      <Droplets size={15} />
                     }
                     title="Doenças"
                     subtitle={`${statistics.withDisease} registros`}
                     data={diseaseSummary}
                     empty="Nenhuma doença registrada."
-                    max={maxDisease}
                   />
 
                 </div>
+              </section>
+            </>
+          )}
+
+          {/* ===================================================
+              PEDIDOS
+          =================================================== */}
+
+          {selectedReport === "pedidos" && (
+            <>
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      INDICADORES
+                    </span>
+
+                    <h3>
+                      Resumo dos pedidos
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="report-stat-grid">
+
+                  <StatCard
+                    icon={
+                      <ShoppingCart size={16} />
+                    }
+                    label="Pedidos"
+                    value={
+                      ordersSummary.total
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <CalendarDays size={16} />
+                    }
+                    label="Pendentes"
+                    value={
+                      ordersSummary.pending
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <Activity size={16} />
+                    }
+                    label="Em andamento"
+                    value={
+                      ordersSummary.inProgress
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <Check size={16} />
+                    }
+                    label="Concluídos"
+                    value={
+                      ordersSummary.completed
+                    }
+                  />
+
+                  <StatCard
+                    icon={
+                      <FileBarChart size={16} />
+                    }
+                    label="Valor total"
+                    value={formatCurrency(
+                      ordersSummary.totalValue
+                    )}
+                  />
+
+                </div>
+              </section>
+
+              <section className="report-section">
+                <div className="section-heading">
+                  <div>
+                    <span>
+                      PEDIDOS
+                    </span>
+
+                    <h3>
+                      Relação de pedidos
+                    </h3>
+                  </div>
+
+                  <span>
+                    {filteredOrders.length}{" "}
+                    pedidos
+                  </span>
+                </div>
+
+                {filteredOrders.length === 0 ? (
+                  <div className="report-empty">
+                    Nenhum pedido encontrado
+                    para o período selecionado.
+                  </div>
+                ) : (
+                  <div className="activities-table-wrapper">
+                    <table className="activities-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Pedido
+                          </th>
+                          <th>
+                            Cliente
+                          </th>
+                          <th>
+                            Data
+                          </th>
+                          <th>
+                            Itens
+                          </th>
+                          <th>
+                            Total
+                          </th>
+                          <th>
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {[...filteredOrders]
+                          .sort(
+                            (a, b) =>
+                              getOrderDate(
+                                b
+                              ).localeCompare(
+                                getOrderDate(
+                                  a
+                                )
+                              )
+                          )
+                          .map(
+                            (order) => {
+                              const status =
+                                order.status ||
+                                "Não informado";
+
+                              const normalized =
+                                normalizeStatus(
+                                  status
+                                );
+
+                              const statusClass =
+                                normalized ===
+                                "concluido"
+                                  ? "concluído"
+                                  : normalized ===
+                                    "em andamento"
+                                  ? "em-andamento"
+                                  : normalized ===
+                                    "pendente"
+                                  ? "planejado"
+                                  : "";
+
+                              return (
+                                <tr
+                                  key={
+                                    order.id
+                                  }
+                                >
+                                  <td>
+                                    <strong>
+                                      #{order.id}
+                                    </strong>
+                                  </td>
+
+                                  <td>
+                                    {order.customer ||
+                                      order.cliente ||
+                                      "—"}
+                                  </td>
+
+                                  <td>
+                                    {formatDate(
+                                      getOrderDate(
+                                        order
+                                      )
+                                    )}
+                                  </td>
+
+                                  <td>
+                                    {getOrderItemCount(
+                                      order
+                                    )}
+                                  </td>
+
+                                  <td>
+                                    {formatCurrency(
+                                      parseNumber(
+                                        order.total ??
+                                          order.valor ??
+                                          0
+                                      )
+                                    )}
+                                  </td>
+
+                                  <td>
+                                    <span
+                                      className={`status-badge ${statusClass}`}
+                                    >
+                                      {status}
+                                    </span>
+                                  </td>
+                                </tr>
+                              );
+                            }
+                          )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </section>
             </>
           )}
@@ -2768,13 +3811,16 @@ function ActivitiesTable({
 
                   <td>
                     {getPropertyName(
-                      activity.propertyId
+                      activity.propertyId ??
+                        activity.property
                     )}
                   </td>
 
                   <td>
                     {getPlotName(
-                      activity.plotId
+                      activity.plotId ??
+                        activity.fieldId ??
+                        activity.talhaoId
                     )}
                   </td>
 
@@ -2856,6 +3902,78 @@ function getActivityDate(activity) {
   ).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+function getOrderDate(order) {
+  if (!order) {
+    return "";
+  }
+
+  const value =
+    order.date ||
+    order.orderDate ||
+    order.createdAt;
+
+  if (!value) {
+    return "";
+  }
+
+  if (
+    typeof value === "string" &&
+    /^\d{4}-\d{2}-\d{2}/.test(value)
+  ) {
+    return value.slice(0, 10);
+  }
+
+  const date = new Date(value);
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return "";
+  }
+
+  const year =
+    date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function getOrderItemCount(order) {
+  if (!order) {
+    return 0;
+  }
+
+  if (
+    Array.isArray(order.items)
+  ) {
+    return order.items.reduce(
+      (total, item) =>
+        total +
+        parseNumber(
+          item.quantity ??
+            item.quantidade ??
+            1
+        ),
+      0
+    );
+  }
+
+  return parseNumber(
+    order.itemCount ??
+      order.itemsCount ??
+      0
+  );
 }
 
 function getActivityPest(activity) {
@@ -3107,21 +4225,50 @@ function formatMonth(value) {
     .replace(".", "");
 }
 
-function formatQuantity(value) {
-  if (
-    !Number.isFinite(value)
-  ) {
-    return "0";
-  }
+/* =========================================================
+   HELPERS — NÚMEROS
+========================================================= */
 
-  return Number.isInteger(value)
-    ? String(value)
-    : value.toLocaleString(
+function formatQuantity(value) {
+  const number = parseNumber(value);
+
+  return Number.isInteger(number)
+    ? String(number)
+    : number.toLocaleString(
         "pt-BR",
         {
           maximumFractionDigits: 2,
         }
       );
+}
+
+function formatCurrency(value) {
+  return parseNumber(value).toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+    }
+  );
+}
+
+function formatArea(value) {
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return "—";
+  }
+
+  const number = parseNumber(value);
+
+  return `${number.toLocaleString(
+    "pt-BR",
+    {
+      maximumFractionDigits: 2,
+    }
+  )} ha`;
 }
 
 export default Reports;
